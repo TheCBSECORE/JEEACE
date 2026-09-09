@@ -271,28 +271,61 @@
             </div>
         </div>
 
-        <!-- VIEW 3: NOTION DAILY PLANNER -->
+        <!-- VIEW 3: NOTION WORKSPACE (MULTI-COMPONENT) -->
         <div id="view-notion" class="hidden space-y-4">
-            <div class="glass-card p-4 rounded-2xl flex items-center justify-between">
-                <div class="flex items-center gap-3">
+            <!-- Sub-navigation & Controls -->
+            <div class="glass-card p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
                     <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-xl border border-emerald-500/30">
                         <i data-lucide="calendar-check" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-white text-base leading-tight">Laksh's Daily Notion Planner</h3>
-                        <p class="text-xs text-slate-400">Live Notion dashboard & daily task tracker</p>
+                        <h3 class="font-bold text-white text-base leading-tight">Laksh's Notion Workspace</h3>
+                        <p class="text-xs text-slate-400">Switch views or expand to fullscreen</p>
                     </div>
                 </div>
-                <a href="https://foul-barge-9ef.notion.site/Daily-Planner-27cd4950f43a803b981ada01e583a684" target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-indigo-400 hover:text-white transition-all flex items-center gap-1.5 border border-slate-700">
-                    <span>Open in Fullscreen</span>
-                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                </a>
+
+                <!-- Component Switcher Buttons -->
+                <div class="flex flex-wrap items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 text-xs">
+                    <button onclick="switchNotionView('calendar')" id="btn-notion-cal" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm">
+                        📅 Calendar
+                    </button>
+                    <button onclick="switchNotionView('table')" id="btn-notion-table" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">
+                        📋 Schedule Table
+                    </button>
+                    <button onclick="switchNotionView('graph')" id="btn-notion-graph" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">
+                        📊 Tasks Graph
+                    </button>
+                </div>
             </div>
 
-            <div class="glass-card rounded-3xl overflow-hidden border border-slate-800 h-[78vh] shadow-2xl relative">
+            <!-- Frame Container (Increased Height to 88vh) -->
+            <div class="glass-card rounded-3xl overflow-hidden border border-slate-800 h-[88vh] shadow-2xl relative">
+                <!-- 1. Calendar Schedule -->
                 <iframe 
-                    src="https://foul-barge-9ef.notion.site/ebd//27cd4950f43a803b981ada01e583a684" 
-                    class="w-full h-full border-0 bg-slate-900"
+                    id="iframe-notion-cal"
+                    src="https://foul-barge-9ef.notion.site/ebd/27cd4950f43a81e892e3f4b1f62fbb17?v=27cd4950f43a81258516000c62eddc5d" 
+                    class="w-full h-full border-0 bg-slate-900 block"
+                    allow="clipboard-read; clipboard-write"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+
+                <!-- 2. Schedule Table -->
+                <iframe 
+                    id="iframe-notion-table"
+                    src="https://foul-barge-9ef.notion.site/ebd/33fd4950f43a80fcbafdffff38e19f4c?v=33fd4950f43a801ba7c6000c5d020fb4" 
+                    class="w-full h-full border-0 bg-slate-900 hidden"
+                    allow="clipboard-read; clipboard-write"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+
+                <!-- 3. Tasks Graph -->
+                <iframe 
+                    id="iframe-notion-graph"
+                    src="https://foul-barge-9ef.notion.site/ebd/33ad4950f43a809c80eef641283c2ae0?v=33ad4950f43a80c4877f000c4ed253aa" 
+                    class="w-full h-full border-0 bg-slate-900 hidden"
                     allow="clipboard-read; clipboard-write"
                     allowfullscreen
                     loading="lazy">
@@ -670,6 +703,34 @@
                 tbody.appendChild(row);
             });
             lucide.createIcons();
+        }
+
+        // --- Notion Component Sub-view Switcher ---
+        function switchNotionView(type) {
+            const frames = {
+                calendar: document.getElementById('iframe-notion-cal'),
+                table: document.getElementById('iframe-notion-table'),
+                graph: document.getElementById('iframe-notion-graph')
+            };
+
+            const buttons = {
+                calendar: document.getElementById('btn-notion-cal'),
+                table: document.getElementById('btn-notion-table'),
+                graph: document.getElementById('btn-notion-graph')
+            };
+
+            // Toggle active iframe
+            Object.keys(frames).forEach(key => {
+                if (frames[key]) {
+                    frames[key].classList.toggle('hidden', key !== type);
+                    frames[key].classList.toggle('block', key === type);
+                }
+                if (buttons[key]) {
+                    buttons[key].className = (key === type)
+                        ? "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm"
+                        : "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
+                }
+            });
         }
 
         // --- Test Form Logic ---
