@@ -39,6 +39,10 @@
                     <div class="flex space-x-1 sm:space-x-4">
                         <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="px-3 py-5 text-sm font-medium transition-colors tab-active">Analytics</button>
                         <button onclick="switchTab('planner')" id="tab-btn-planner" class="px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors">Planner</button>
+                        <button onclick="switchTab('notion')" id="tab-btn-notion" class="px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-1.5">
+                            <span>Daily Planner</span>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        </button>
                     </div>
 
                     <!-- Backup & Restore Buttons -->
@@ -196,7 +200,6 @@
 
         <!-- VIEW 2: SYLLABUS PLANNER -->
         <div id="view-planner" class="hidden space-y-8">
-            
             <!-- Countdown Banner -->
             <div id="next-test-banner" class="bg-gradient-to-r from-indigo-900/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="text-center md:text-left">
@@ -267,11 +270,40 @@
                 </div>
             </div>
         </div>
+
+        <!-- VIEW 3: NOTION DAILY PLANNER -->
+        <div id="view-notion" class="hidden space-y-4">
+            <div class="glass-card p-4 rounded-2xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-xl border border-emerald-500/30">
+                        <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-base leading-tight">Laksh's Daily Notion Planner</h3>
+                        <p class="text-xs text-slate-400">Live Notion dashboard & daily task tracker</p>
+                    </div>
+                </div>
+                <a href="https://foul-barge-9ef.notion.site/Daily-Planner-27cd4950f43a803b981ada01e583a684" target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-indigo-400 hover:text-white transition-all flex items-center gap-1.5 border border-slate-700">
+                    <span>Open in Fullscreen</span>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+            </div>
+
+            <div class="glass-card rounded-3xl overflow-hidden border border-slate-800 h-[78vh] shadow-2xl relative">
+                <iframe 
+                    src="https://foul-barge-9ef.notion.site/ebd//27cd4950f43a803b981ada01e583a684" 
+                    class="w-full h-full border-0 bg-slate-900"
+                    allow="clipboard-read; clipboard-write"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+
     </main>
 
     <!-- FLOATING AI MENTOR WIDGET -->
     <div id="ai-widget-container" class="fixed bottom-5 right-5 z-50 flex flex-col items-end">
-        <!-- Floating Trigger Button -->
         <button id="ai-toggle-btn" onclick="toggleAIChat()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-indigo-400/30 transition-transform active:scale-95">
             <div class="relative">
                 <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
@@ -280,9 +312,7 @@
             <span class="font-bold text-sm">Ask AI Mentor</span>
         </button>
 
-        <!-- Compact AI Chat Card -->
         <div id="ai-chatbox" class="hidden mt-3 w-[360px] sm:w-[410px] h-[520px] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-200">
-            <!-- Header -->
             <div class="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <div class="bg-indigo-600/30 p-1.5 rounded-lg border border-indigo-500/30">
@@ -309,7 +339,6 @@
                 </div>
             </div>
 
-            <!-- Quick Action Chips -->
             <div class="p-2 border-b border-slate-800/70 bg-slate-950/30 flex gap-1.5 overflow-x-auto custom-scrollbar text-[11px] whitespace-nowrap">
                 <button onclick="sendQuickPrompt('Analyze my latest test results, subject weaknesses, and silly mistakes from notes.')" class="bg-slate-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/40 border border-slate-700/60 px-2.5 py-1 rounded-full text-slate-300 transition-colors">
                     📊 Analyze Scores
@@ -322,12 +351,8 @@
                 </button>
             </div>
 
-            <!-- Chat Message Thread View -->
-            <div id="ai-chat-thread" class="flex-1 p-3.5 overflow-y-auto space-y-3 custom-scrollbar text-xs">
-                <!-- Injected Messages -->
-            </div>
+            <div id="ai-chat-thread" class="flex-1 p-3.5 overflow-y-auto space-y-3 custom-scrollbar text-xs"></div>
 
-            <!-- Saved History Drawer View (Hidden by default) -->
             <div id="ai-history-drawer" class="hidden flex-1 p-3 overflow-y-auto space-y-2 custom-scrollbar text-xs bg-slate-950/50">
                 <div class="flex justify-between items-center mb-2 px-1">
                     <span class="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Saved Conversations</span>
@@ -336,7 +361,6 @@
                 <div id="ai-history-list" class="space-y-2"></div>
             </div>
 
-            <!-- Chat Input Bar -->
             <form id="ai-input-form" onsubmit="handleUserSubmit(event)" class="p-2.5 bg-slate-950 border-t border-slate-800 flex gap-1.5 items-center">
                 <input type="text" id="ai-user-input" placeholder="Ask about study plan, test analysis..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                 <button type="submit" id="ai-send-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl transition-all">
@@ -474,9 +498,11 @@
         function switchTab(view) {
             document.getElementById('view-analytics').classList.toggle('hidden', view !== 'analytics');
             document.getElementById('view-planner').classList.toggle('hidden', view !== 'planner');
+            document.getElementById('view-notion').classList.toggle('hidden', view !== 'notion');
             
             document.getElementById('tab-btn-analytics').className = view === 'analytics' ? 'px-3 py-5 text-sm font-medium transition-colors tab-active' : 'px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors';
             document.getElementById('tab-btn-planner').className = view === 'planner' ? 'px-3 py-5 text-sm font-medium transition-colors tab-active' : 'px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors';
+            document.getElementById('tab-btn-notion').className = view === 'notion' ? 'px-3 py-5 text-sm font-medium transition-colors tab-active flex items-center gap-1.5' : 'px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-1.5';
             
             if(view === 'planner') updateCountdown();
             if(view === 'analytics') renderChart();
@@ -914,7 +940,6 @@
                 `;
                 item.onclick = () => {
                     toggleHistoryView();
-                    // Scroll to bottom of thread
                     setTimeout(() => {
                         const thread = document.getElementById('ai-chat-thread');
                         thread.scrollTop = thread.scrollHeight;
@@ -947,13 +972,11 @@
                 `;
             } else {
                 appState.chatHistory.forEach(msg => {
-                    // User bubble
                     const userDiv = document.createElement('div');
                     userDiv.className = "flex justify-end";
                     userDiv.innerHTML = `<div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none px-3 py-2 max-w-[85%] break-words">${msg.prompt}</div>`;
                     thread.appendChild(userDiv);
 
-                    // AI bubble
                     const aiDiv = document.createElement('div');
                     aiDiv.className = "flex justify-start";
                     aiDiv.innerHTML = `
@@ -970,29 +993,25 @@
         }
 
         function formatMarkdown(text) {
-    if (!text) return '';
-    
-    // Headers
-    let parsed = text
-        .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-indigo-400 mt-3 mb-1">$1</h4>')
-        .replace(/^## (.*$)/gim, '<h3 class="text-base font-bold text-white mt-4 mb-2">$1</h3>')
-        .replace(/^# (.*$)/gim, '<h2 class="text-lg font-black text-white mt-4 mb-2">$1</h2>');
+            if (!text) return '';
+            
+            let parsed = text
+                .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-indigo-400 mt-3 mb-1">$1</h4>')
+                .replace(/^## (.*$)/gim, '<h3 class="text-base font-bold text-white mt-4 mb-2">$1</h3>')
+                .replace(/^# (.*$)/gim, '<h2 class="text-lg font-black text-white mt-4 mb-2">$1</h2>');
 
-    // Bold & Italics
-    parsed = parsed
-        .replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="text-white font-semibold"><em>$1</em></strong>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
-        .replace(/\*(.*?)\*/g, '<span class="text-indigo-200 font-medium">$1</span>');
+            parsed = parsed
+                .replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="text-white font-semibold"><em>$1</em></strong>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<span class="text-indigo-200 font-medium">$1</span>');
 
-    // Bullet points (handles *, -, and numbered bullets)
-    parsed = parsed
-        .replace(/^\s*[\*\-]\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-2 my-1"><span class="text-indigo-400">•</span><span class="flex-1 text-slate-300">$1</span></div>')
-        .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-2 my-1"><span class="text-indigo-400 font-bold text-[11px]">$1.</span><span class="flex-1 text-slate-300">$2</span></div>');
+            parsed = parsed
+                .replace(/^\s*[\*\-]\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-2 my-1"><span class="text-indigo-400">•</span><span class="flex-1 text-slate-300">$1</span></div>')
+                .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-2 my-1"><span class="text-indigo-400 font-bold text-[11px]">$1.</span><span class="flex-1 text-slate-300">$2</span></div>');
 
-    // Line breaks
-    parsed = parsed.replace(/\n/g, '<br>');
-    return parsed;
-}
+            parsed = parsed.replace(/\n/g, '<br>');
+            return parsed;
+        }
 
         function sendQuickPrompt(promptText) {
             document.getElementById('ai-user-input').value = promptText;
@@ -1011,13 +1030,11 @@
 
             const thread = document.getElementById('ai-chat-thread');
             
-            // Append User Question to Thread
             const uBubble = document.createElement('div');
             uBubble.className = "flex justify-end";
             uBubble.innerHTML = `<div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none px-3 py-2 max-w-[85%] break-words">${prompt}</div>`;
             thread.appendChild(uBubble);
 
-            // Append Thinking Bubble
             const loadingBubble = document.createElement('div');
             loadingBubble.className = "flex justify-start";
             loadingBubble.id = "ai-loading-bubble";
@@ -1033,10 +1050,8 @@
 
             try {
                 const responseText = await callGeminiAPI(prompt);
-                
                 document.getElementById('ai-loading-bubble')?.remove();
 
-                // Save to state & storage
                 appState.chatHistory.push({
                     prompt: prompt,
                     response: responseText,
@@ -1060,7 +1075,6 @@
             const key = appState.apiKey;
             if(!key) throw new Error("Gemini API Key missing.");
 
-            // Construct Comprehensive Context for Laksh
             const testSummary = appState.tests.map(t => 
                 `• Date: ${t.date} | ${t.name}: Total ${t.total}/${t.max} (P: ${t.p}, C: ${t.c}, M: ${t.m}) | Rank: ${t.rank || 'N/A'}/${t.students || 'N/A'} | Notes: "${t.notes || 'None'}"`
             ).join("\n") || "No tests recorded yet.";
@@ -1075,7 +1089,6 @@
                 ? `${appState.nextTest.name} on ${appState.nextTest.date}` 
                 : "No upcoming test scheduled";
 
-            // Recent chat context (up to last 3 exchanges)
             const recentExchanges = appState.chatHistory.slice(-3).map(c => `User: ${c.prompt}\nMentor: ${c.response}`).join("\n\n");
 
             const systemPrompt = `
