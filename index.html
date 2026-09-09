@@ -21,10 +21,10 @@
         .tab-active { border-bottom: 2px solid #6366f1; color: #6366f1; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen pb-20">
+<body class="bg-slate-950 text-slate-200 min-h-screen pb-24">
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+    <nav class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-2">
@@ -32,6 +32,7 @@
                         <i data-lucide="layout-dashboard" class="w-6 h-6 text-white"></i>
                     </div>
                     <span class="text-xl font-bold tracking-tight text-white">JEE<span class="text-indigo-500">Ace</span></span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono hidden sm:inline ml-2">Laksh • 11th (JEE 2028)</span>
                 </div>
                 
                 <div class="flex items-center gap-3 sm:gap-6">
@@ -78,9 +79,7 @@
                 <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
                     <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Recent Momentum (Last 3)</p>
                     <h3 id="stat-recent-avg" class="text-3xl font-bold text-white">0</h3>
-                    <div id="momentum-indicator" class="flex items-center gap-1 mt-1 text-sm">
-                        <!-- Dynamic indicator -->
-                    </div>
+                    <div id="momentum-indicator" class="flex items-center gap-1 mt-1 text-sm"></div>
                 </div>
                 <div class="glass-card p-5 rounded-2xl">
                     <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Best Percentile</p>
@@ -154,7 +153,6 @@
                         <p class="text-xs text-slate-400 mt-0.5">Track your scores over time as per test date</p>
                     </div>
                     
-                    <!-- Graph Toggle Buttons -->
                     <div class="flex flex-wrap gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800 text-xs">
                         <button onclick="setChartFilter('all')" id="btn-chart-all" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm">Total Score</button>
                         <button onclick="setChartFilter('pcm')" id="btn-chart-pcm" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">PCM Combined</button>
@@ -186,9 +184,7 @@
                                 <th class="px-6 py-4 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="test-table-body" class="divide-y divide-slate-800">
-                            <!-- Rows injected by JS -->
-                        </tbody>
+                        <tbody id="test-table-body" class="divide-y divide-slate-800"></tbody>
                     </table>
                     <div id="empty-state" class="hidden p-12 text-center text-slate-500">
                         <i data-lucide="database" class="w-12 h-12 mx-auto mb-4 opacity-20"></i>
@@ -267,13 +263,101 @@
 
                 <!-- Syllabus List -->
                 <div class="lg:col-span-2 space-y-4">
-                    <div id="syllabus-list" class="space-y-4">
-                        <!-- Items injected by JS -->
-                    </div>
+                    <div id="syllabus-list" class="space-y-4"></div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- FLOATING AI MENTOR WIDGET -->
+    <div id="ai-widget-container" class="fixed bottom-5 right-5 z-50 flex flex-col items-end">
+        <!-- Floating Trigger Button -->
+        <button id="ai-toggle-btn" onclick="toggleAIChat()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-indigo-400/30 transition-transform active:scale-95">
+            <div class="relative">
+                <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
+                <span class="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full"></span>
+            </div>
+            <span class="font-bold text-sm">Ask AI Mentor</span>
+        </button>
+
+        <!-- Compact AI Chat Card -->
+        <div id="ai-chatbox" class="hidden mt-3 w-[360px] sm:w-[410px] h-[520px] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-200">
+            <!-- Header -->
+            <div class="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="bg-indigo-600/30 p-1.5 rounded-lg border border-indigo-500/30">
+                        <i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                            JEE AI Coach
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-normal">Laksh (Allen)</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Analyzes tests & syllabus data</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button onclick="toggleHistoryView()" title="Previous Saved Chats" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800">
+                        <i data-lucide="history" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="openApiKeyModal()" title="API Settings" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800">
+                        <i data-lucide="key" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="toggleAIChat()" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Action Chips -->
+            <div class="p-2 border-b border-slate-800/70 bg-slate-950/30 flex gap-1.5 overflow-x-auto custom-scrollbar text-[11px] whitespace-nowrap">
+                <button onclick="sendQuickPrompt('Analyze my latest test results, subject weaknesses, and silly mistakes from notes.')" class="bg-slate-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/40 border border-slate-700/60 px-2.5 py-1 rounded-full text-slate-300 transition-colors">
+                    📊 Analyze Scores
+                </button>
+                <button onclick="sendQuickPrompt('Give me a realistic revision schedule considering my Allen coaching from 7am-12pm and remaining syllabus.')" class="bg-slate-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/40 border border-slate-700/60 px-2.5 py-1 rounded-full text-slate-300 transition-colors">
+                    📅 Study Routine
+                </button>
+                <button onclick="sendQuickPrompt('Prioritize my incomplete syllabus topics based on high-yield weightage for JEE.')" class="bg-slate-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/40 border border-slate-700/60 px-2.5 py-1 rounded-full text-slate-300 transition-colors">
+                    🎯 Syllabus Triage
+                </button>
+            </div>
+
+            <!-- Chat Message Thread View -->
+            <div id="ai-chat-thread" class="flex-1 p-3.5 overflow-y-auto space-y-3 custom-scrollbar text-xs">
+                <!-- Injected Messages -->
+            </div>
+
+            <!-- Saved History Drawer View (Hidden by default) -->
+            <div id="ai-history-drawer" class="hidden flex-1 p-3 overflow-y-auto space-y-2 custom-scrollbar text-xs bg-slate-950/50">
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <span class="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Saved Conversations</span>
+                    <button onclick="clearChatHistory()" class="text-red-400 text-[10px] hover:underline">Clear All</button>
+                </div>
+                <div id="ai-history-list" class="space-y-2"></div>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <form id="ai-input-form" onsubmit="handleUserSubmit(event)" class="p-2.5 bg-slate-950 border-t border-slate-800 flex gap-1.5 items-center">
+                <input type="text" id="ai-user-input" placeholder="Ask about study plan, test analysis..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <button type="submit" id="ai-send-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl transition-all">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- API KEY SETTINGS MODAL -->
+    <div id="api-key-modal" class="fixed inset-0 z-[70] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
+            <h3 class="text-lg font-bold mb-2">Gemini API Key</h3>
+            <p class="text-xs text-slate-400 mb-4">Your key is stored strictly on this browser's memory.</p>
+            <input type="password" id="custom-api-key" placeholder="Enter Gemini API key" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white mb-4 outline-none focus:ring-2 focus:ring-indigo-500">
+            <div class="flex gap-2">
+                <button onclick="closeApiKeyModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
+                <button onclick="saveApiKey()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-bold">Save Key</button>
+            </div>
+        </div>
+    </div>
 
     <!-- TEST MODAL -->
     <div id="test-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -365,19 +449,25 @@
 
     <script>
         // --- State Management ---
+        const DEFAULT_API_KEY = "";
+
         let appState = {
             tests: JSON.parse(localStorage.getItem('jee_tests')) || [],
             syllabus: JSON.parse(localStorage.getItem('jee_syllabus')) || [],
-            nextTest: JSON.parse(localStorage.getItem('jee_next_test')) || { name: 'Next Major Test', date: '' }
+            nextTest: JSON.parse(localStorage.getItem('jee_next_test')) || { name: 'Next Major Test', date: '' },
+            apiKey: localStorage.getItem('jee_api_key') || DEFAULT_API_KEY,
+            chatHistory: JSON.parse(localStorage.getItem('jee_ai_chats')) || []
         };
 
         let performanceChart = null;
-        let activeChartFilter = 'all'; // 'all', 'pcm', 'physics', 'chem', 'maths'
+        let activeChartFilter = 'all';
 
         const saveToStorage = () => {
             localStorage.setItem('jee_tests', JSON.stringify(appState.tests));
             localStorage.setItem('jee_syllabus', JSON.stringify(appState.syllabus));
             localStorage.setItem('jee_next_test', JSON.stringify(appState.nextTest));
+            localStorage.setItem('jee_api_key', appState.apiKey);
+            localStorage.setItem('jee_ai_chats', JSON.stringify(appState.chatHistory));
         };
 
         // --- Tab Switching ---
@@ -397,17 +487,13 @@
         function setChartFilter(type) {
             activeChartFilter = type;
             const buttons = ['all', 'pcm', 'physics', 'chem', 'maths'];
-            
             buttons.forEach(b => {
                 const btn = document.getElementById(`btn-chart-${b}`);
                 if (!btn) return;
-                if (b === type) {
-                    btn.className = "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm";
-                } else {
-                    btn.className = "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
-                }
+                btn.className = (b === type) 
+                    ? "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm"
+                    : "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
             });
-
             renderChart();
         }
 
@@ -415,16 +501,13 @@
             const ctx = document.getElementById('scoreChart');
             if (!ctx) return;
 
-            // Sort tests chronologically by date for accurate trendline
             const sortedTests = [...appState.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
-
             const labels = sortedTests.map(t => {
                 const d = t.date ? new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : t.name;
                 return `${d} (${t.name})`;
             });
 
             let datasets = [];
-
             if (activeChartFilter === 'all') {
                 datasets = [{
                     label: 'Total Score',
@@ -435,126 +518,40 @@
                     fill: true,
                     tension: 0.35,
                     pointBackgroundColor: '#818cf8',
-                    pointRadius: 4,
-                    pointHoverRadius: 6
+                    pointRadius: 4
                 }];
             } else if (activeChartFilter === 'pcm') {
                 datasets = [
-                    {
-                        label: 'Physics',
-                        data: sortedTests.map(t => Number(t.p || 0)),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        tension: 0.35,
-                        pointBackgroundColor: '#3b82f6',
-                        pointRadius: 4
-                    },
-                    {
-                        label: 'Chemistry',
-                        data: sortedTests.map(t => Number(t.c || 0)),
-                        borderColor: '#10b981',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        tension: 0.35,
-                        pointBackgroundColor: '#10b981',
-                        pointRadius: 4
-                    },
-                    {
-                        label: 'Maths',
-                        data: sortedTests.map(t => Number(t.m || 0)),
-                        borderColor: '#f97316',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        tension: 0.35,
-                        pointBackgroundColor: '#f97316',
-                        pointRadius: 4
-                    }
+                    { label: 'Physics', data: sortedTests.map(t => Number(t.p || 0)), borderColor: '#3b82f6', tension: 0.35, pointRadius: 4 },
+                    { label: 'Chemistry', data: sortedTests.map(t => Number(t.c || 0)), borderColor: '#10b981', tension: 0.35, pointRadius: 4 },
+                    { label: 'Maths', data: sortedTests.map(t => Number(t.m || 0)), borderColor: '#f97316', tension: 0.35, pointRadius: 4 }
                 ];
             } else if (activeChartFilter === 'physics') {
-                datasets = [{
-                    label: 'Physics Score',
-                    data: sortedTests.map(t => Number(t.p || 0)),
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.35,
-                    pointBackgroundColor: '#60a5fa',
-                    pointRadius: 4
-                }];
+                datasets = [{ label: 'Physics Score', data: sortedTests.map(t => Number(t.p || 0)), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
             } else if (activeChartFilter === 'chem') {
-                datasets = [{
-                    label: 'Chemistry Score',
-                    data: sortedTests.map(t => Number(t.c || 0)),
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.35,
-                    pointBackgroundColor: '#34d399',
-                    pointRadius: 4
-                }];
+                datasets = [{ label: 'Chemistry Score', data: sortedTests.map(t => Number(t.c || 0)), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
             } else if (activeChartFilter === 'maths') {
-                datasets = [{
-                    label: 'Maths Score',
-                    data: sortedTests.map(t => Number(t.m || 0)),
-                    borderColor: '#f97316',
-                    backgroundColor: 'rgba(249, 115, 22, 0.15)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.35,
-                    pointBackgroundColor: '#fb923c',
-                    pointRadius: 4
-                }];
+                datasets = [{ label: 'Maths Score', data: sortedTests.map(t => Number(t.m || 0)), borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
             }
 
-            if (performanceChart) {
-                performanceChart.destroy();
-            }
+            if (performanceChart) performanceChart.destroy();
 
             performanceChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels.length ? labels : ['No tests yet'],
-                    datasets: datasets.length ? datasets : [{
-                        label: 'No Data',
-                        data: [0],
-                        borderColor: '#334155'
-                    }]
+                    datasets: datasets.length ? datasets : [{ label: 'No Data', data: [0], borderColor: '#334155' }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
+                    interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: {
-                            display: activeChartFilter === 'pcm',
-                            labels: { color: '#94a3b8', font: { family: 'Inter', size: 12 } }
-                        },
-                        tooltip: {
-                            backgroundColor: '#0f172a',
-                            titleColor: '#f8fafc',
-                            bodyColor: '#cbd5e1',
-                            borderColor: '#334155',
-                            borderWidth: 1,
-                            padding: 10
-                        }
+                        legend: { display: activeChartFilter === 'pcm', labels: { color: '#94a3b8' } }
                     },
                     scales: {
-                        x: {
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { color: '#64748b', font: { size: 11 } }
-                        },
-                        y: {
-                            min: 0,
-                            max: (activeChartFilter === 'all') ? 300 : 100,
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { color: '#64748b', font: { size: 11 } }
-                        }
+                        x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } },
+                        y: { min: 0, max: (activeChartFilter === 'all') ? 300 : 100, grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } }
                     }
                 }
             });
@@ -562,11 +559,7 @@
 
         function calculateAnalytics() {
             const { tests } = appState;
-            if (tests.length === 0) {
-                document.getElementById('empty-state').classList.remove('hidden');
-            } else {
-                document.getElementById('empty-state').classList.add('hidden');
-            }
+            document.getElementById('empty-state').classList.toggle('hidden', tests.length > 0);
 
             const totalScore = tests.reduce((sum, t) => sum + Number(t.total || 0), 0);
             const avgScore = tests.length ? (totalScore / tests.length).toFixed(1) : 0;
@@ -575,7 +568,6 @@
             document.getElementById('stat-avg-score').innerText = avgScore;
             document.getElementById('stat-avg-perc').innerText = `${avgPerc}% Avg`;
 
-            // Rolling Avg (Last 3)
             const recent = tests.slice(-3);
             const recentAvg = recent.length ? (recent.reduce((sum, t) => sum + Number(t.total || 0), 0) / recent.length).toFixed(1) : 0;
             document.getElementById('stat-recent-avg').innerText = recentAvg;
@@ -583,18 +575,12 @@
             const momentumIdx = document.getElementById('momentum-indicator');
             if (tests.length >= 2) {
                 const diff = recentAvg - avgScore;
-                if (diff > 0) {
-                    momentumIdx.className = "flex items-center gap-1 mt-1 text-sm text-emerald-400";
-                    momentumIdx.innerHTML = `<i data-lucide="trending-up" class="w-4 h-4"></i> +${diff.toFixed(1)} vs avg`;
-                } else {
-                    momentumIdx.className = "flex items-center gap-1 mt-1 text-sm text-red-400";
-                    momentumIdx.innerHTML = `<i data-lucide="trending-down" class="w-4 h-4"></i> ${diff.toFixed(1)} vs avg`;
-                }
+                momentumIdx.className = `flex items-center gap-1 mt-1 text-sm ${diff >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+                momentumIdx.innerHTML = `<i data-lucide="${diff >= 0 ? 'trending-up' : 'trending-down'}" class="w-4 h-4"></i> ${diff >= 0 ? '+' : ''}${diff.toFixed(1)} vs avg`;
             } else {
                 momentumIdx.innerHTML = '';
             }
 
-            // Subject-wise Averages
             const avgP = tests.length ? (tests.reduce((sum, t) => sum + Number(t.p || 0), 0) / tests.length).toFixed(1) : 0;
             const avgC = tests.length ? (tests.reduce((sum, t) => sum + Number(t.c || 0), 0) / tests.length).toFixed(1) : 0;
             const avgM = tests.length ? (tests.reduce((sum, t) => sum + Number(t.m || 0), 0) / tests.length).toFixed(1) : 0;
@@ -606,13 +592,8 @@
             document.getElementById('bar-c').style.width = `${avgC}%`;
             document.getElementById('bar-m').style.width = `${avgM}%`;
 
-            // Best Percentile
-            const percentiles = tests.map(t => {
-                if(!t.rank || !t.students) return 0;
-                return ((t.students - t.rank) / t.students * 100);
-            });
-            const bestPerc = Math.max(...percentiles, 0).toFixed(2);
-            document.getElementById('stat-best-percentile').innerText = `${bestPerc}%`;
+            const percentiles = tests.map(t => (t.rank && t.students) ? ((t.students - t.rank) / t.students * 100) : 0);
+            document.getElementById('stat-best-percentile').innerText = `${Math.max(...percentiles, 0).toFixed(2)}%`;
 
             renderTestTable();
             renderChart();
@@ -625,7 +606,7 @@
 
             [...appState.tests].reverse().forEach((test, originalIndex) => {
                 const actualIdx = appState.tests.length - 1 - originalIndex;
-                const perc = test.students ? ((test.students - test.rank) / test.students * 100).toFixed(1) : 'N/A';
+                const perc = (test.students && test.rank) ? ((test.students - test.rank) / test.students * 100).toFixed(1) : 'N/A';
                 
                 const row = document.createElement('tr');
                 row.className = "hover:bg-slate-800/30 transition-colors group";
@@ -668,7 +649,6 @@
         // --- Test Form Logic ---
         const testForm = document.getElementById('test-form');
         const modal = document.getElementById('test-modal');
-
         const pIn = document.getElementById('t-p');
         const cIn = document.getElementById('t-c');
         const mIn = document.getElementById('t-m');
@@ -691,7 +671,6 @@
         testForm.onsubmit = (e) => {
             e.preventDefault();
             const editIdx = parseInt(document.getElementById('edit-index').value);
-            
             const testData = {
                 name: document.getElementById('t-name').value,
                 date: document.getElementById('t-date').value,
@@ -740,53 +719,48 @@
             lucide.createIcons();
         }
 
-        function closeTestModal() {
-            modal.classList.add('hidden');
-        }
-
+        function closeTestModal() { modal.classList.add('hidden'); }
         function deleteTest(idx) {
-            if(confirm('Delete this record?')) {
+            if(confirm('Delete this test record?')) {
                 appState.tests.splice(idx, 1);
                 saveToStorage();
                 calculateAnalytics();
             }
         }
-
-        function editTest(idx) {
-            openTestModal(idx);
-        }
+        function editTest(idx) { openTestModal(idx); }
 
         // --- Backup & Restore Logic ---
         function exportBackup() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `jee_prep_backup_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `jee_prep_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(dl);
+            dl.click();
+            dl.remove();
         }
 
         function importBackup(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const imported = JSON.parse(e.target.result);
                     if (imported.tests && imported.syllabus) {
-                        appState = imported;
+                        appState.tests = imported.tests;
+                        appState.syllabus = imported.syllabus;
+                        appState.nextTest = imported.nextTest || appState.nextTest;
+                        if(imported.chatHistory) appState.chatHistory = imported.chatHistory;
                         saveToStorage();
                         calculateAnalytics();
                         renderSyllabus();
                         updateCountdown();
+                        renderChatThread();
                         alert('Data successfully restored!');
-                    } else {
-                        alert('Invalid backup file format.');
                     }
                 } catch (err) {
-                    alert('Error parsing JSON backup file.');
+                    alert('Invalid backup file format.');
                 }
             };
             reader.readAsText(file);
@@ -797,20 +771,11 @@
             const name = document.getElementById('topic-name').value;
             const subject = document.getElementById('topic-subject').value;
             const note = document.getElementById('topic-note').value;
-
             if(!name) return alert('Enter topic name');
 
-            appState.syllabus.push({
-                id: Date.now(),
-                subject,
-                name,
-                note,
-                completed: false
-            });
-
+            appState.syllabus.push({ id: Date.now(), subject, name, note, completed: false });
             document.getElementById('topic-name').value = '';
             document.getElementById('topic-note').value = '';
-            
             saveToStorage();
             renderSyllabus();
         }
@@ -841,7 +806,6 @@
         function renderSyllabus() {
             const list = document.getElementById('syllabus-list');
             list.innerHTML = '';
-
             const subjects = ['Physics', 'Chemistry', 'Maths', 'General'];
             
             subjects.forEach(sub => {
@@ -850,10 +814,7 @@
 
                 const section = document.createElement('div');
                 section.className = "mb-6";
-                section.innerHTML = `
-                    <h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-3 ml-1">${sub}</h4>
-                    <div class="space-y-2"></div>
-                `;
+                section.innerHTML = `<h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-3 ml-1">${sub}</h4><div class="space-y-2"></div>`;
                 const itemContainer = section.querySelector('div');
 
                 subTopics.forEach(topic => {
@@ -876,15 +837,12 @@
                 list.appendChild(section);
             });
 
-            // Update Progress Bar
             const total = appState.syllabus.length;
             const done = appState.syllabus.filter(t => t.completed).length;
             const perc = total === 0 ? 0 : Math.round((done / total) * 100);
-
             document.getElementById('progress-text').innerText = `${done}/${total} Topics`;
             document.getElementById('progress-percent').innerText = `${perc}%`;
             document.getElementById('overall-progress-bar').style.width = `${perc}%`;
-            
             lucide.createIcons();
         }
 
@@ -892,18 +850,12 @@
         function updateCountdown() {
             const next = appState.nextTest;
             document.getElementById('display-next-name').innerText = next.name || 'Set Your Next Goal';
-            
             if (!next.date) {
                 document.getElementById('display-next-date').innerText = 'No date set';
                 document.getElementById('countdown-days').innerText = '00';
                 return;
             }
-
-            const now = new Date();
-            const target = new Date(next.date);
-            const diffTime = target - now;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+            const diffDays = Math.ceil((new Date(next.date) - new Date()) / (1000 * 60 * 60 * 24));
             document.getElementById('display-next-date').innerText = new Date(next.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('countdown-days').innerText = diffDays > 0 ? diffDays.toString().padStart(2, '0') : '00';
         }
@@ -914,10 +866,7 @@
             document.getElementById('nt-date').value = appState.nextTest.date;
         }
 
-        function closeNextTestModal() {
-            document.getElementById('next-test-modal').classList.add('hidden');
-        }
-
+        function closeNextTestModal() { document.getElementById('next-test-modal').classList.add('hidden'); }
         function saveNextTest() {
             appState.nextTest.name = document.getElementById('nt-name').value;
             appState.nextTest.date = document.getElementById('nt-date').value;
@@ -926,11 +875,272 @@
             closeNextTestModal();
         }
 
+        // ==========================================
+        // --- AI CHATBOT INTEGRATION & MENTOR ---
+        // ==========================================
+        function toggleAIChat() {
+            const box = document.getElementById('ai-chatbox');
+            box.classList.toggle('hidden');
+            if(!box.classList.contains('hidden')) {
+                renderChatThread();
+                lucide.createIcons();
+            }
+        }
+
+        function toggleHistoryView() {
+            const drawer = document.getElementById('ai-history-drawer');
+            const thread = document.getElementById('ai-chat-thread');
+            const isHidden = drawer.classList.contains('hidden');
+            drawer.classList.toggle('hidden', !isHidden);
+            thread.classList.toggle('hidden', isHidden);
+            if(isHidden) renderHistoryList();
+        }
+
+        function renderHistoryList() {
+            const container = document.getElementById('ai-history-list');
+            container.innerHTML = '';
+            if(!appState.chatHistory.length) {
+                container.innerHTML = `<p class="text-slate-500 text-center py-6">No previous conversations saved.</p>`;
+                return;
+            }
+
+            [...appState.chatHistory].reverse().forEach((session, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/40 cursor-pointer transition-colors";
+                item.innerHTML = `
+                    <div class="text-[10px] text-indigo-400 font-semibold mb-1">${session.timestamp}</div>
+                    <div class="font-medium text-slate-200 truncate">${session.prompt}</div>
+                    <div class="text-slate-500 text-[11px] truncate mt-0.5">${session.response}</div>
+                `;
+                item.onclick = () => {
+                    toggleHistoryView();
+                    // Scroll to bottom of thread
+                    setTimeout(() => {
+                        const thread = document.getElementById('ai-chat-thread');
+                        thread.scrollTop = thread.scrollHeight;
+                    }, 50);
+                };
+                container.appendChild(item);
+            });
+        }
+
+        function clearChatHistory() {
+            if(confirm('Clear all conversation history?')) {
+                appState.chatHistory = [];
+                saveToStorage();
+                renderHistoryList();
+                renderChatThread();
+            }
+        }
+
+        function renderChatThread() {
+            const thread = document.getElementById('ai-chat-thread');
+            thread.innerHTML = '';
+
+            if (appState.chatHistory.length === 0) {
+                thread.innerHTML = `
+                    <div class="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-slate-400 leading-relaxed">
+                        Hey <strong class="text-white font-semibold">Laksh</strong>! I'm your dedicated JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>, your 11th grade pace for JEE 2028, and all test scores & syllabus entries above. 
+                        <br><br>
+                        Click a quick analysis chip above or ask me anything!
+                    </div>
+                `;
+            } else {
+                appState.chatHistory.forEach(msg => {
+                    // User bubble
+                    const userDiv = document.createElement('div');
+                    userDiv.className = "flex justify-end";
+                    userDiv.innerHTML = `<div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none px-3 py-2 max-w-[85%] break-words">${msg.prompt}</div>`;
+                    thread.appendChild(userDiv);
+
+                    // AI bubble
+                    const aiDiv = document.createElement('div');
+                    aiDiv.className = "flex justify-start";
+                    aiDiv.innerHTML = `
+                        <div class="bg-slate-800/90 text-slate-200 border border-slate-700/50 rounded-2xl rounded-tl-none px-3.5 py-2.5 max-w-[90%] break-words space-y-1.5 leading-relaxed">
+                            ${formatMarkdown(msg.response)}
+                        </div>
+                    `;
+                    thread.appendChild(aiDiv);
+                });
+            }
+
+            thread.scrollTop = thread.scrollHeight;
+            lucide.createIcons();
+        }
+
+        function formatMarkdown(text) {
+            // Lightweight markdown formatter for bold, lists, and line breaks
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em class="text-indigo-200">$1</em>')
+                .replace(/\n\s*-\s*(.*)/g, '<li class="ml-3 list-disc text-slate-300">$1</li>')
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function sendQuickPrompt(promptText) {
+            document.getElementById('ai-user-input').value = promptText;
+            document.getElementById('ai-input-form').dispatchEvent(new Event('submit'));
+        }
+
+        async function handleUserSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('ai-user-input');
+            const prompt = input.value.trim();
+            if(!prompt) return;
+
+            const sendBtn = document.getElementById('ai-send-btn');
+            sendBtn.disabled = true;
+            input.value = '';
+
+            const thread = document.getElementById('ai-chat-thread');
+            
+            // Append User Question to Thread
+            const uBubble = document.createElement('div');
+            uBubble.className = "flex justify-end";
+            uBubble.innerHTML = `<div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none px-3 py-2 max-w-[85%] break-words">${prompt}</div>`;
+            thread.appendChild(uBubble);
+
+            // Append Thinking Bubble
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = "flex justify-start";
+            loadingBubble.id = "ai-loading-bubble";
+            loadingBubble.innerHTML = `
+                <div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3 py-2 text-slate-400 flex items-center gap-2">
+                    <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i>
+                    <span>Analyzing tests & syllabus...</span>
+                </div>
+            `;
+            thread.appendChild(loadingBubble);
+            thread.scrollTop = thread.scrollHeight;
+            lucide.createIcons();
+
+            try {
+                const responseText = await callGeminiAPI(prompt);
+                
+                document.getElementById('ai-loading-bubble')?.remove();
+
+                // Save to state & storage
+                appState.chatHistory.push({
+                    prompt: prompt,
+                    response: responseText,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })
+                });
+                saveToStorage();
+
+                renderChatThread();
+            } catch (err) {
+                document.getElementById('ai-loading-bubble')?.remove();
+                const errDiv = document.createElement('div');
+                errDiv.className = "text-center text-red-400 p-2 text-[11px] bg-red-950/40 rounded-xl border border-red-800/40";
+                errDiv.innerText = `Error: ${err.message || 'Failed to connect to AI'}. Check API key in settings.`;
+                thread.appendChild(errDiv);
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        async function callGeminiAPI(userQuery) {
+            const key = appState.apiKey;
+            if(!key) throw new Error("Gemini API Key missing.");
+
+            // Construct Comprehensive Context for Laksh
+            const testSummary = appState.tests.map(t => 
+                `• Date: ${t.date} | ${t.name}: Total ${t.total}/${t.max} (P: ${t.p}, C: ${t.c}, M: ${t.m}) | Rank: ${t.rank || 'N/A'}/${t.students || 'N/A'} | Notes: "${t.notes || 'None'}"`
+            ).join("\n") || "No tests recorded yet.";
+
+            const incompleteSyllabus = appState.syllabus.filter(s => !s.completed).map(s => 
+                `• [${s.subject}] ${s.name} (${s.note || 'No note'})`
+            ).join("\n") || "No pending topics!";
+
+            const completedSyllabus = appState.syllabus.filter(s => s.completed).map(s => s.name).join(", ") || "None";
+
+            const nextGoal = appState.nextTest.date 
+                ? `${appState.nextTest.name} on ${appState.nextTest.date}` 
+                : "No upcoming test scheduled";
+
+            // Recent chat context (up to last 3 exchanges)
+            const recentExchanges = appState.chatHistory.slice(-3).map(c => `User: ${c.prompt}\nMentor: ${c.response}`).join("\n\n");
+
+            const systemPrompt = `
+You are an elite, highly encouraging, and analytical JEE Mentor tailored specifically for the student:
+- Name: Laksh
+- Current Academic Phase: 11th Grade (2026)
+- Target Exam: JEE Advanced / Main 2028 (2-year prep cycle)
+- Coaching Institute: Allen
+- Daily Coaching Timings: 7:00 AM to 12:00 PM (Leaves afternoons & evenings dedicated for self-study, homework, PYQ solving, and revision)
+
+Current Student Data:
+- Upcoming Test: ${nextGoal}
+- Recorded Test History:
+${testSummary}
+- Incomplete / Target Syllabus Topics:
+${incompleteSyllabus}
+- Completed Topics: ${completedSyllabus}
+
+Previous Context:
+${recentExchanges}
+
+Instructions:
+1. Provide concise, direct, high-impact advice. Avoid unnecessary fluff.
+2. Directly analyze his test marks, trends, and specific reflections/silly mistakes from test notes.
+3. When building schedules, optimize around his 7:00 AM - 12:00 PM Allen schedule and emphasize rest, high-yield revision, and daily PYQ practice.
+4. Keep the tone brotherly, candid, and motivating.
+            `.trim();
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            role: "user",
+                            parts: [
+                                { text: `${systemPrompt}\n\nStudent's Query: "${userQuery}"` }
+                            ]
+                        }
+                    ],
+                    generationConfig: {
+                        temperature: 0.4,
+                        maxOutputTokens: 800
+                    }
+                })
+            });
+
+            if(!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData?.error?.message || `API error ${res.status}`);
+            }
+
+            const data = await res.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        // --- API Key Modal Logic ---
+        function openApiKeyModal() {
+            document.getElementById('api-key-modal').classList.remove('hidden');
+            document.getElementById('custom-api-key').value = appState.apiKey;
+        }
+        function closeApiKeyModal() { document.getElementById('api-key-modal').classList.add('hidden'); }
+        function saveApiKey() {
+            const val = document.getElementById('custom-api-key').value.trim();
+            if(val) {
+                appState.apiKey = val;
+                saveToStorage();
+                alert('API Key updated!');
+            }
+            closeApiKeyModal();
+        }
+
         // Initialize App
         window.onload = () => {
             calculateAnalytics();
             renderSyllabus();
             updateCountdown();
+            renderChatThread();
             lucide.createIcons();
         };
     </script>
