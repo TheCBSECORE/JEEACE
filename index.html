@@ -33,9 +33,25 @@
                     </div>
                     <span class="text-xl font-bold tracking-tight text-white">JEE<span class="text-indigo-500">Ace</span></span>
                 </div>
-                <div class="flex space-x-1 sm:space-x-4">
-                    <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="px-3 py-5 text-sm font-medium transition-colors tab-active">Analytics</button>
-                    <button onclick="switchTab('planner')" id="tab-btn-planner" class="px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors">Planner</button>
+                
+                <div class="flex items-center gap-3 sm:gap-6">
+                    <div class="flex space-x-1 sm:space-x-4">
+                        <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="px-3 py-5 text-sm font-medium transition-colors tab-active">Analytics</button>
+                        <button onclick="switchTab('planner')" id="tab-btn-planner" class="px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors">Planner</button>
+                    </div>
+
+                    <!-- Backup & Restore Buttons -->
+                    <div class="flex items-center gap-1.5 border-l border-slate-800 pl-3 sm:pl-6">
+                        <button onclick="exportBackup()" title="Download Backup" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-xs flex items-center gap-1.5 font-medium">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span class="hidden md:inline">Backup</span>
+                        </button>
+                        <label title="Restore Backup" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-xs flex items-center gap-1.5 font-medium cursor-pointer">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            <span class="hidden md:inline">Restore</span>
+                            <input type="file" id="import-input" accept=".json" class="hidden" onchange="importBackup(event)">
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,8 +64,11 @@
             
             <!-- Quick Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="glass-card p-5 rounded-2xl">
-                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Lifetime Average</p>
+                <div onclick="setChartFilter('all')" class="glass-card p-5 rounded-2xl cursor-pointer hover:border-indigo-500/50 transition-colors" title="Click to view total score chart">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Lifetime Average</p>
+                        <i data-lucide="line-chart" class="w-4 h-4 text-indigo-400"></i>
+                    </div>
                     <div class="flex items-baseline gap-2">
                         <h3 id="stat-avg-score" class="text-3xl font-bold text-white">0</h3>
                         <span class="text-slate-500 text-sm">/ 300</span>
@@ -78,11 +97,14 @@
                 </div>
             </div>
 
-            <!-- Subject Breakdown -->
+            <!-- Subject Breakdown (Interactive: Click to filter chart) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden">
+                <div onclick="setChartFilter('physics')" class="glass-card p-6 rounded-2xl relative overflow-hidden cursor-pointer hover:border-blue-500/50 transition-colors" title="Click to view Physics chart">
                     <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="atom" class="w-12 h-12"></i></div>
-                    <h4 class="text-slate-400 font-medium mb-4">Physics Average</h4>
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-slate-400 font-medium">Physics Average</h4>
+                        <span class="text-xs text-blue-400 font-semibold uppercase tracking-wider">Filter Graph</span>
+                    </div>
                     <div class="flex items-end gap-2">
                         <span id="avg-p" class="text-4xl font-bold">0</span>
                         <span class="text-slate-500 mb-1">/ 100</span>
@@ -91,9 +113,12 @@
                         <div id="bar-p" class="bg-blue-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden">
+                <div onclick="setChartFilter('chem')" class="glass-card p-6 rounded-2xl relative overflow-hidden cursor-pointer hover:border-emerald-500/50 transition-colors" title="Click to view Chemistry chart">
                     <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="beaker" class="w-12 h-12"></i></div>
-                    <h4 class="text-slate-400 font-medium mb-4">Chemistry Average</h4>
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-slate-400 font-medium">Chemistry Average</h4>
+                        <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Filter Graph</span>
+                    </div>
                     <div class="flex items-end gap-2">
                         <span id="avg-c" class="text-4xl font-bold">0</span>
                         <span class="text-slate-500 mb-1">/ 100</span>
@@ -102,9 +127,12 @@
                         <div id="bar-c" class="bg-emerald-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden">
+                <div onclick="setChartFilter('maths')" class="glass-card p-6 rounded-2xl relative overflow-hidden cursor-pointer hover:border-orange-500/50 transition-colors" title="Click to view Maths chart">
                     <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="binary" class="w-12 h-12"></i></div>
-                    <h4 class="text-slate-400 font-medium mb-4">Maths Average</h4>
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-slate-400 font-medium">Maths Average</h4>
+                        <span class="text-xs text-orange-400 font-semibold uppercase tracking-wider">Filter Graph</span>
+                    </div>
                     <div class="flex items-end gap-2">
                         <span id="avg-m" class="text-4xl font-bold">0</span>
                         <span class="text-slate-500 mb-1">/ 100</span>
@@ -112,6 +140,32 @@
                     <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
                         <div id="bar-m" class="bg-orange-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Performance Trend Chart Section -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-indigo-400"></i>
+                            Score Progression
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Track your scores over time as per test date</p>
+                    </div>
+                    
+                    <!-- Graph Toggle Buttons -->
+                    <div class="flex flex-wrap gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800 text-xs">
+                        <button onclick="setChartFilter('all')" id="btn-chart-all" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm">Total Score</button>
+                        <button onclick="setChartFilter('pcm')" id="btn-chart-pcm" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">PCM Combined</button>
+                        <button onclick="setChartFilter('physics')" id="btn-chart-physics" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-blue-400">Physics</button>
+                        <button onclick="setChartFilter('chem')" id="btn-chart-chem" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-emerald-400">Chemistry</button>
+                        <button onclick="setChartFilter('maths')" id="btn-chart-maths" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-orange-400">Maths</button>
+                    </div>
+                </div>
+
+                <div class="relative w-full h-[320px]">
+                    <canvas id="scoreChart"></canvas>
                 </div>
             </div>
 
@@ -317,6 +371,9 @@
             nextTest: JSON.parse(localStorage.getItem('jee_next_test')) || { name: 'Next Major Test', date: '' }
         };
 
+        let performanceChart = null;
+        let activeChartFilter = 'all'; // 'all', 'pcm', 'physics', 'chem', 'maths'
+
         const saveToStorage = () => {
             localStorage.setItem('jee_tests', JSON.stringify(appState.tests));
             localStorage.setItem('jee_syllabus', JSON.stringify(appState.syllabus));
@@ -332,28 +389,195 @@
             document.getElementById('tab-btn-planner').className = view === 'planner' ? 'px-3 py-5 text-sm font-medium transition-colors tab-active' : 'px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors';
             
             if(view === 'planner') updateCountdown();
+            if(view === 'analytics') renderChart();
             lucide.createIcons();
         }
 
-        // --- Analytics Logic ---
+        // --- Chart & Analytics Logic ---
+        function setChartFilter(type) {
+            activeChartFilter = type;
+            const buttons = ['all', 'pcm', 'physics', 'chem', 'maths'];
+            
+            buttons.forEach(b => {
+                const btn = document.getElementById(`btn-chart-${b}`);
+                if (!btn) return;
+                if (b === type) {
+                    btn.className = "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
+                }
+            });
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('scoreChart');
+            if (!ctx) return;
+
+            // Sort tests chronologically by date for accurate trendline
+            const sortedTests = [...appState.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const labels = sortedTests.map(t => {
+                const d = t.date ? new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : t.name;
+                return `${d} (${t.name})`;
+            });
+
+            let datasets = [];
+
+            if (activeChartFilter === 'all') {
+                datasets = [{
+                    label: 'Total Score',
+                    data: sortedTests.map(t => Number(t.total || 0)),
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#818cf8',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }];
+            } else if (activeChartFilter === 'pcm') {
+                datasets = [
+                    {
+                        label: 'Physics',
+                        data: sortedTests.map(t => Number(t.p || 0)),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.35,
+                        pointBackgroundColor: '#3b82f6',
+                        pointRadius: 4
+                    },
+                    {
+                        label: 'Chemistry',
+                        data: sortedTests.map(t => Number(t.c || 0)),
+                        borderColor: '#10b981',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.35,
+                        pointBackgroundColor: '#10b981',
+                        pointRadius: 4
+                    },
+                    {
+                        label: 'Maths',
+                        data: sortedTests.map(t => Number(t.m || 0)),
+                        borderColor: '#f97316',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.35,
+                        pointBackgroundColor: '#f97316',
+                        pointRadius: 4
+                    }
+                ];
+            } else if (activeChartFilter === 'physics') {
+                datasets = [{
+                    label: 'Physics Score',
+                    data: sortedTests.map(t => Number(t.p || 0)),
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#60a5fa',
+                    pointRadius: 4
+                }];
+            } else if (activeChartFilter === 'chem') {
+                datasets = [{
+                    label: 'Chemistry Score',
+                    data: sortedTests.map(t => Number(t.c || 0)),
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#34d399',
+                    pointRadius: 4
+                }];
+            } else if (activeChartFilter === 'maths') {
+                datasets = [{
+                    label: 'Maths Score',
+                    data: sortedTests.map(t => Number(t.m || 0)),
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#fb923c',
+                    pointRadius: 4
+                }];
+            }
+
+            if (performanceChart) {
+                performanceChart.destroy();
+            }
+
+            performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.length ? labels : ['No tests yet'],
+                    datasets: datasets.length ? datasets : [{
+                        label: 'No Data',
+                        data: [0],
+                        borderColor: '#334155'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: activeChartFilter === 'pcm',
+                            labels: { color: '#94a3b8', font: { family: 'Inter', size: 12 } }
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#cbd5e1',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            ticks: { color: '#64748b', font: { size: 11 } }
+                        },
+                        y: {
+                            min: 0,
+                            max: (activeChartFilter === 'all') ? 300 : 100,
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            ticks: { color: '#64748b', font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
         function calculateAnalytics() {
             const { tests } = appState;
             if (tests.length === 0) {
                 document.getElementById('empty-state').classList.remove('hidden');
-                return;
+            } else {
+                document.getElementById('empty-state').classList.add('hidden');
             }
-            document.getElementById('empty-state').classList.add('hidden');
 
-            const totalScore = tests.reduce((sum, t) => sum + Number(t.total), 0);
-            const avgScore = (totalScore / tests.length).toFixed(1);
-            const avgPerc = ((avgScore / 300) * 100).toFixed(1);
+            const totalScore = tests.reduce((sum, t) => sum + Number(t.total || 0), 0);
+            const avgScore = tests.length ? (totalScore / tests.length).toFixed(1) : 0;
+            const avgPerc = tests.length ? ((avgScore / 300) * 100).toFixed(1) : 0;
 
             document.getElementById('stat-avg-score').innerText = avgScore;
             document.getElementById('stat-avg-perc').innerText = `${avgPerc}% Avg`;
 
             // Rolling Avg (Last 3)
             const recent = tests.slice(-3);
-            const recentAvg = (recent.reduce((sum, t) => sum + Number(t.total), 0) / recent.length).toFixed(1);
+            const recentAvg = recent.length ? (recent.reduce((sum, t) => sum + Number(t.total || 0), 0) / recent.length).toFixed(1) : 0;
             document.getElementById('stat-recent-avg').innerText = recentAvg;
 
             const momentumIdx = document.getElementById('momentum-indicator');
@@ -366,12 +590,14 @@
                     momentumIdx.className = "flex items-center gap-1 mt-1 text-sm text-red-400";
                     momentumIdx.innerHTML = `<i data-lucide="trending-down" class="w-4 h-4"></i> ${diff.toFixed(1)} vs avg`;
                 }
+            } else {
+                momentumIdx.innerHTML = '';
             }
 
             // Subject-wise Averages
-            const avgP = (tests.reduce((sum, t) => sum + Number(t.p || 0), 0) / tests.length).toFixed(1);
-            const avgC = (tests.reduce((sum, t) => sum + Number(t.c || 0), 0) / tests.length).toFixed(1);
-            const avgM = (tests.reduce((sum, t) => sum + Number(t.m || 0), 0) / tests.length).toFixed(1);
+            const avgP = tests.length ? (tests.reduce((sum, t) => sum + Number(t.p || 0), 0) / tests.length).toFixed(1) : 0;
+            const avgC = tests.length ? (tests.reduce((sum, t) => sum + Number(t.c || 0), 0) / tests.length).toFixed(1) : 0;
+            const avgM = tests.length ? (tests.reduce((sum, t) => sum + Number(t.m || 0), 0) / tests.length).toFixed(1) : 0;
 
             document.getElementById('avg-p').innerText = avgP;
             document.getElementById('avg-c').innerText = avgC;
@@ -389,6 +615,7 @@
             document.getElementById('stat-best-percentile').innerText = `${bestPerc}%`;
 
             renderTestTable();
+            renderChart();
         }
 
         function renderTestTable() {
@@ -406,6 +633,7 @@
                     <td class="px-6 py-4">
                         <div class="font-bold text-white">${test.name}</div>
                         <div class="text-xs text-slate-500">${test.date}</div>
+                        ${test.notes ? `<div class="text-xs text-slate-400 italic mt-1 bg-slate-900/40 p-1.5 rounded border border-slate-800">${test.notes}</div>` : ''}
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex justify-center gap-2 text-xs font-mono">
@@ -441,7 +669,6 @@
         const testForm = document.getElementById('test-form');
         const modal = document.getElementById('test-modal');
 
-        // Auto-distribute marks logic
         const pIn = document.getElementById('t-p');
         const cIn = document.getElementById('t-c');
         const mIn = document.getElementById('t-m');
@@ -505,7 +732,7 @@
                 document.getElementById('t-max').value = t.max;
                 document.getElementById('t-rank').value = t.rank;
                 document.getElementById('t-students').value = t.students;
-                document.getElementById('t-notes').value = t.notes;
+                document.getElementById('t-notes').value = t.notes || '';
             } else {
                 testForm.reset();
                 document.getElementById('t-max').value = 300;
@@ -527,6 +754,42 @@
 
         function editTest(idx) {
             openTestModal(idx);
+        }
+
+        // --- Backup & Restore Logic ---
+        function exportBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `jee_prep_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.tests && imported.syllabus) {
+                        appState = imported;
+                        saveToStorage();
+                        calculateAnalytics();
+                        renderSyllabus();
+                        updateCountdown();
+                        alert('Data successfully restored!');
+                    } else {
+                        alert('Invalid backup file format.');
+                    }
+                } catch (err) {
+                    alert('Error parsing JSON backup file.');
+                }
+            };
+            reader.readAsText(file);
         }
 
         // --- Syllabus Logic ---
