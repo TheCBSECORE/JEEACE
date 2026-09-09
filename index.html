@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEE Ace | Preparation & Test Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .tab-active { border-bottom: 2px solid #6366f1; color: #6366f1; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen pb-20">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <div class="bg-indigo-600 p-1.5 rounded-lg">
+                        <i data-lucide="layout-dashboard" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-white">JEE<span class="text-indigo-500">Ace</span></span>
+                </div>
+                <div class="flex space-x-1 sm:space-x-4">
+                    <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="px-3 py-5 text-sm font-medium transition-colors tab-active">Analytics</button>
+                    <button onclick="switchTab('planner')" id="tab-btn-planner" class="px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors">Planner</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- VIEW 1: ANALYTICS & TEST TRACKER -->
+        <div id="view-analytics" class="space-y-8">
+            
+            <!-- Quick Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="glass-card p-5 rounded-2xl">
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Lifetime Average</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 id="stat-avg-score" class="text-3xl font-bold text-white">0</h3>
+                        <span class="text-slate-500 text-sm">/ 300</span>
+                    </div>
+                    <p id="stat-avg-perc" class="text-indigo-400 text-sm font-medium mt-1">0% Avg</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Recent Momentum (Last 3)</p>
+                    <h3 id="stat-recent-avg" class="text-3xl font-bold text-white">0</h3>
+                    <div id="momentum-indicator" class="flex items-center gap-1 mt-1 text-sm">
+                        <!-- Dynamic indicator -->
+                    </div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl">
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Best Percentile</p>
+                    <h3 id="stat-best-percentile" class="text-3xl font-bold text-white">0%</h3>
+                    <p class="text-slate-500 text-sm mt-1">Across all tests</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-center items-center bg-indigo-600/10 border-indigo-500/30">
+                    <button onclick="openTestModal()" class="w-full h-full flex flex-col items-center justify-center gap-2 group">
+                        <div class="bg-indigo-600 p-2 rounded-full group-hover:scale-110 transition-transform">
+                            <i data-lucide="plus" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="font-bold text-indigo-400">Add New Test</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Subject Breakdown -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="atom" class="w-12 h-12"></i></div>
+                    <h4 class="text-slate-400 font-medium mb-4">Physics Average</h4>
+                    <div class="flex items-end gap-2">
+                        <span id="avg-p" class="text-4xl font-bold">0</span>
+                        <span class="text-slate-500 mb-1">/ 100</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
+                        <div id="bar-p" class="bg-blue-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="beaker" class="w-12 h-12"></i></div>
+                    <h4 class="text-slate-400 font-medium mb-4">Chemistry Average</h4>
+                    <div class="flex items-end gap-2">
+                        <span id="avg-c" class="text-4xl font-bold">0</span>
+                        <span class="text-slate-500 mb-1">/ 100</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
+                        <div id="bar-c" class="bg-emerald-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="binary" class="w-12 h-12"></i></div>
+                    <h4 class="text-slate-400 font-medium mb-4">Maths Average</h4>
+                    <div class="flex items-end gap-2">
+                        <span id="avg-m" class="text-4xl font-bold">0</span>
+                        <span class="text-slate-500 mb-1">/ 100</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
+                        <div id="bar-m" class="bg-orange-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test History Table -->
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                    <h3 class="text-lg font-bold">Test History</h3>
+                    <div class="text-sm text-slate-400" id="test-count">0 Tests Recorded</div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-widest">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold">Date & Name</th>
+                                <th class="px-6 py-4 font-semibold text-center">P / C / M</th>
+                                <th class="px-6 py-4 font-semibold text-center">Total Score</th>
+                                <th class="px-6 py-4 font-semibold text-center">Percentile</th>
+                                <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="test-table-body" class="divide-y divide-slate-800">
+                            <!-- Rows injected by JS -->
+                        </tbody>
+                    </table>
+                    <div id="empty-state" class="hidden p-12 text-center text-slate-500">
+                        <i data-lucide="database" class="w-12 h-12 mx-auto mb-4 opacity-20"></i>
+                        <p>No tests recorded yet. Hit "Add New Test" to begin tracking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: SYLLABUS PLANNER -->
+        <div id="view-planner" class="hidden space-y-8">
+            
+            <!-- Countdown Banner -->
+            <div id="next-test-banner" class="bg-gradient-to-r from-indigo-900/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="text-center md:text-left">
+                    <div class="flex items-center gap-2 justify-center md:justify-start mb-2">
+                        <span class="px-3 py-1 bg-indigo-500/20 text-indigo-400 text-xs font-bold rounded-full uppercase tracking-widest">Next Milestone</span>
+                    </div>
+                    <h2 id="display-next-name" class="text-3xl font-bold text-white mb-1">Set Your Next Goal</h2>
+                    <p id="display-next-date" class="text-slate-400">Click the gear icon to schedule</p>
+                </div>
+                <div class="flex items-center gap-8">
+                    <div class="text-center">
+                        <div id="countdown-days" class="text-5xl font-black text-indigo-500">00</div>
+                        <div class="text-xs uppercase text-slate-500 font-bold tracking-tighter">Days Left</div>
+                    </div>
+                    <button onclick="openNextTestModal()" class="p-3 bg-slate-800 rounded-xl hover:bg-slate-700 transition-colors">
+                        <i data-lucide="settings" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Syllabus Input -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="text-lg font-bold mb-4">Add Topic</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Subject</label>
+                                <select id="topic-subject" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="Physics">Physics</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                    <option value="Maths">Maths</option>
+                                    <option value="General">General/Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Topic Name</label>
+                                <input type="text" id="topic-name" placeholder="e.g. Rotational Mechanics" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">Short Note</label>
+                                <input type="text" id="topic-note" placeholder="e.g. Revise PYQs" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <button onclick="addTopic()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="plus-circle" class="w-5 h-5"></i> Add to Syllabus
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="text-lg font-bold mb-2">Total Progress</h3>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span id="progress-text">0/0 Topics</span>
+                            <span id="progress-percent" class="text-indigo-400 font-bold">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
+                            <div id="overall-progress-bar" class="bg-indigo-500 h-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <button onclick="archiveSyllabus()" class="w-full mt-6 text-slate-500 text-sm hover:text-red-400 transition-colors flex items-center justify-center gap-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> Clear All Completed
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Syllabus List -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div id="syllabus-list" class="space-y-4">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- TEST MODAL -->
+    <div id="test-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <h3 id="modal-title" class="text-xl font-bold">Add New Test</h3>
+                <button onclick="closeTestModal()" class="text-slate-400 hover:text-white"><i data-lucide="x"></i></button>
+            </div>
+            <form id="test-form" class="p-6 space-y-6">
+                <input type="hidden" id="edit-index" value="-1">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Test Title</label>
+                        <input type="text" id="t-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Test Date</label>
+                        <input type="date" id="t-date" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-blue-400 uppercase mb-1 text-center">Physics</label>
+                        <input type="number" id="t-p" placeholder="Score" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-center">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-400 uppercase mb-1 text-center">Chem</label>
+                        <input type="number" id="t-c" placeholder="Score" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 outline-none text-center">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-orange-400 uppercase mb-1 text-center">Math</label>
+                        <input type="number" id="t-m" placeholder="Score" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none text-center">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-800">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Total Max Marks</label>
+                        <input type="number" id="t-max" value="300" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none opacity-60">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Total Scored (Auto)</label>
+                        <input type="number" id="t-total" placeholder="Calculated" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-indigo-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Your Rank</label>
+                        <input type="number" id="t-rank" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Total Students</label>
+                        <input type="number" id="t-students" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Analysis / Reflections</label>
+                    <textarea id="t-notes" rows="2" placeholder="Silly mistakes in vectors, ran out of time in chem..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all">Save Test Performance</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NEXT TEST SETTINGS MODAL -->
+    <div id="next-test-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
+            <h3 class="text-xl font-bold mb-6">Set Upcoming Milestone</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Test Name</label>
+                    <input type="text" id="nt-name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Date</label>
+                    <input type="date" id="nt-date" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
+                </div>
+                <div class="flex gap-2 pt-4">
+                    <button onclick="closeNextTestModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl">Cancel</button>
+                    <button onclick="saveNextTest()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl font-bold">Set Goal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State Management ---
+        let appState = {
+            tests: JSON.parse(localStorage.getItem('jee_tests')) || [],
+            syllabus: JSON.parse(localStorage.getItem('jee_syllabus')) || [],
+            nextTest: JSON.parse(localStorage.getItem('jee_next_test')) || { name: 'Next Major Test', date: '' }
+        };
+
+        const saveToStorage = () => {
+            localStorage.setItem('jee_tests', JSON.stringify(appState.tests));
+            localStorage.setItem('jee_syllabus', JSON.stringify(appState.syllabus));
+            localStorage.setItem('jee_next_test', JSON.stringify(appState.nextTest));
+        };
+
+        // --- Tab Switching ---
+        function switchTab(view) {
+            document.getElementById('view-analytics').classList.toggle('hidden', view !== 'analytics');
+            document.getElementById('view-planner').classList.toggle('hidden', view !== 'planner');
+            
+            document.getElementById('tab-btn-analytics').className = view === 'analytics' ? 'px-3 py-5 text-sm font-medium transition-colors tab-active' : 'px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors';
+            document.getElementById('tab-btn-planner').className = view === 'planner' ? 'px-3 py-5 text-sm font-medium transition-colors tab-active' : 'px-3 py-5 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors';
+            
+            if(view === 'planner') updateCountdown();
+            lucide.createIcons();
+        }
+
+        // --- Analytics Logic ---
+        function calculateAnalytics() {
+            const { tests } = appState;
+            if (tests.length === 0) {
+                document.getElementById('empty-state').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('empty-state').classList.add('hidden');
+
+            const totalScore = tests.reduce((sum, t) => sum + Number(t.total), 0);
+            const avgScore = (totalScore / tests.length).toFixed(1);
+            const avgPerc = ((avgScore / 300) * 100).toFixed(1);
+
+            document.getElementById('stat-avg-score').innerText = avgScore;
+            document.getElementById('stat-avg-perc').innerText = `${avgPerc}% Avg`;
+
+            // Rolling Avg (Last 3)
+            const recent = tests.slice(-3);
+            const recentAvg = (recent.reduce((sum, t) => sum + Number(t.total), 0) / recent.length).toFixed(1);
+            document.getElementById('stat-recent-avg').innerText = recentAvg;
+
+            const momentumIdx = document.getElementById('momentum-indicator');
+            if (tests.length >= 2) {
+                const diff = recentAvg - avgScore;
+                if (diff > 0) {
+                    momentumIdx.className = "flex items-center gap-1 mt-1 text-sm text-emerald-400";
+                    momentumIdx.innerHTML = `<i data-lucide="trending-up" class="w-4 h-4"></i> +${diff.toFixed(1)} vs avg`;
+                } else {
+                    momentumIdx.className = "flex items-center gap-1 mt-1 text-sm text-red-400";
+                    momentumIdx.innerHTML = `<i data-lucide="trending-down" class="w-4 h-4"></i> ${diff.toFixed(1)} vs avg`;
+                }
+            }
+
+            // Subject-wise Averages
+            const avgP = (tests.reduce((sum, t) => sum + Number(t.p || 0), 0) / tests.length).toFixed(1);
+            const avgC = (tests.reduce((sum, t) => sum + Number(t.c || 0), 0) / tests.length).toFixed(1);
+            const avgM = (tests.reduce((sum, t) => sum + Number(t.m || 0), 0) / tests.length).toFixed(1);
+
+            document.getElementById('avg-p').innerText = avgP;
+            document.getElementById('avg-c').innerText = avgC;
+            document.getElementById('avg-m').innerText = avgM;
+            document.getElementById('bar-p').style.width = `${avgP}%`;
+            document.getElementById('bar-c').style.width = `${avgC}%`;
+            document.getElementById('bar-m').style.width = `${avgM}%`;
+
+            // Best Percentile
+            const percentiles = tests.map(t => {
+                if(!t.rank || !t.students) return 0;
+                return ((t.students - t.rank) / t.students * 100);
+            });
+            const bestPerc = Math.max(...percentiles, 0).toFixed(2);
+            document.getElementById('stat-best-percentile').innerText = `${bestPerc}%`;
+
+            renderTestTable();
+        }
+
+        function renderTestTable() {
+            const tbody = document.getElementById('test-table-body');
+            document.getElementById('test-count').innerText = `${appState.tests.length} Tests Recorded`;
+            tbody.innerHTML = '';
+
+            [...appState.tests].reverse().forEach((test, originalIndex) => {
+                const actualIdx = appState.tests.length - 1 - originalIndex;
+                const perc = test.students ? ((test.students - test.rank) / test.students * 100).toFixed(1) : 'N/A';
+                
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-800/30 transition-colors group";
+                row.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-white">${test.name}</div>
+                        <div class="text-xs text-slate-500">${test.date}</div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex justify-center gap-2 text-xs font-mono">
+                            <span class="text-blue-400">${test.p}</span>
+                            <span class="text-slate-600">|</span>
+                            <span class="text-emerald-400">${test.c}</span>
+                            <span class="text-slate-600">|</span>
+                            <span class="text-orange-400">${test.m}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="text-lg font-bold text-indigo-400">${test.total}</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-tighter">Out of ${test.max}</div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 text-xs font-bold border border-indigo-500/20">
+                            ${perc}${perc !== 'N/A' ? '%' : ''}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editTest(${actualIdx})" class="p-1.5 hover:text-indigo-400"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                            <button onclick="deleteTest(${actualIdx})" class="p-1.5 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            lucide.createIcons();
+        }
+
+        // --- Test Form Logic ---
+        const testForm = document.getElementById('test-form');
+        const modal = document.getElementById('test-modal');
+
+        // Auto-distribute marks logic
+        const pIn = document.getElementById('t-p');
+        const cIn = document.getElementById('t-c');
+        const mIn = document.getElementById('t-m');
+        const totalIn = document.getElementById('t-total');
+
+        [pIn, cIn, mIn].forEach(el => {
+            el.addEventListener('input', () => {
+                totalIn.value = Number(pIn.value || 0) + Number(cIn.value || 0) + Number(mIn.value || 0);
+            });
+        });
+
+        totalIn.addEventListener('input', () => {
+            const val = Number(totalIn.value || 0);
+            const each = Math.floor(val / 3);
+            pIn.value = each;
+            cIn.value = each;
+            mIn.value = val - (each * 2);
+        });
+
+        testForm.onsubmit = (e) => {
+            e.preventDefault();
+            const editIdx = parseInt(document.getElementById('edit-index').value);
+            
+            const testData = {
+                name: document.getElementById('t-name').value,
+                date: document.getElementById('t-date').value,
+                p: pIn.value,
+                c: cIn.value,
+                m: mIn.value,
+                total: totalIn.value,
+                max: document.getElementById('t-max').value,
+                rank: document.getElementById('t-rank').value,
+                students: document.getElementById('t-students').value,
+                notes: document.getElementById('t-notes').value
+            };
+
+            if (editIdx > -1) {
+                appState.tests[editIdx] = testData;
+            } else {
+                appState.tests.push(testData);
+            }
+
+            saveToStorage();
+            calculateAnalytics();
+            closeTestModal();
+        };
+
+        function openTestModal(idx = -1) {
+            modal.classList.remove('hidden');
+            document.getElementById('edit-index').value = idx;
+            document.getElementById('modal-title').innerText = idx > -1 ? 'Edit Test' : 'Add New Test';
+            
+            if (idx > -1) {
+                const t = appState.tests[idx];
+                document.getElementById('t-name').value = t.name;
+                document.getElementById('t-date').value = t.date;
+                pIn.value = t.p;
+                cIn.value = t.c;
+                mIn.value = t.m;
+                totalIn.value = t.total;
+                document.getElementById('t-max').value = t.max;
+                document.getElementById('t-rank').value = t.rank;
+                document.getElementById('t-students').value = t.students;
+                document.getElementById('t-notes').value = t.notes;
+            } else {
+                testForm.reset();
+                document.getElementById('t-max').value = 300;
+            }
+            lucide.createIcons();
+        }
+
+        function closeTestModal() {
+            modal.classList.add('hidden');
+        }
+
+        function deleteTest(idx) {
+            if(confirm('Delete this record?')) {
+                appState.tests.splice(idx, 1);
+                saveToStorage();
+                calculateAnalytics();
+            }
+        }
+
+        function editTest(idx) {
+            openTestModal(idx);
+        }
+
+        // --- Syllabus Logic ---
+        function addTopic() {
+            const name = document.getElementById('topic-name').value;
+            const subject = document.getElementById('topic-subject').value;
+            const note = document.getElementById('topic-note').value;
+
+            if(!name) return alert('Enter topic name');
+
+            appState.syllabus.push({
+                id: Date.now(),
+                subject,
+                name,
+                note,
+                completed: false
+            });
+
+            document.getElementById('topic-name').value = '';
+            document.getElementById('topic-note').value = '';
+            
+            saveToStorage();
+            renderSyllabus();
+        }
+
+        function toggleTopic(id) {
+            const topic = appState.syllabus.find(t => t.id === id);
+            if(topic) {
+                topic.completed = !topic.completed;
+                saveToStorage();
+                renderSyllabus();
+            }
+        }
+
+        function deleteTopic(id) {
+            appState.syllabus = appState.syllabus.filter(t => t.id !== id);
+            saveToStorage();
+            renderSyllabus();
+        }
+
+        function archiveSyllabus() {
+            if(confirm('Clear all completed topics?')) {
+                appState.syllabus = appState.syllabus.filter(t => !t.completed);
+                saveToStorage();
+                renderSyllabus();
+            }
+        }
+
+        function renderSyllabus() {
+            const list = document.getElementById('syllabus-list');
+            list.innerHTML = '';
+
+            const subjects = ['Physics', 'Chemistry', 'Maths', 'General'];
+            
+            subjects.forEach(sub => {
+                const subTopics = appState.syllabus.filter(t => t.subject === sub);
+                if(subTopics.length === 0) return;
+
+                const section = document.createElement('div');
+                section.className = "mb-6";
+                section.innerHTML = `
+                    <h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-3 ml-1">${sub}</h4>
+                    <div class="space-y-2"></div>
+                `;
+                const itemContainer = section.querySelector('div');
+
+                subTopics.forEach(topic => {
+                    const item = document.createElement('div');
+                    item.className = `flex items-center gap-4 p-4 rounded-xl transition-all border ${topic.completed ? 'bg-slate-900/30 border-slate-800' : 'glass-card border-slate-700/50'}`;
+                    item.innerHTML = `
+                        <button onclick="toggleTopic(${topic.id})" class="w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${topic.completed ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-slate-600 hover:border-indigo-500'}">
+                            ${topic.completed ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
+                        </button>
+                        <div class="flex-1">
+                            <div class="text-sm font-semibold ${topic.completed ? 'text-slate-500 line-through' : 'text-white'}">${topic.name}</div>
+                            <div class="text-xs text-slate-500 font-medium">${topic.note}</div>
+                        </div>
+                        <button onclick="deleteTopic(${topic.id})" class="text-slate-600 hover:text-red-400 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                    itemContainer.appendChild(item);
+                });
+                list.appendChild(section);
+            });
+
+            // Update Progress Bar
+            const total = appState.syllabus.length;
+            const done = appState.syllabus.filter(t => t.completed).length;
+            const perc = total === 0 ? 0 : Math.round((done / total) * 100);
+
+            document.getElementById('progress-text').innerText = `${done}/${total} Topics`;
+            document.getElementById('progress-percent').innerText = `${perc}%`;
+            document.getElementById('overall-progress-bar').style.width = `${perc}%`;
+            
+            lucide.createIcons();
+        }
+
+        // --- Countdown & Goal Logic ---
+        function updateCountdown() {
+            const next = appState.nextTest;
+            document.getElementById('display-next-name').innerText = next.name || 'Set Your Next Goal';
+            
+            if (!next.date) {
+                document.getElementById('display-next-date').innerText = 'No date set';
+                document.getElementById('countdown-days').innerText = '00';
+                return;
+            }
+
+            const now = new Date();
+            const target = new Date(next.date);
+            const diffTime = target - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            document.getElementById('display-next-date').innerText = new Date(next.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('countdown-days').innerText = diffDays > 0 ? diffDays.toString().padStart(2, '0') : '00';
+        }
+
+        function openNextTestModal() {
+            document.getElementById('next-test-modal').classList.remove('hidden');
+            document.getElementById('nt-name').value = appState.nextTest.name;
+            document.getElementById('nt-date').value = appState.nextTest.date;
+        }
+
+        function closeNextTestModal() {
+            document.getElementById('next-test-modal').classList.add('hidden');
+        }
+
+        function saveNextTest() {
+            appState.nextTest.name = document.getElementById('nt-name').value;
+            appState.nextTest.date = document.getElementById('nt-date').value;
+            saveToStorage();
+            updateCountdown();
+            closeNextTestModal();
+        }
+
+        // Initialize App
+        window.onload = () => {
+            calculateAnalytics();
+            renderSyllabus();
+            updateCountdown();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
