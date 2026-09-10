@@ -941,37 +941,56 @@
             widget.classList.toggle('hidden');
         }
 
-        // --- Picture-in-Picture (PiP) Stream ---
+        // --- Picture-in-Picture (PiP) Stream with Live Real-Time Clock ---
         function renderPipCanvas() {
             const canvas = document.getElementById('pip-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             
+            // 1. Format Countdown Timer
             const mins = Math.floor(timerRemaining / 60).toString().padStart(2, '0');
             const secs = (timerRemaining % 60).toString().padStart(2, '0');
-            const timeText = `${mins}:${secs}`;
+            const timerText = `${mins}:${secs}`;
 
-            // Clean Dark Canvas
+            // 2. Format Live Clock (e.g., 04:25:10 PM)
+            const now = new Date();
+            const liveClock = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+            // Background
             ctx.fillStyle = '#020617';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // "AIM: IIT" Header
+            // Header: "AIM: IIT" & Real-World Current Clock
             ctx.fillStyle = '#f59e0b';
-            ctx.font = 'bold 18px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('AIM: IIT', canvas.width / 2, 42);
-            
-            // Focus Timer Display
+            ctx.font = 'bold 15px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('AIM: IIT', 18, 28);
+
+            // Current Time (Right-aligned top corner)
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '600 12px monospace';
+            ctx.textAlign = 'right';
+            ctx.fillText(liveClock, canvas.width - 18, 28);
+
+            // Thin divider line
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(18, 38);
+            ctx.lineTo(canvas.width - 18, 38);
+            ctx.stroke();
+
+            // Large Focus Timer Countdown Display
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 54px monospace';
-            ctx.fillText(timeText, canvas.width / 2, 102);
+            ctx.font = 'bold 50px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(timerText, canvas.width / 2, 95);
 
-            // Status Indicator
+            // Status Indicator (Active / Paused)
             ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
-            ctx.font = 'bold 12px Inter, sans-serif';
-            ctx.fillText(isTimerRunning ? '● SESSION ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 134);
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.fillText(isTimerRunning ? '● FOCUS SESSION ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 128);
         }
-
         async function togglePiP() {
             const canvas = document.getElementById('pip-canvas');
             const video = document.getElementById('pip-video');
@@ -1570,6 +1589,13 @@ Instructions:
             renderChatThread();
             renderPipCanvas();
             lucide.createIcons();
+
+            // Refresh PiP canvas every second for the real-world clock
+            setInterval(() => {
+                if (document.pictureInPictureElement) {
+                    renderPipCanvas();
+                }
+            }, 1000);
         };
     </script>
 </body>
