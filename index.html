@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         .glass-card {
@@ -19,9 +19,19 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         .tab-active { border-bottom: 2px solid #6366f1; color: #6366f1; }
+        
+        /* Hide native arrows on time inputs */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen pb-24">
+<body class="bg-slate-950 text-slate-200 min-h-screen pb-28">
 
     <!-- Navigation -->
     <nav class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
@@ -67,39 +77,33 @@
         <!-- VIEW 1: ANALYTICS & TEST TRACKER -->
         <div id="view-analytics" class="space-y-8">
             
-            <!-- IIT BOMBAY CSE 2028 MOTIVATION BANNER -->
-        <div class="relative overflow-hidden rounded-3xl border border-indigo-500/30 bg-slate-900 shadow-2xl mb-8 group">
-            <div class="absolute inset-0 z-0">
-                <img src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1600&q=80" 
-                     alt="IIT Bombay Main Building" 
-                     class="w-full h-full object-cover object-center filter brightness-[0.22] contrast-125 transition-transform duration-700 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
-            </div>
+            <!-- IIT BOMBAY MOTIVATION BANNER -->
+            <div class="relative overflow-hidden rounded-3xl border border-indigo-500/30 bg-slate-900 shadow-2xl group mb-8">
+                <div class="absolute inset-0 z-0">
+                    <img src="iitb.jpg" 
+                         alt="IIT Bombay Campus Gate" 
+                         class="w-full h-full object-cover object-center filter brightness-[0.35] contrast-125 transition-transform duration-700 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+                </div>
 
-            <div class="relative z-10 p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div class="space-y-2 max-w-xl">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-black rounded-full uppercase tracking-wider flex items-center gap-1.5">
-                            <i data-lucide="target" class="w-3.5 h-3.5 text-amber-400"></i>
-                            AIM: IIT BOMBAY CSE 2028
-                        </span>
-                        <span class="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 text-[11px] font-mono rounded-md">AIR &lt; 60 Goal</span>
+                <div class="relative z-10 p-6 sm:p-8">
+                    <div class="space-y-2 max-w-2xl">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-black rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                                <i data-lucide="target" class="w-3.5 h-3.5 text-amber-400"></i>
+                                AIM: IIT BOMBAY CSE 2028
+                            </span>
+                            <span class="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 text-[11px] font-mono rounded-md">AIR &lt; 60 Goal</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                            Powai is Calling, Laksh.
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Every single module question solved today and every mark pulled in Allen tests brings you closer to the CSE department. Stay consistent.
+                        </p>
                     </div>
-                    <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                        Powai is Calling, Laksh.
-                    </h2>
-                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                        Every single module question solved today and every mark pulled in Allen tests brings you closer to the CSE department. Stay consistent.
-                    </p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleFocusTimer()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-bold transition-all shadow-lg flex items-center gap-2 border border-indigo-400/30">
-                        <i data-lucide="timer" class="w-4 h-4"></i>
-                        Open Focus Timer
-                    </button>
                 </div>
             </div>
-        </div>
             
             <!-- Quick Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -134,7 +138,7 @@
                 </div>
             </div>
 
-            <!-- Subject Breakdown (Interactive: Click to filter chart) -->
+            <!-- Subject Breakdown -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div onclick="setChartFilter('physics')" class="glass-card p-6 rounded-2xl relative overflow-hidden cursor-pointer hover:border-blue-500/50 transition-colors" title="Click to view Physics chart">
                     <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="atom" class="w-12 h-12"></i></div>
@@ -234,7 +238,6 @@
 
         <!-- VIEW 2: SYLLABUS PLANNER -->
         <div id="view-planner" class="hidden space-y-8">
-            <!-- Countdown Banner -->
             <div id="next-test-banner" class="bg-gradient-to-r from-indigo-900/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="text-center md:text-left">
                     <div class="flex items-center gap-2 justify-center md:justify-start mb-2">
@@ -305,16 +308,14 @@
             </div>
         </div>
 
-       <!-- VIEW 3: NOTION WORKSPACE WITH INSTANT LAUNCHER -->
+        <!-- VIEW 3: NOTION WORKSPACE WITH INSTANT LAUNCHER -->
         <div id="view-notion" class="hidden w-full space-y-3 -my-2">
-            <!-- Top Controls Bar -->
             <div class="glass-card p-3 rounded-2xl flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span class="text-xs font-semibold text-slate-300">Notion Daily Workspace</span>
                 </div>
 
-                <!-- Instant Edit Launcher Button -->
                 <a href="notion://foul-barge-9ef.notion.site/Daily-Planner-27cd4950f43a803b981ada01e583a684" 
                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg flex items-center gap-2 border border-indigo-400/30">
                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
@@ -322,7 +323,6 @@
                 </a>
             </div>
 
-            <!-- Full Embed Preview Frame -->
             <div class="w-full h-[calc(100vh-140px)] rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl bg-slate-950">
                 <iframe 
                     src="https://foul-barge-9ef.notion.site/ebd/27cd4950f43a803b981ada01e583a684" 
@@ -336,16 +336,24 @@
 
     </main>
 
-    <!-- DRAGGABLE FLOATING FOCUS TIMER & PiP -->
-    <div id="focus-timer-widget" class="fixed bottom-24 left-6 z-50 select-none touch-none">
-        <div class="glass-card bg-slate-900/95 border border-slate-700/80 p-4 rounded-3xl shadow-2xl w-72 backdrop-blur-xl">
+    <!-- STANDALONE FLOATING FOCUS TIMER (BOTTOM-LEFT) -->
+    <div id="focus-timer-container" class="fixed bottom-6 left-6 z-50 flex flex-col items-start select-none touch-none">
+        
+        <!-- Timer Floating Launch Pill -->
+        <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-slate-900/90 hover:bg-slate-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-slate-700/80 transition-transform active:scale-95 backdrop-blur-md">
+            <i data-lucide="timer" class="w-5 h-5 text-indigo-400"></i>
+            <span class="font-bold text-sm">Focus Timer</span>
+        </button>
+
+        <!-- The Draggable Timer Card (Hidden until clicked) -->
+        <div id="focus-timer-widget" class="hidden absolute bottom-14 left-0 glass-card bg-slate-900/95 border border-slate-700/80 p-4 rounded-3xl shadow-2xl w-72 backdrop-blur-xl">
             <!-- Drag Header -->
             <div id="timer-drag-handle" class="cursor-move flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-xs text-slate-400 font-semibold">
                 <span class="flex items-center gap-1.5 text-white">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> Focus Timer
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> Focus Session
                 </span>
                 <div class="flex items-center gap-1.5">
-                    <button onclick="togglePiP()" title="Picture-in-Picture (Pin while watching lectures)" class="p-1 hover:text-indigo-400 text-slate-400 transition-colors">
+                    <button onclick="togglePiP()" title="Picture-in-Picture (Pin over lectures)" class="p-1 hover:text-indigo-400 text-slate-400 transition-colors">
                         <i data-lucide="picture-in-picture-2" class="w-3.5 h-3.5"></i>
                     </button>
                     <button onclick="toggleFocusTimer()" class="p-1 hover:text-red-400 transition-colors">
@@ -354,24 +362,29 @@
                 </div>
             </div>
 
-            <!-- Tap to Edit Digits -->
+            <!-- Direct In-Place Minutes & Seconds Configuration -->
             <div class="text-center py-2">
-                <div onclick="promptTimerDuration()" title="Tap to customize time" class="cursor-pointer group flex justify-center items-center gap-1 font-mono text-4xl font-black text-white hover:text-indigo-400 transition-colors">
-                    <span id="timer-display">25:00</span>
-                    <i data-lucide="edit-2" class="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                <div class="flex justify-center items-center gap-1 font-mono text-4xl font-black text-white">
+                    <input type="number" id="timer-input-m" min="0" max="60" value="25" 
+                           class="w-16 bg-transparent text-right text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 transition-all font-mono"
+                           onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
+                    <span class="text-slate-500">:</span>
+                    <input type="number" id="timer-input-s" min="0" max="59" value="00" 
+                           class="w-16 bg-transparent text-left text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 transition-all font-mono"
+                           onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
                 </div>
-                <p class="text-[10px] text-slate-500 mt-0.5">Tap number to edit (1 sec – 60 min)</p>
+                <p class="text-[10px] text-slate-500 mt-1">Tap digits to configure (0–60m : 0–59s)</p>
             </div>
 
-            <!-- Quick Preset Chips -->
-            <div class="flex justify-center gap-1.5 my-2.5">
-                <button onclick="setTimerPreset(25)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-md font-mono">25m</button>
-                <button onclick="setTimerPreset(45)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-md font-mono">45m</button>
-                <button onclick="setTimerPreset(60)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-md font-mono">60m</button>
-                <button onclick="setTimerPreset(0.5)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-md font-mono">30s</button>
+            <!-- Presets -->
+            <div class="flex justify-center gap-1.5 my-2">
+                <button onclick="setTimerDirect(25, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">25m</button>
+                <button onclick="setTimerDirect(45, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">45m</button>
+                <button onclick="setTimerDirect(60, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">60m</button>
+                <button onclick="setTimerDirect(0, 30)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">30s</button>
             </div>
 
-            <!-- Action Controls -->
+            <!-- Controls -->
             <div class="flex items-center justify-center gap-2 pt-1">
                 <button id="timer-start-btn" onclick="startTimer()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i> Start
@@ -384,14 +397,14 @@
                 </button>
             </div>
 
-            <!-- Hidden canvas & video elements for Picture-in-Picture -->
-            <canvas id="pip-canvas" width="320" height="180" class="hidden"></canvas>
+            <!-- PiP Canvas & Video Elements -->
+            <canvas id="pip-canvas" width="300" height="150" class="hidden"></canvas>
             <video id="pip-video" autoplay muted class="hidden"></video>
         </div>
     </div>
     
-    <!-- FLOATING AI MENTOR WIDGET -->
-    <div id="ai-widget-container" class="fixed bottom-5 right-5 z-50 flex flex-col items-end">
+    <!-- FLOATING AI MENTOR WIDGET (Pinned to Bottom-Right) -->
+    <div id="ai-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
         <button id="ai-toggle-btn" onclick="toggleAIChat()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-indigo-400/30 transition-transform active:scale-95">
             <div class="relative">
                 <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
@@ -587,7 +600,6 @@
             document.getElementById('view-planner').classList.toggle('hidden', view !== 'planner');
             document.getElementById('view-notion').classList.toggle('hidden', view !== 'notion');
             
-            // Go edge-to-edge for Notion, keep standard width for Analytics
             const mainContainer = document.querySelector('main');
             if (view === 'notion') {
                 mainContainer.className = "w-full max-w-[99%] mx-auto px-1 py-2";
@@ -772,52 +784,46 @@
             lucide.createIcons();
         }
 
-        // --- Notion Component Sub-view Switcher ---
-        function switchNotionView(type) {
-            const frames = {
-                calendar: document.getElementById('iframe-notion-cal'),
-                table: document.getElementById('iframe-notion-table'),
-                graph: document.getElementById('iframe-notion-graph')
-            };
-
-            const buttons = {
-                calendar: document.getElementById('btn-notion-cal'),
-                table: document.getElementById('btn-notion-table'),
-                graph: document.getElementById('btn-notion-graph')
-            };
-
-            // Toggle active iframe
-            Object.keys(frames).forEach(key => {
-                if (frames[key]) {
-                    frames[key].classList.toggle('hidden', key !== type);
-                    frames[key].classList.toggle('block', key === type);
-                }
-                if (buttons[key]) {
-                    buttons[key].className = (key === type)
-                        ? "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm"
-                        : "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
-                }
-            });
-        }
-
         // ==========================================
-        // --- DRAGGABLE FOCUS TIMER & PiP LOGIC ---
+        // --- IN-PLACE FOCUS TIMER & PiP LOGIC ---
         // ==========================================
-        let timerDuration = 25 * 60; // default 25m in seconds
-        let timerRemaining = timerDuration;
+        let timerRemaining = 25 * 60; 
         let timerInterval = null;
         let isTimerRunning = false;
 
-        function updateTimerDisplay() {
+        function getDirectConfiguredSeconds() {
+            const m = parseInt(document.getElementById('timer-input-m').value) || 0;
+            const s = parseInt(document.getElementById('timer-input-s').value) || 0;
+            return Math.max(1, Math.min(3600, (m * 60) + s));
+        }
+
+        function onDirectTimeChange() {
+            if (isTimerRunning) return;
+            timerRemaining = getDirectConfiguredSeconds();
+            renderPipCanvas();
+        }
+
+        function setTimerDirect(mins, secs) {
+            pauseTimer();
+            document.getElementById('timer-input-m').value = mins.toString().padStart(2, '0');
+            document.getElementById('timer-input-s').value = secs.toString().padStart(2, '0');
+            timerRemaining = (mins * 60) + secs;
+            renderPipCanvas();
+        }
+
+        function updateTimerFields() {
             const mins = Math.floor(timerRemaining / 60);
             const secs = timerRemaining % 60;
-            const text = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            document.getElementById('timer-display').innerText = text;
-            renderPipCanvas(text);
+            document.getElementById('timer-input-m').value = mins.toString().padStart(2, '0');
+            document.getElementById('timer-input-s').value = secs.toString().padStart(2, '0');
+            renderPipCanvas();
         }
 
         function startTimer() {
             if (isTimerRunning) return;
+            if (timerRemaining <= 0) {
+                timerRemaining = getDirectConfiguredSeconds();
+            }
             isTimerRunning = true;
             document.getElementById('timer-start-btn').classList.add('bg-emerald-600');
             document.getElementById('timer-start-btn').innerHTML = `<i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse"></i> Focus`;
@@ -826,7 +832,7 @@
             timerInterval = setInterval(() => {
                 if (timerRemaining > 0) {
                     timerRemaining--;
-                    updateTimerDisplay();
+                    updateTimerFields();
                 } else {
                     clearInterval(timerInterval);
                     isTimerRunning = false;
@@ -842,45 +848,17 @@
             document.getElementById('timer-start-btn').classList.remove('bg-emerald-600');
             document.getElementById('timer-start-btn').innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume`;
             lucide.createIcons();
+            renderPipCanvas();
         }
 
         function resetTimer() {
             clearInterval(timerInterval);
             isTimerRunning = false;
-            timerRemaining = timerDuration;
+            timerRemaining = getDirectConfiguredSeconds();
             document.getElementById('timer-start-btn').classList.remove('bg-emerald-600');
             document.getElementById('timer-start-btn').innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Start`;
-            updateTimerDisplay();
+            updateTimerFields();
             lucide.createIcons();
-        }
-
-        function setTimerPreset(minutes) {
-            pauseTimer();
-            timerDuration = Math.round(minutes * 60);
-            timerRemaining = timerDuration;
-            updateTimerDisplay();
-        }
-
-        function promptTimerDuration() {
-            const input = prompt("Set Focus Time:\n• Enter minutes (e.g. 25, 45, 60)\n• Or seconds with 's' (e.g. 45s, 1s):", "25");
-            if (!input) return;
-
-            let totalSecs = 0;
-            if (input.toLowerCase().endsWith('s')) {
-                totalSecs = parseInt(input);
-            } else {
-                totalSecs = Math.round(parseFloat(input) * 60);
-            }
-
-            if (isNaN(totalSecs) || totalSecs < 1 || totalSecs > 3600) {
-                alert("Please enter a valid time between 1 second and 60 minutes.");
-                return;
-            }
-
-            pauseTimer();
-            timerDuration = totalSecs;
-            timerRemaining = timerDuration;
-            updateTimerDisplay();
         }
 
         function toggleFocusTimer() {
@@ -889,51 +867,61 @@
         }
 
         // --- Picture-in-Picture (PiP) Stream ---
-        function renderPipCanvas(timeText) {
+        function renderPipCanvas() {
             const canvas = document.getElementById('pip-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             
-            // Dark futuristic badge
+            const mins = Math.floor(timerRemaining / 60).toString().padStart(2, '0');
+            const secs = (timerRemaining % 60).toString().padStart(2, '0');
+            const timeText = `${mins}:${secs}`;
+
+            // Clean Dark Canvas
             ctx.fillStyle = '#020617';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // IIT Bombay CSE Accent
+            // "AIM: IIT" Header
             ctx.fillStyle = '#f59e0b';
-            ctx.font = 'bold 16px Inter, sans-serif';
+            ctx.font = 'bold 18px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('IIT BOMBAY CSE 2028', canvas.width / 2, 45);
+            ctx.fillText('AIM: IIT', canvas.width / 2, 42);
             
-            // Timer Numbers
+            // Focus Timer Display
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 56px monospace';
-            ctx.fillText(timeText, canvas.width / 2, 115);
+            ctx.font = 'bold 54px monospace';
+            ctx.fillText(timeText, canvas.width / 2, 102);
 
-            ctx.fillStyle = '#818cf8';
-            ctx.font = '14px Inter, sans-serif';
-            ctx.fillText(isTimerRunning ? '● SESSION ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 150);
+            // Status Indicator
+            ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.fillText(isTimerRunning ? '● SESSION ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 134);
         }
 
         async function togglePiP() {
             const canvas = document.getElementById('pip-canvas');
             const video = document.getElementById('pip-video');
-            renderPipCanvas(document.getElementById('timer-display').innerText);
+            renderPipCanvas();
 
-            if (document.pictureInPictureElement) {
-                await document.exitPictureInPicture();
-            } else {
-                if (!video.srcObject) {
-                    video.srcObject = canvas.captureStream(10);
-                    await video.play();
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else {
+                    if (!video.srcObject) {
+                        video.srcObject = canvas.captureStream(10);
+                        await video.play();
+                    }
+                    await video.requestPictureInPicture();
                 }
-                await video.requestPictureInPicture();
+            } catch (err) {
+                alert("Picture-in-Picture error: " + err.message);
             }
         }
 
-        // --- Draggable Widget Support (Mouse + Touch) ---
+        // --- Draggable Timer Logic ---
         (function makeDraggable() {
             const el = document.getElementById('focus-timer-widget');
             const handle = document.getElementById('timer-drag-handle');
+            if (!handle || !el) return;
             let isDragging = false;
             let startX, startY, origX, origY;
 
@@ -941,8 +929,15 @@
                 isDragging = true;
                 startX = e.clientX;
                 startY = e.clientY;
-                origX = el.offsetLeft;
-                origY = el.offsetTop;
+                const rect = el.getBoundingClientRect();
+                origX = rect.left;
+                origY = rect.top;
+                
+                el.style.position = 'fixed';
+                el.style.bottom = 'auto';
+                el.style.left = `${origX}px`;
+                el.style.top = `${origY}px`;
+
                 document.addEventListener('mousemove', onMouseMove);
                 document.addEventListener('mouseup', onMouseUp);
             });
@@ -951,7 +946,6 @@
                 if (!isDragging) return;
                 el.style.left = `${origX + (e.clientX - startX)}px`;
                 el.style.top = `${origY + (e.clientY - startY)}px`;
-                el.style.bottom = 'auto';
             }
 
             function onMouseUp() {
@@ -1458,6 +1452,7 @@ Instructions:
             renderSyllabus();
             updateCountdown();
             renderChatThread();
+            renderPipCanvas();
             lucide.createIcons();
         };
     </script>
