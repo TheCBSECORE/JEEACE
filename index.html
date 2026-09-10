@@ -663,9 +663,14 @@
                         <div class="text-[10px] text-slate-500 uppercase tracking-tighter">Out of ${test.max}</div>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 text-xs font-bold border border-indigo-500/20">
+                        <span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 text-xs font-bold border border-indigo-500/20 inline-block">
                             ${perc}${perc !== 'N/A' ? '%' : ''}
                         </span>
+                        ${(test.rank && test.students) ? `
+                            <div class="text-[11px] text-slate-400 font-mono mt-1 font-medium">
+                                Rank <span class="text-white font-bold">${test.rank}</span> <span class="text-slate-500">/ ${test.students}</span>
+                            </div>
+                        ` : ''}
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
