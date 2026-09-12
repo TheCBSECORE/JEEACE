@@ -770,7 +770,7 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT ROUTINE TASK -->
+    <!-- MODAL: ADD / EDIT ROUTINE TASK WITH AUTO-DURATION -->
     <div id="task-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
             <h3 class="text-xl font-bold mb-4">Schedule Routine Task</h3>
@@ -804,7 +804,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Duration (e.g. 45m, 1h 30m)</label>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Duration (Auto or Custom e.g. 45m)</label>
                     <input type="text" id="task-duration" placeholder="e.g. 1h 30m, 45m" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-indigo-400 font-mono outline-none">
                 </div>
                 <div>
@@ -854,11 +854,11 @@
 
     <script>
         // ==========================================
-        // 1. SAFE STATE INITIALIZATION
+        // 1. DATA STATE MANAGEMENT
         // ==========================================
         function safeJSON(key, fallback) {
             try {
-                const val = localStorage.getItem(key);
+                var val = localStorage.getItem(key);
                 if (!val || val === 'undefined' || val === 'null') return fallback;
                 return JSON.parse(val);
             } catch(e) {
@@ -866,7 +866,7 @@
             }
         }
 
-        var appState = {
+        window.appState = {
             tests: safeJSON('jee_tests', []),
             syllabus: safeJSON('jee_syllabus', []),
             scheduledTasks: safeJSON('jee_tasks', []),
@@ -875,30 +875,30 @@
             chatHistory: safeJSON('jee_ai_chats', [])
         };
 
-        var activeChartFilter = 'all';
-        var performanceChart = null;
-        var taskCharts = {};
-        var calendarView = 'month';
-        var selectedDate = new Date();
-        var lastActionUndoStack = null;
+        window.activeChartFilter = 'all';
+        window.performanceChart = null;
+        window.taskCharts = {};
+        window.calendarView = 'month';
+        window.selectedDate = new Date();
+        window.lastActionUndoStack = null;
 
-        function saveToStorage() {
+        window.saveToStorage = function() {
             try {
-                localStorage.setItem('jee_tests', JSON.stringify(appState.tests || []));
-                localStorage.setItem('jee_syllabus', JSON.stringify(appState.syllabus || []));
-                localStorage.setItem('jee_tasks', JSON.stringify(appState.scheduledTasks || []));
-                localStorage.setItem('jee_next_test', JSON.stringify(appState.nextTest || { name: 'Next Major Test', date: '' }));
-                localStorage.setItem('jee_api_key', appState.apiKey || '');
-                localStorage.setItem('jee_ai_chats', JSON.stringify(appState.chatHistory || []));
+                localStorage.setItem('jee_tests', JSON.stringify(window.appState.tests || []));
+                localStorage.setItem('jee_syllabus', JSON.stringify(window.appState.syllabus || []));
+                localStorage.setItem('jee_tasks', JSON.stringify(window.appState.scheduledTasks || []));
+                localStorage.setItem('jee_next_test', JSON.stringify(window.appState.nextTest || { name: 'Next Major Test', date: '' }));
+                localStorage.setItem('jee_api_key', window.appState.apiKey || '');
+                localStorage.setItem('jee_ai_chats', JSON.stringify(window.appState.chatHistory || []));
             } catch(e) {
                 console.error("Storage save failed", e);
             }
-        }
+        };
 
         // ==========================================
         // 2. NAVIGATION & TABS
         // ==========================================
-        function switchTab(view) {
+        window.switchTab = function(view) {
             ['analytics', 'planner', 'daily', 'f1hub', 'goals'].forEach(function(v) {
                 var el = document.getElementById('view-' + v);
                 if (el) el.classList.toggle('hidden', v !== view);
@@ -915,22 +915,22 @@
                 else main.className = "max-w-7xl mx-auto px-4 py-8";
             }
 
-            if (view === 'daily') { renderCalendar(); renderTaskMetrics(); }
-            if (view === 'analytics') renderChart();
-            if (view === 'planner') { renderSyllabus(); updateCountdown(); }
+            if (view === 'daily') { window.renderCalendar(); window.renderTaskMetrics(); }
+            if (view === 'analytics') window.renderChart();
+            if (view === 'planner') { window.renderSyllabus(); window.updateCountdown(); }
             if (window.lucide) lucide.createIcons();
-        }
+        };
 
-        function toggleMobileMenu() {
+        window.toggleMobileMenu = function() {
             var menu = document.getElementById('mobile-menu');
             if (menu) menu.classList.toggle('hidden');
-        }
+        };
 
         // ==========================================
         // 3. ANALYTICS & CHART.JS
         // ==========================================
-        function setChartFilter(type) {
-            activeChartFilter = type;
+        window.setChartFilter = function(type) {
+            window.activeChartFilter = type;
             ['all', 'pcm', 'physics', 'chem', 'maths'].forEach(function(b) {
                 var btn = document.getElementById('btn-chart-' + b);
                 if (!btn) return;
@@ -938,18 +938,18 @@
                     ? "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm" 
                     : "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
             });
-            renderChart();
-        }
+            window.renderChart();
+        };
 
-        function renderChart() {
+        window.renderChart = function() {
             var ctx = document.getElementById('scoreChart');
             if (!ctx) return;
-            var tests = appState.tests || [];
+            var tests = window.appState.tests || [];
             var sorted = tests.slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
             var labels = sorted.map(function(t) { return t.name; });
 
             var datasets = [];
-            if (activeChartFilter === 'all') {
+            if (window.activeChartFilter === 'all') {
                 datasets = [{
                     label: 'Total Score',
                     data: sorted.map(function(t) { return Number(t.total || 0); }),
@@ -957,37 +957,41 @@
                     backgroundColor: 'rgba(99, 102, 241, 0.15)',
                     borderWidth: 3, fill: true, tension: 0.35, pointRadius: 4
                 }];
-            } else if (activeChartFilter === 'pcm') {
+            } else if (window.activeChartFilter === 'pcm') {
                 datasets = [
                     { label: 'Physics', data: sorted.map(function(t) { return Number(t.p || 0); }), borderColor: '#3b82f6', tension: 0.35, pointRadius: 4 },
                     { label: 'Chemistry', data: sorted.map(function(t) { return Number(t.c || 0); }), borderColor: '#10b981', tension: 0.35, pointRadius: 4 },
                     { label: 'Maths', data: sorted.map(function(t) { return Number(t.m || 0); }), borderColor: '#f97316', tension: 0.35, pointRadius: 4 }
                 ];
-            } else if (activeChartFilter === 'physics') {
+            } else if (window.activeChartFilter === 'physics') {
                 datasets = [{ label: 'Physics Score', data: sorted.map(function(t) { return Number(t.p || 0); }), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            } else if (activeChartFilter === 'chem') {
+            } else if (window.activeChartFilter === 'chem') {
                 datasets = [{ label: 'Chemistry Score', data: sorted.map(function(t) { return Number(t.c || 0); }), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            } else if (activeChartFilter === 'maths') {
+            } else if (window.activeChartFilter === 'maths') {
                 datasets = [{ label: 'Maths Score', data: sorted.map(function(t) { return Number(t.m || 0); }), borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
             }
 
-            if (performanceChart) performanceChart.destroy();
-            performanceChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: labels.length ? labels : ['No tests yet'], datasets: datasets.length ? datasets : [{ label: 'No Data', data: [0], borderColor: '#334155' }] },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } },
-                        y: { min: 0, max: (activeChartFilter === 'all') ? 300 : 100, grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } }
+            try {
+                if (window.performanceChart) window.performanceChart.destroy();
+                window.performanceChart = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: labels.length ? labels : ['No tests yet'], datasets: datasets.length ? datasets : [{ label: 'No Data', data: [0], borderColor: '#334155' }] },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } },
+                            y: { min: 0, max: (window.activeChartFilter === 'all') ? 300 : 100, grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } }
+                        }
                     }
-                }
-            });
-            calculateAnalytics();
-        }
+                });
+            } catch(e) {
+                console.warn("Chart render skipped", e);
+            }
+            window.calculateAnalytics();
+        };
 
-        function calculateAnalytics() {
-            var tests = appState.tests || [];
+        window.calculateAnalytics = function() {
+            var tests = window.appState.tests || [];
             var emptyEl = document.getElementById('empty-state');
             if (emptyEl) emptyEl.classList.toggle('hidden', tests.length > 0);
             
@@ -1005,7 +1009,7 @@
 
             var avgP = tests.length ? (tests.reduce(function(sum, t) { return sum + Number(t.p || 0); }, 0) / tests.length).toFixed(1) : 0;
             var avgC = tests.length ? (tests.reduce(function(sum, t) { return sum + Number(t.c || 0); }, 0) / tests.length).toFixed(1) : 0;
-            var avgM = tests.length ? (tests.reduce(function(sum, t) { return sum + Number(t.m || 0); }, 0) / tests.length).toFixed(1) : 0;
+            var avgM = tests.length ? (tests.reduce(function(sum, t) { return sum + Number(t.m || 0), 0; }, 0) / tests.length).toFixed(1) : 0;
             
             var pEl = document.getElementById('avg-p'); if (pEl) pEl.innerText = avgP;
             var cEl = document.getElementById('avg-c'); if (cEl) cEl.innerText = avgC;
@@ -1018,13 +1022,13 @@
             var percentiles = tests.map(function(t) { return (t.rank && t.students) ? ((t.students - t.rank) / t.students * 100) : 0; });
             var bestP = document.getElementById('stat-best-percentile');
             if (bestP) bestP.innerText = (percentiles.length ? Math.max.apply(null, percentiles).toFixed(1) : 0) + '%';
-            renderTestTable();
-        }
+            window.renderTestTable();
+        };
 
-        function renderTestTable() {
+        window.renderTestTable = function() {
             var tbody = document.getElementById('test-table-body');
             var countEl = document.getElementById('test-count');
-            var tests = appState.tests || [];
+            var tests = window.appState.tests || [];
             if (countEl) countEl.innerText = tests.length + ' Tests Recorded';
             if (!tbody) return;
             tbody.innerHTML = '';
@@ -1061,9 +1065,8 @@
                 tbody.appendChild(row);
             });
             if (window.lucide) lucide.createIcons();
-        }
+        };
 
-        // Test Form Binding
         var pIn = document.getElementById('t-p'), cIn = document.getElementById('t-c'), mIn = document.getElementById('t-m'), totalIn = document.getElementById('t-total');
         if (pIn && cIn && mIn && totalIn) {
             [pIn, cIn, mIn].forEach(function(el) {
@@ -1087,17 +1090,17 @@
                     students: document.getElementById('t-students').value,
                     notes: document.getElementById('t-notes').value
                 };
-                if (!appState.tests) appState.tests = [];
-                if (editIdx > -1) appState.tests[editIdx] = data;
-                else appState.tests.push(data);
-                saveToStorage();
-                calculateAnalytics();
-                renderChart();
-                closeTestModal();
+                if (!window.appState.tests) window.appState.tests = [];
+                if (editIdx > -1) window.appState.tests[editIdx] = data;
+                else window.appState.tests.push(data);
+                window.saveToStorage();
+                window.calculateAnalytics();
+                window.renderChart();
+                window.closeTestModal();
             };
         }
 
-        function openTestModal(idx) {
+        window.openTestModal = function(idx) {
             if (idx === undefined) idx = -1;
             var m = document.getElementById('test-modal');
             if (!m) return;
@@ -1105,7 +1108,7 @@
             document.getElementById('edit-index').value = idx;
             document.getElementById('modal-title').innerText = idx > -1 ? 'Edit Test' : 'Add New Test';
             if (idx > -1) {
-                var t = appState.tests[idx];
+                var t = window.appState.tests[idx];
                 document.getElementById('t-name').value = t.name;
                 document.getElementById('t-date').value = t.date;
                 pIn.value = t.p; cIn.value = t.c; mIn.value = t.m; totalIn.value = t.total;
@@ -1117,41 +1120,42 @@
                 if (testFormEl) testFormEl.reset();
                 document.getElementById('t-max').value = 300;
             }
-        }
+        };
 
-        function closeTestModal() { 
+        window.closeTestModal = function() { 
             var m = document.getElementById('test-modal');
             if (m) m.classList.add('hidden'); 
-        }
+        };
 
-        function deleteTest(idx) {
+        window.deleteTest = function(idx) {
             if (confirm('Delete this test score?')) {
-                appState.tests.splice(idx, 1);
-                saveToStorage();
-                renderChart();
+                window.appState.tests.splice(idx, 1);
+                window.saveToStorage();
+                window.renderChart();
             }
-        }
-        function editTest(idx) { openTestModal(idx); }
+        };
+
+        window.editTest = function(idx) { window.openTestModal(idx); };
 
         // ==========================================
         // 4. CALENDAR & DAILY PLANNER
         // ==========================================
-        function getSubjectStyle(sub) {
+        window.getSubjectStyle = function(sub) {
             if (sub === 'Physics') return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
             if (sub === 'Chemistry') return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
             if (sub === 'Maths') return 'bg-orange-500/20 text-orange-300 border-orange-500/30';
             if (sub === 'Allen') return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
             return 'bg-slate-700/50 text-slate-300 border-slate-600';
-        }
+        };
 
-        function getStatusBadge(status) {
+        window.getStatusBadge = function(status) {
             if (status === 'Completed') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Completed</span>';
             if (status === 'In Progress') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">In Progress</span>';
             if (status === 'Pending') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30">Pending</span>';
             return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">Not Started</span>';
-        }
+        };
 
-        function calculateTaskDuration(start, end) {
+        window.calculateTaskDuration = function(start, end) {
             if (!start || !end) return '';
             var sParts = start.split(':').map(Number);
             var eParts = end.split(':').map(Number);
@@ -1162,16 +1166,16 @@
             if (h > 0 && m > 0) return h + 'h ' + m + 'm';
             if (h > 0) return h + 'h';
             return m + 'm';
-        }
+        };
 
-        function calculateModalDuration() {
+        window.calculateModalDuration = function() {
             var s = document.getElementById('task-start').value;
             var e = document.getElementById('task-end').value;
-            var dur = calculateTaskDuration(s, e);
+            var dur = window.calculateTaskDuration(s, e);
             if (dur) document.getElementById('task-duration').value = dur;
-        }
+        };
 
-        function openTaskModalForDate(targetDate) {
+        window.openTaskModalForDate = function(targetDate) {
             var d = targetDate instanceof Date ? targetDate : new Date(targetDate);
             var dateStr = d.toISOString().split('T')[0];
             document.getElementById('task-date').value = dateStr;
@@ -1180,9 +1184,9 @@
             document.getElementById('task-end').value = '';
             document.getElementById('task-duration').value = '';
             document.getElementById('task-modal').classList.remove('hidden');
-        }
+        };
 
-        function renderCalendar() {
+        window.renderCalendar = function() {
             var monthView = document.getElementById('calendar-month-view');
             var tasksView = document.getElementById('calendar-tasks-view');
             var monthGrid = document.getElementById('month-grid');
@@ -1190,14 +1194,14 @@
 
             if (!monthGrid) return;
 
-            if (calendarView === 'month') {
+            if (window.calendarView === 'month') {
                 if (monthView) monthView.classList.remove('hidden');
                 if (tasksView) tasksView.classList.add('hidden');
                 monthGrid.innerHTML = '';
 
-                var year = selectedDate.getFullYear();
-                var month = selectedDate.getMonth();
-                if (title) title.innerText = selectedDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+                var year = window.selectedDate.getFullYear();
+                var month = window.selectedDate.getMonth();
+                if (title) title.innerText = window.selectedDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
                 var firstDayIndex = new Date(year, month, 1).getDay();
                 var totalDays = new Date(year, month + 1, 0).getDate();
@@ -1209,7 +1213,7 @@
                 for (var d = 1; d <= totalDays; d++) {
                     var dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
                     var isToday = new Date().toISOString().split('T')[0] === dateStr;
-                    var dayTasks = (appState.scheduledTasks || []).filter(function(t) { return t.date === dateStr; });
+                    var dayTasks = (window.appState.scheduledTasks || []).filter(function(t) { return t.date === dateStr; });
 
                     var cell = document.createElement('div');
                     cell.className = "calendar-cell p-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors border-r border-b border-slate-800/70 flex flex-col justify-between group relative " + (isToday ? 'bg-indigo-950/20' : '');
@@ -1222,25 +1226,25 @@
                         this.classList.remove('drag-over');
                         var taskId = parseInt(e.dataTransfer.getData('text/plain'));
                         var targetDateStr = this.dataset.date;
-                        var task = (appState.scheduledTasks || []).find(function(t) { return t.id === taskId; });
+                        var task = (window.appState.scheduledTasks || []).find(function(t) { return t.id === taskId; });
                         if (task && task.date !== targetDateStr) {
                             task.date = targetDateStr;
-                            saveToStorage();
-                            renderCalendar();
+                            window.saveToStorage();
+                            window.renderCalendar();
                         }
                     };
 
                     cell.onclick = (function(yr, mo, dayNum) {
                         return function(e) {
                             if (e.target.closest('button') || e.target.closest('.task-item')) return;
-                            selectedDate = new Date(yr, mo, dayNum);
-                            setCalendarView('today');
+                            window.selectedDate = new Date(yr, mo, dayNum);
+                            window.setCalendarView('today');
                         };
                     })(year, month, d);
 
                     var taskPills = dayTasks.slice(0, 3).map(function(t) {
-                        var dur = t.duration || calculateTaskDuration(t.start, t.end);
-                        return '<div draggable="true" ondragstart="event.dataTransfer.setData(\'text/plain\', \'' + t.id + '\')" class="task-item text-[10px] px-2 py-0.5 rounded border truncate flex items-center justify-between gap-1 shadow-sm ' + getSubjectStyle(t.subject) + ' ' + (t.status === 'Completed' ? 'line-through opacity-40' : '') + '">' +
+                        var dur = t.duration || window.calculateTaskDuration(t.start, t.end);
+                        return '<div draggable="true" ondragstart="event.dataTransfer.setData(\'text/plain\', \'' + t.id + '\')" class="task-item text-[10px] px-2 py-0.5 rounded border truncate flex items-center justify-between gap-1 shadow-sm ' + window.getSubjectStyle(t.subject) + ' ' + (t.status === 'Completed' ? 'line-through opacity-40' : '') + '">' +
                             '<span class="truncate">' + t.title + '</span>' +
                             (dur ? '<span class="text-[9px] font-mono opacity-80 flex-shrink-0">' + dur + '</span>' : '') +
                         '</div>';
@@ -1267,21 +1271,21 @@
                 if (monthView) monthView.classList.add('hidden');
                 if (tasksView) tasksView.classList.remove('hidden');
                 if (title) title.innerText = "Daily Briefing & Routines";
-                renderTaskList();
+                window.renderTaskList();
             }
-            renderTaskMetrics();
+            window.renderTaskMetrics();
             if (window.lucide) lucide.createIcons();
-        }
+        };
 
-        function renderTaskList() {
+        window.renderTaskList = function() {
             var list = document.getElementById('daily-task-list');
             if (!list) return;
-            var dateStr = selectedDate.toISOString().split('T')[0];
+            var dateStr = window.selectedDate.toISOString().split('T')[0];
             var dateLabel = document.getElementById('tasks-selected-date');
-            if (dateLabel) dateLabel.innerText = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            if (dateLabel) dateLabel.innerText = window.selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             list.innerHTML = '';
 
-            var tasks = (appState.scheduledTasks || []).filter(function(t) { return t.date === dateStr; }).sort(function(a, b) { return (a.start || '').localeCompare(b.start || ''); });
+            var tasks = (window.appState.scheduledTasks || []).filter(function(t) { return t.date === dateStr; }).sort(function(a, b) { return (a.start || '').localeCompare(b.start || ''); });
             var badge = document.getElementById('tasks-stats-badge');
             if (badge) badge.innerText = tasks.length + ' Routines Scheduled';
 
@@ -1289,21 +1293,21 @@
                 list.innerHTML = '<div class="glass-card p-12 text-center rounded-3xl border border-dashed border-slate-800 text-slate-500">No tasks or lectures scheduled for this date. Click "Add Routine" to schedule.</div>';
             } else {
                 tasks.forEach(function(t) {
-                    var dur = t.duration || calculateTaskDuration(t.start, t.end);
+                    var dur = t.duration || window.calculateTaskDuration(t.start, t.end);
                     var row = document.createElement('div');
                     row.className = "glass-card p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group";
                     row.innerHTML = 
                         '<div class="flex items-center gap-3">' +
                             '<button onclick="cycleTaskStatus(' + t.id + ')" title="Click to cycle status" class="transition-transform active:scale-95">' +
-                                getStatusBadge(t.status) +
+                                window.getStatusBadge(t.status) +
                             '</button>' +
                             '<div>' +
                                 '<h4 class="font-bold text-sm text-white ' + (t.status === 'Completed' ? 'line-through opacity-50' : '') + '">' + t.title + '</h4>' +
                                 '<div class="flex items-center gap-2 mt-1">' +
-                                    '<span class="text-[10px] font-bold px-2 py-0.5 rounded border ' + getSubjectStyle(t.subject) + '">' + t.subject + '</span>' +
+                                    '<span class="text-[10px] font-bold px-2 py-0.5 rounded border ' + window.getSubjectStyle(t.subject) + '">' + t.subject + '</span>' +
                                     (dur ? '<span class="text-xs text-indigo-400 font-mono font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">' + dur + '</span>' : '') +
                                     '<span class="text-xs text-slate-400 font-mono">' + (t.start ? t.start + ' - ' + t.end : '') + '</span>' +
-                                '</div>' +
+                                </div>' +
                             '</div>' +
                         '</div>' +
                         '<div class="flex items-center gap-2 self-end sm:self-center">' +
@@ -1315,32 +1319,36 @@
                 });
             }
             if (window.lucide) lucide.createIcons();
-        }
+        };
 
-        function buildDoughnut(canvasId, done, inProg, pending) {
+        window.buildDoughnut = function(canvasId, done, inProg, pending) {
             var ctx = document.getElementById(canvasId);
             if (!ctx) return;
-            if (taskCharts[canvasId]) taskCharts[canvasId].destroy();
+            try {
+                if (window.taskCharts[canvasId]) window.taskCharts[canvasId].destroy();
 
-            var total = done + inProg + pending;
-            var data = total === 0 ? [0, 0, 1] : [done, inProg, pending];
-            var colors = total === 0 ? ['#1e293b', '#1e293b', '#334155'] : ['#10b981', '#f59e0b', '#475569'];
+                var total = done + inProg + pending;
+                var data = total === 0 ? [0, 0, 1] : [done, inProg, pending];
+                var colors = total === 0 ? ['#1e293b', '#1e293b', '#334155'] : ['#10b981', '#f59e0b', '#475569'];
 
-            taskCharts[canvasId] = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'In Progress', 'Pending'],
-                    datasets: [{ data: data, backgroundColor: colors, borderWidth: 0, hoverOffset: 3 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '72%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } }
-                }
-            });
-        }
+                window.taskCharts[canvasId] = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'In Progress', 'Pending'],
+                        datasets: [{ data: data, backgroundColor: colors, borderWidth: 0, hoverOffset: 3 }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, cutout: '72%',
+                        plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } }
+                    }
+                });
+            } catch(e) {
+                console.warn("Doughnut render skipped", e);
+            }
+        };
 
-        function renderTaskMetrics() {
-            var tasks = appState.scheduledTasks || [];
+        window.renderTaskMetrics = function() {
+            var tasks = window.appState.scheduledTasks || [];
             function getCounts(taskList) {
                 var done = taskList.filter(function(t) { return t.status === 'Completed'; }).length;
                 var inProg = taskList.filter(function(t) { return t.status === 'In Progress'; }).length;
@@ -1349,112 +1357,112 @@
             }
 
             var ov = getCounts(tasks);
-            buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
+            window.buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
             var elOv = document.getElementById('stat-text-overall');
             if (elOv) elOv.innerText = ov.done + '/' + ov.total + ' Done (' + (ov.total ? Math.round((ov.done/ov.total)*100) : 0) + '%)';
 
             var phy = getCounts(tasks.filter(function(t) { return t.subject === 'Physics'; }));
-            buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
+            window.buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
             var elPhy = document.getElementById('stat-text-physics');
             if (elPhy) elPhy.innerText = phy.done + '/' + phy.total + ' Done (' + (phy.total ? Math.round((phy.done/phy.total)*100) : 0) + '%)';
 
             var chm = getCounts(tasks.filter(function(t) { return t.subject === 'Chemistry'; }));
-            buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
+            window.buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
             var elChm = document.getElementById('stat-text-chemistry');
             if (elChm) elChm.innerText = chm.done + '/' + chm.total + ' Done (' + (chm.total ? Math.round((chm.done/chm.total)*100) : 0) + '%)';
 
             var mth = getCounts(tasks.filter(function(t) { return t.subject === 'Maths'; }));
-            buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
+            window.buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
             var elMth = document.getElementById('stat-text-maths');
             if (elMth) elMth.innerText = mth.done + '/' + mth.total + ' Done (' + (mth.total ? Math.round((mth.done/mth.total)*100) : 0) + '%)';
-        }
+        };
 
-        function closeTaskModal() { 
+        window.closeTaskModal = function() { 
             var m = document.getElementById('task-modal');
             if (m) m.classList.add('hidden'); 
-        }
+        };
 
-        function saveTask() {
+        window.saveTask = function() {
             var title = document.getElementById('task-title').value.trim();
             var subject = document.getElementById('task-subject').value;
             var start = document.getElementById('task-start').value;
             var end = document.getElementById('task-end').value;
             var duration = document.getElementById('task-duration').value.trim();
-            if (!duration && start && end) duration = calculateTaskDuration(start, end);
+            if (!duration && start && end) duration = window.calculateTaskDuration(start, end);
             var status = document.getElementById('task-status').value;
-            var dateStr = document.getElementById('task-date').value || selectedDate.toISOString().split('T')[0];
+            var dateStr = document.getElementById('task-date').value || window.selectedDate.toISOString().split('T')[0];
 
             if (!title) return alert("Please enter a task title.");
 
-            if (!appState.scheduledTasks) appState.scheduledTasks = [];
-            appState.scheduledTasks.push({
+            if (!window.appState.scheduledTasks) window.appState.scheduledTasks = [];
+            window.appState.scheduledTasks.push({
                 id: Date.now(),
                 date: dateStr,
                 title: title, subject: subject, start: start, end: end, duration: duration, status: status
             });
 
-            saveToStorage();
-            closeTaskModal();
-            renderCalendar();
-        }
+            window.saveToStorage();
+            window.closeTaskModal();
+            window.renderCalendar();
+        };
 
-        function cycleTaskStatus(id) {
-            var t = (appState.scheduledTasks || []).find(function(x) { return x.id === id; });
+        window.cycleTaskStatus = function(id) {
+            var t = (window.appState.scheduledTasks || []).find(function(x) { return x.id === id; });
             if (!t) return;
             var seq = ['Not Started', 'In Progress', 'Completed', 'Pending'];
             var nextIdx = (seq.indexOf(t.status) + 1) % seq.length;
             t.status = seq[nextIdx];
-            saveToStorage();
-            renderCalendar();
-        }
+            window.saveToStorage();
+            window.renderCalendar();
+        };
 
-        function deleteTask(id) {
-            appState.scheduledTasks = (appState.scheduledTasks || []).filter(function(x) { return x.id !== id; });
-            saveToStorage();
-            renderCalendar();
-        }
+        window.deleteTask = function(id) {
+            window.appState.scheduledTasks = (window.appState.scheduledTasks || []).filter(function(x) { return x.id !== id; });
+            window.saveToStorage();
+            window.renderCalendar();
+        };
 
         // ==========================================
         // 5. FOCUS TIMER & PIP
         // ==========================================
-        var timerRemaining = 25 * 60;
-        var timerInterval = null;
-        var isTimerRunning = false;
+        window.timerRemaining = 25 * 60;
+        window.timerInterval = null;
+        window.isTimerRunning = false;
 
-        function getDirectConfiguredSeconds() {
+        window.getDirectConfiguredSeconds = function() {
             var m = parseInt(document.getElementById('timer-input-m').value) || 0;
             var s = parseInt(document.getElementById('timer-input-s').value) || 0;
             return Math.max(1, Math.min(3600, (m * 60) + s));
-        }
+        };
 
-        function onDirectTimeChange() {
-            if (isTimerRunning) return;
-            timerRemaining = getDirectConfiguredSeconds();
-            renderPipCanvas();
-        }
+        window.onDirectTimeChange = function() {
+            if (window.isTimerRunning) return;
+            window.timerRemaining = window.getDirectConfiguredSeconds();
+            window.renderPipCanvas();
+        };
 
-        function setTimerDirect(mins, secs) {
-            pauseTimer();
+        window.setTimerDirect = function(mins, secs) {
+            window.pauseTimer();
             document.getElementById('timer-input-m').value = mins.toString().padStart(2, '0');
             document.getElementById('timer-input-s').value = secs.toString().padStart(2, '0');
-            timerRemaining = (mins * 60) + secs;
-            renderPipCanvas();
-        }
+            window.timerRemaining = (mins * 60) + secs;
+            window.renderPipCanvas();
+        };
 
-        function updateTimerFields() {
-            var mins = Math.floor(timerRemaining / 60);
-            var secs = timerRemaining % 60;
+        window.updateTimerFields = function() {
+            var mins = Math.floor(window.timerRemaining / 60);
+            var secs = window.timerRemaining % 60;
             var mi = document.getElementById('timer-input-m');
             var si = document.getElementById('timer-input-s');
             if (mi) mi.value = mins.toString().padStart(2, '0');
             if (si) si.value = secs.toString().padStart(2, '0');
-            renderPipCanvas();
-        }
+            window.renderPipCanvas();
+        };
 
-        function startTimer() {
-            if (isTimerRunning) return;
-            if (timerRemaining <= 0) timerRemaining = getDirectConfiguredSeconds();
-            isTimerRunning = true;
+        window.startTimer = function() {
+            if (window.isTimerRunning) return;
+            if (window.timerRemaining <= 0) window.timerRemaining = window.getDirectConfiguredSeconds();
+            window.isTimerRunning = true;
             var btn = document.getElementById('timer-start-btn');
             if (btn) {
                 btn.classList.add('bg-emerald-600');
@@ -1462,55 +1470,55 @@
             }
             if (window.lucide) lucide.createIcons();
 
-            timerInterval = setInterval(function() {
-                if (timerRemaining > 0) {
-                    timerRemaining--;
-                    updateTimerFields();
+            window.timerInterval = setInterval(function() {
+                if (window.timerRemaining > 0) {
+                    window.timerRemaining--;
+                    window.updateTimerFields();
                 } else {
-                    clearInterval(timerInterval);
-                    isTimerRunning = false;
+                    clearInterval(window.timerInterval);
+                    window.isTimerRunning = false;
                     alert("⏰ Focus Session Finished! Great work Laksh.");
-                    resetTimer();
+                    window.resetTimer();
                 }
             }, 1000);
-        }
+        };
 
-        function pauseTimer() {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
+        window.pauseTimer = function() {
+            clearInterval(window.timerInterval);
+            window.isTimerRunning = false;
             var btn = document.getElementById('timer-start-btn');
             if (btn) {
                 btn.classList.remove('bg-emerald-600');
                 btn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume';
             }
             if (window.lucide) lucide.createIcons();
-            renderPipCanvas();
-        }
+            window.renderPipCanvas();
+        };
 
-        function resetTimer() {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            timerRemaining = getDirectConfiguredSeconds();
+        window.resetTimer = function() {
+            clearInterval(window.timerInterval);
+            window.isTimerRunning = false;
+            window.timerRemaining = window.getDirectConfiguredSeconds();
             var btn = document.getElementById('timer-start-btn');
             if (btn) {
                 btn.classList.remove('bg-emerald-600');
                 btn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5"></i> Start';
             }
-            updateTimerFields();
+            window.updateTimerFields();
             if (window.lucide) lucide.createIcons();
-        }
+        };
 
-        function toggleFocusTimer() {
+        window.toggleFocusTimer = function() {
             var w = document.getElementById('focus-timer-widget');
             if (w) w.classList.toggle('hidden');
-        }
+        };
 
-        function renderPipCanvas() {
+        window.renderPipCanvas = function() {
             var canvas = document.getElementById('pip-canvas');
             if (!canvas) return;
             var ctx = canvas.getContext('2d');
-            var mins = Math.floor(timerRemaining / 60).toString().padStart(2, '0');
-            var secs = (timerRemaining % 60).toString().padStart(2, '0');
+            var mins = Math.floor(window.timerRemaining / 60).toString().padStart(2, '0');
+            var secs = (window.timerRemaining % 60).toString().padStart(2, '0');
             var liveClock = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
             ctx.fillStyle = '#020617';
@@ -1538,15 +1546,15 @@
             ctx.textAlign = 'center';
             ctx.fillText(mins + ':' + secs, canvas.width / 2, 95);
 
-            ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
+            ctx.fillStyle = window.isTimerRunning ? '#10b981' : '#64748b';
             ctx.font = 'bold 11px Inter, sans-serif';
-            ctx.fillText(isTimerRunning ? '● FOCUS ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 128);
-        }
+            ctx.fillText(window.isTimerRunning ? '● FOCUS ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 128);
+        };
 
-        function togglePiP() {
+        window.togglePiP = function() {
             var canvas = document.getElementById('pip-canvas');
             var video = document.getElementById('pip-video');
-            renderPipCanvas();
+            window.renderPipCanvas();
 
             if (document.pictureInPictureElement) {
                 document.exitPictureInPicture();
@@ -1562,9 +1570,8 @@
                     video.requestPictureInPicture();
                 }
             }
-        }
+        };
 
-        // Draggable Focus Timer Handle
         (function() {
             var el = document.getElementById('focus-timer-widget');
             var handle = document.getElementById('timer-drag-handle');
@@ -1601,32 +1608,32 @@
         // ==========================================
         // 6. DAILY QUOTA (MIDNIGHT RESET)
         // ==========================================
-        var QUOTA_KEY = 'jee_daily_quota';
+        window.QUOTA_KEY = 'jee_daily_quota';
 
-        function getStoredQuota() {
+        window.getStoredQuota = function() {
             var todayStr = new Date().toISOString().split('T')[0];
-            var stored = safeJSON(QUOTA_KEY, null);
+            var stored = safeJSON(window.QUOTA_KEY, null);
 
             if (!stored || stored.date !== todayStr) {
                 var fresh = { date: todayStr, revision: false, maths: false, phy: false, chem: false };
-                localStorage.setItem(QUOTA_KEY, JSON.stringify(fresh));
+                localStorage.setItem(window.QUOTA_KEY, JSON.stringify(fresh));
                 return fresh;
             }
             return stored;
-        }
+        };
 
-        function toggleDailyQuota(taskKey) {
-            var quota = getStoredQuota();
+        window.toggleDailyQuota = function(taskKey) {
+            var quota = window.getStoredQuota();
             var checkbox = document.getElementById('quota-' + taskKey);
             if (checkbox) {
                 quota[taskKey] = checkbox.checked;
-                localStorage.setItem(QUOTA_KEY, JSON.stringify(quota));
-                renderDailyQuotaUI();
+                localStorage.setItem(window.QUOTA_KEY, JSON.stringify(quota));
+                window.renderDailyQuotaUI();
             }
-        }
+        };
 
-        function renderDailyQuotaUI() {
-            var quota = getStoredQuota();
+        window.renderDailyQuotaUI = function() {
+            var quota = window.getStoredQuota();
             ['revision', 'maths', 'phy', 'chem'].forEach(function(key) {
                 var cb = document.getElementById('quota-' + key);
                 if (cb) cb.checked = !!quota[key];
@@ -1658,36 +1665,39 @@
                 }
             }
             if (window.lucide) lucide.createIcons();
-        }
+        };
 
         // ==========================================
         // 7. AI MENTOR & AUTONOMOUS ACTIONS
         // ==========================================
-        function toggleAIChat() {
+        window.toggleAIChat = function() {
             var box = document.getElementById('ai-chatbox');
             if (box) box.classList.toggle('hidden');
-            renderChat();
-        }
-        function openApiKeyModal() { 
+            window.renderChat();
+        };
+
+        window.openApiKeyModal = function() { 
             var m = document.getElementById('api-key-modal');
             if (m) m.classList.remove('hidden'); 
             var k = document.getElementById('custom-api-key');
-            if (k) k.value = appState.apiKey || ''; 
-        }
-        function closeApiKeyModal() { 
+            if (k) k.value = window.appState.apiKey || ''; 
+        };
+
+        window.closeApiKeyModal = function() { 
             var m = document.getElementById('api-key-modal');
             if (m) m.classList.add('hidden'); 
-        }
-        function saveApiKey() {
+        };
+
+        window.saveApiKey = function() {
             var k = document.getElementById('custom-api-key');
             if (k) {
-                appState.apiKey = k.value.trim();
-                saveToStorage();
+                window.appState.apiKey = k.value.trim();
+                window.saveToStorage();
             }
-            closeApiKeyModal();
-        }
+            window.closeApiKeyModal();
+        };
 
-        function formatMarkdown(text) {
+        window.formatMarkdown = function(text) {
             if (!text) return '';
             var parsed = text
                 .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-indigo-400 mt-2 mb-1">$1</h4>')
@@ -1705,9 +1715,9 @@
 
             parsed = parsed.replace(/\n/g, '<br>');
             return parsed;
-        }
+        };
 
-        function renderAIActionCard(act, idx) {
+        window.renderAIActionCard = function(act, idx) {
             var isDone = act.executed;
             return '<div class="p-4 rounded-2xl max-w-[92%] bg-slate-900 border border-indigo-500/40 text-white space-y-3 shadow-xl">' +
                 '<div class="flex items-center gap-2 text-xs font-bold text-indigo-400 uppercase tracking-wider">' +
@@ -1718,7 +1728,7 @@
                     act.items.map(function(item) {
                         return '<div class="p-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs flex justify-between items-center gap-2">' +
                             '<span class="font-semibold text-slate-200 truncate">' + (item.title || item.name) + '</span>' +
-                            '<span class="text-[10px] px-2 py-0.5 rounded font-mono ' + getSubjectStyle(item.subject) + '">' + item.subject + '</span>' +
+                            '<span class="text-[10px] px-2 py-0.5 rounded font-mono ' + window.getSubjectStyle(item.subject) + '">' + item.subject + '</span>' +
                         '</div>';
                     }).join('') +
                 '</div>' +
@@ -1731,13 +1741,13 @@
                     ) +
                 '</div>' +
             '</div>';
-        }
+        };
 
-        function renderChat() {
+        window.renderChat = function() {
             var thread = document.getElementById('ai-chat-thread');
             if (!thread) return;
             thread.innerHTML = '';
-            var history = appState.chatHistory || [];
+            var history = window.appState.chatHistory || [];
             if (!history.length) {
                 thread.innerHTML = '<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I\'m your dedicated JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>, daily routines, syllabus progress, and test history. Ask a question or tell me to schedule tasks for today!</div>';
             } else {
@@ -1746,11 +1756,11 @@
                     bubble.className = m.role === 'user' ? 'flex justify-end' : 'flex justify-start';
                     
                     if (m.actionData) {
-                        bubble.innerHTML = renderAIActionCard(m.actionData, idx);
+                        bubble.innerHTML = window.renderAIActionCard(m.actionData, idx);
                     } else {
                         var content = m.content || m.response || m.prompt || '';
                         bubble.innerHTML = '<div class="p-3 rounded-2xl max-w-[88%] break-words ' + (m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-tl-none leading-relaxed') + '">' +
-                            (m.role === 'user' ? content : formatMarkdown(content)) +
+                            (m.role === 'user' ? content : window.formatMarkdown(content)) +
                         '</div>';
                     }
                     thread.appendChild(bubble);
@@ -1758,20 +1768,20 @@
             }
             thread.scrollTop = thread.scrollHeight;
             if (window.lucide) lucide.createIcons();
-        }
+        };
 
-        function executeAIAction(idx) {
-            var m = appState.chatHistory[idx];
+        window.executeAIAction = function(idx) {
+            var m = window.appState.chatHistory[idx];
             if (!m || !m.actionData) return;
             var act = m.actionData;
 
             if (act.type === 'tasks') {
                 var addedIds = [];
-                if (!appState.scheduledTasks) appState.scheduledTasks = [];
+                if (!window.appState.scheduledTasks) window.appState.scheduledTasks = [];
                 act.items.forEach(function(it) {
                     var id = Date.now() + Math.floor(Math.random() * 1000);
                     addedIds.push(id);
-                    appState.scheduledTasks.push({
+                    window.appState.scheduledTasks.push({
                         id: id,
                         date: it.date || new Date().toISOString().split('T')[0],
                         title: it.title,
@@ -1780,14 +1790,14 @@
                         status: 'Not Started'
                     });
                 });
-                lastActionUndoStack = { type: 'tasks', ids: addedIds };
+                window.lastActionUndoStack = { type: 'tasks', ids: addedIds };
             } else if (act.type === 'syllabus') {
                 var addedSyllIds = [];
-                if (!appState.syllabus) appState.syllabus = [];
+                if (!window.appState.syllabus) window.appState.syllabus = [];
                 act.items.forEach(function(it) {
                     var id = Date.now() + Math.floor(Math.random() * 1000);
                     addedSyllIds.push(id);
-                    appState.syllabus.push({
+                    window.appState.syllabus.push({
                         id: id,
                         subject: it.subject || 'Physics',
                         name: it.name,
@@ -1795,37 +1805,37 @@
                         completed: false
                     });
                 });
-                lastActionUndoStack = { type: 'syllabus', ids: addedSyllIds };
+                window.lastActionUndoStack = { type: 'syllabus', ids: addedSyllIds };
             }
 
             act.executed = true;
-            saveToStorage();
-            renderChat();
-            renderCalendar();
-            renderSyllabus();
-        }
+            window.saveToStorage();
+            window.renderChat();
+            window.renderCalendar();
+            window.renderSyllabus();
+        };
 
-        function undoAIAction(idx) {
-            var m = appState.chatHistory[idx];
+        window.undoAIAction = function(idx) {
+            var m = window.appState.chatHistory[idx];
             if (!m || !m.actionData) return;
             var act = m.actionData;
 
-            if (lastActionUndoStack) {
-                if (lastActionUndoStack.type === 'tasks') {
-                    appState.scheduledTasks = (appState.scheduledTasks || []).filter(function(t) { return !lastActionUndoStack.ids.includes(t.id); });
-                } else if (lastActionUndoStack.type === 'syllabus') {
-                    appState.syllabus = (appState.syllabus || []).filter(function(s) { return !lastActionUndoStack.ids.includes(s.id); });
+            if (window.lastActionUndoStack) {
+                if (window.lastActionUndoStack.type === 'tasks') {
+                    window.appState.scheduledTasks = (window.appState.scheduledTasks || []).filter(function(t) { return !window.lastActionUndoStack.ids.includes(t.id); });
+                } else if (window.lastActionUndoStack.type === 'syllabus') {
+                    window.appState.syllabus = (window.appState.syllabus || []).filter(function(s) { return !window.lastActionUndoStack.ids.includes(s.id); });
                 }
             }
 
             act.executed = false;
-            saveToStorage();
-            renderChat();
-            renderCalendar();
-            renderSyllabus();
-        }
+            window.saveToStorage();
+            window.renderChat();
+            window.renderCalendar();
+            window.renderSyllabus();
+        };
 
-        function handleUserSubmit(e) {
+        window.handleUserSubmit = function(e) {
             e.preventDefault();
             var input = document.getElementById('ai-user-input');
             if (!input) return;
@@ -1833,9 +1843,9 @@
             if (!prompt) return;
             input.value = '';
 
-            if (!appState.chatHistory) appState.chatHistory = [];
-            appState.chatHistory.push({ role: 'user', content: prompt });
-            renderChat();
+            if (!window.appState.chatHistory) window.appState.chatHistory = [];
+            window.appState.chatHistory.push({ role: 'user', content: prompt });
+            window.renderChat();
 
             var thread = document.getElementById('ai-chat-thread');
             var loadingBubble = document.createElement('div');
@@ -1848,7 +1858,7 @@
             }
             if (window.lucide) lucide.createIcons();
 
-            callGeminiAPI(prompt).then(function(response) {
+            window.callGeminiAPI(prompt).then(function(response) {
                 var el = document.getElementById('ai-loading-bubble');
                 if (el) el.remove();
 
@@ -1867,27 +1877,27 @@
                             };
                             cleanResponse = response.replace(/```json[\s\S]*?```/, '').trim();
                         }
-                    } catch (err) { console.warn("Action parse failed", err); }
+                    } catch(err) { console.warn("Action parse failed", err); }
                 }
 
-                appState.chatHistory.push({ role: 'assistant', content: cleanResponse, actionData: parsedAction });
-                saveToStorage();
-                renderChat();
+                window.appState.chatHistory.push({ role: 'assistant', content: cleanResponse, actionData: parsedAction });
+                window.saveToStorage();
+                window.renderChat();
             }).catch(function(err) {
                 var el = document.getElementById('ai-loading-bubble');
                 if (el) el.remove();
                 alert("AI Error: " + err.message);
             });
-        }
+        };
 
-        function callGeminiAPI(userQuery) {
+        window.callGeminiAPI = function(userQuery) {
             return new Promise(function(resolve, reject) {
-                if (!appState.apiKey) return reject(new Error("Gemini API Key missing. Add it via the key icon."));
+                if (!window.appState.apiKey) return reject(new Error("Gemini API Key missing. Add it via the key icon."));
                 
-                var recentTests = JSON.stringify((appState.tests || []).slice(-3));
+                var recentTests = JSON.stringify((window.appState.tests || []).slice(-3));
                 var todayStr = new Date().toISOString().split('T')[0];
-                var activeSchedule = JSON.stringify((appState.scheduledTasks || []).filter(function(t) { return t.date === todayStr; }));
-                var pendingSyllabus = (appState.syllabus || []).filter(function(s) { return !s.completed; }).map(function(s) { return s.name; }).slice(0, 8).join(', ');
+                var activeSchedule = JSON.stringify((window.appState.scheduledTasks || []).filter(function(t) { return t.date === todayStr; }));
+                var pendingSyllabus = (window.appState.syllabus || []).filter(function(s) { return !s.completed; }).map(function(s) { return s.name; }).slice(0, 8).join(', ');
 
                 var systemPrompt = "You are Laksh's grounded, candid, and disciplined JEE Mentor.\n" +
                     "Target Goal: IIT Bombay CSE 2028 (AIR < 60).\n" +
@@ -1923,7 +1933,7 @@
                     "- When he greets you ('hi', 'hello'), reply in 1-2 friendly sentences. Never lecture without being asked.\n" +
                     "- Only generate the JSON action block when he explicitly asks to schedule, plan, or add items.";
 
-                var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(appState.apiKey);
+                var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(window.appState.apiKey);
                 fetch(url, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1941,48 +1951,48 @@
                     reject(err);
                 });
             });
-        }
+        };
 
         // ==========================================
         // 8. SYLLABUS & COUNTDOWN
         // ==========================================
-        function addTopic() {
+        window.addTopic = function() {
             var name = document.getElementById('topic-name').value.trim();
             var subject = document.getElementById('topic-subject').value;
             var note = document.getElementById('topic-note').value.trim();
             if (!name) return alert('Enter topic name');
-            if (!appState.syllabus) appState.syllabus = [];
-            appState.syllabus.push({ id: Date.now(), subject: subject, name: name, note: note, completed: false });
+            if (!window.appState.syllabus) window.appState.syllabus = [];
+            window.appState.syllabus.push({ id: Date.now(), subject: subject, name: name, note: note, completed: false });
             document.getElementById('topic-name').value = '';
             document.getElementById('topic-note').value = '';
-            saveToStorage();
-            renderSyllabus();
-        }
+            window.saveToStorage();
+            window.renderSyllabus();
+        };
 
-        function toggleTopic(id) {
-            var t = (appState.syllabus || []).find(function(x) { return x.id === id; });
-            if (t) { t.completed = !t.completed; saveToStorage(); renderSyllabus(); }
-        }
+        window.toggleTopic = function(id) {
+            var t = (window.appState.syllabus || []).find(function(x) { return x.id === id; });
+            if (t) { t.completed = !t.completed; window.saveToStorage(); window.renderSyllabus(); }
+        };
 
-        function deleteTopic(id) {
-            appState.syllabus = (appState.syllabus || []).filter(function(x) { return x.id !== id; });
-            saveToStorage();
-            renderSyllabus();
-        }
+        window.deleteTopic = function(id) {
+            window.appState.syllabus = (window.appState.syllabus || []).filter(function(x) { return x.id !== id; });
+            window.saveToStorage();
+            window.renderSyllabus();
+        };
 
-        function archiveSyllabus() {
+        window.archiveSyllabus = function() {
             if (confirm('Clear all completed topics?')) {
-                appState.syllabus = (appState.syllabus || []).filter(function(t) { return !t.completed; });
-                saveToStorage();
-                renderSyllabus();
+                window.appState.syllabus = (window.appState.syllabus || []).filter(function(t) { return !t.completed; });
+                window.saveToStorage();
+                window.renderSyllabus();
             }
-        }
+        };
 
-        function renderSyllabus() {
+        window.renderSyllabus = function() {
             var list = document.getElementById('syllabus-list');
             if (!list) return;
             list.innerHTML = '';
-            var syllabus = appState.syllabus || [];
+            var syllabus = window.appState.syllabus || [];
             ['Physics', 'Chemistry', 'Maths', 'General'].forEach(function(sub) {
                 var subTopics = syllabus.filter(function(t) { return t.subject === sub; });
                 if (!subTopics.length) return;
@@ -2013,10 +2023,10 @@
             var pPerc = document.getElementById('progress-percent'); if (pPerc) pPerc.innerText = perc + '%';
             var pBar = document.getElementById('overall-progress-bar'); if (pBar) pBar.style.width = perc + '%';
             if (window.lucide) lucide.createIcons();
-        }
+        };
 
-        function updateCountdown() {
-            var next = appState.nextTest || { name: 'Set Your Next Goal', date: '' };
+        window.updateCountdown = function() {
+            var next = window.appState.nextTest || { name: 'Set Your Next Goal', date: '' };
             var nameEl = document.getElementById('display-next-name');
             if (nameEl) nameEl.innerText = next.name || 'Set Your Next Goal';
             var dateEl = document.getElementById('display-next-date');
@@ -2029,26 +2039,26 @@
             var diff = Math.ceil((new Date(next.date) - new Date()) / (1000 * 60 * 60 * 24));
             if (dateEl) dateEl.innerText = new Date(next.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
             if (countEl) countEl.innerText = diff > 0 ? String(diff).padStart(2, '0') : '00';
-        }
+        };
 
-        function openNextTestModal() { 
+        window.openNextTestModal = function() { 
             var m = document.getElementById('next-test-modal');
             if (m) m.classList.remove('hidden'); 
-        }
-        function closeNextTestModal() { 
+        };
+        window.closeNextTestModal = function() { 
             var m = document.getElementById('next-test-modal');
             if (m) m.classList.add('hidden'); 
-        }
-        function saveNextTest() {
-            if (!appState.nextTest) appState.nextTest = {};
-            appState.nextTest.name = document.getElementById('nt-name').value;
-            appState.nextTest.date = document.getElementById('nt-date').value;
-            saveToStorage();
-            updateCountdown();
-            closeNextTestModal();
-        }
+        };
+        window.saveNextTest = function() {
+            if (!window.appState.nextTest) window.appState.nextTest = {};
+            window.appState.nextTest.name = document.getElementById('nt-name').value;
+            window.appState.nextTest.date = document.getElementById('nt-date').value;
+            window.saveToStorage();
+            window.updateCountdown();
+            window.closeNextTestModal();
+        };
 
-        function toggleAudio(audioId, btnId) {
+        window.toggleAudio = function(audioId, btnId) {
             var audio = document.getElementById(audioId);
             var btn = document.getElementById(btnId);
             if (!audio || !btn) return;
@@ -2073,18 +2083,18 @@
                 btn.innerHTML = '<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>'; 
                 if (window.lucide) lucide.createIcons(); 
             };
-        }
+        };
 
         // ==========================================
         // 9. BACKUP & RESTORE
         // ==========================================
-        function exportBackup() {
+        window.exportBackup = function() {
             var payload = {
-                tests: appState.tests || [],
-                syllabus: appState.syllabus || [],
-                scheduledTasks: appState.scheduledTasks || [],
-                nextTest: appState.nextTest || {},
-                chatHistory: appState.chatHistory || []
+                tests: window.appState.tests || [],
+                syllabus: window.appState.syllabus || [],
+                scheduledTasks: window.appState.scheduledTasks || [],
+                nextTest: window.appState.nextTest || {},
+                chatHistory: window.appState.chatHistory || []
             };
             var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
             var dl = document.createElement('a');
@@ -2093,56 +2103,56 @@
             document.body.appendChild(dl);
             dl.click();
             dl.remove();
-        }
+        };
 
-        function importBackup(event) {
+        window.importBackup = function(event) {
             var file = event.target.files[0];
             if (!file) return;
             var reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     var parsed = JSON.parse(e.target.result);
-                    if (parsed.tests) appState.tests = parsed.tests;
-                    if (parsed.syllabus) appState.syllabus = parsed.syllabus;
-                    if (parsed.scheduledTasks) appState.scheduledTasks = parsed.scheduledTasks;
-                    else if (parsed.tasks) appState.scheduledTasks = parsed.tasks;
-                    if (parsed.nextTest) appState.nextTest = parsed.nextTest;
-                    if (parsed.chatHistory) appState.chatHistory = parsed.chatHistory;
+                    if (parsed.tests) window.appState.tests = parsed.tests;
+                    if (parsed.syllabus) window.appState.syllabus = parsed.syllabus;
+                    if (parsed.scheduledTasks) window.appState.scheduledTasks = parsed.scheduledTasks;
+                    else if (parsed.tasks) window.appState.scheduledTasks = parsed.tasks;
+                    if (parsed.nextTest) window.appState.nextTest = parsed.nextTest;
+                    if (parsed.chatHistory) window.appState.chatHistory = parsed.chatHistory;
                     
-                    saveToStorage();
-                    renderChart();
-                    renderSyllabus();
-                    updateCountdown();
-                    renderCalendar();
-                    renderChat();
-                    renderDailyQuotaUI();
+                    window.saveToStorage();
+                    window.renderChart();
+                    window.renderSyllabus();
+                    window.updateCountdown();
+                    window.renderCalendar();
+                    window.renderChat();
+                    window.renderDailyQuotaUI();
                     alert('Data successfully restored!');
-                } catch (err) {
+                } catch(err) {
                     alert('Invalid backup file format: ' + err.message);
                 } finally {
                     event.target.value = '';
                 }
             };
             reader.readAsText(file);
-        }
+        };
 
         // ==========================================
         // 10. INITIALIZATION
         // ==========================================
         window.onload = function() {
-            try { renderChart(); } catch(e) { console.error("Chart error:", e); }
-            try { renderSyllabus(); } catch(e) { console.error("Syllabus error:", e); }
-            try { updateCountdown(); } catch(e) { console.error("Countdown error:", e); }
-            try { renderCalendar(); } catch(e) { console.error("Calendar error:", e); }
-            try { renderPipCanvas(); } catch(e) { console.error("PiP error:", e); }
-            try { renderChat(); } catch(e) { console.error("Chat error:", e); }
-            try { renderDailyQuotaUI(); } catch(e) { console.error("Quota error:", e); }
+            try { window.renderChart(); } catch(e) { console.error("Chart error:", e); }
+            try { window.renderSyllabus(); } catch(e) { console.error("Syllabus error:", e); }
+            try { window.updateCountdown(); } catch(e) { console.error("Countdown error:", e); }
+            try { window.renderCalendar(); } catch(e) { console.error("Calendar error:", e); }
+            try { window.renderPipCanvas(); } catch(e) { console.error("PiP error:", e); }
+            try { window.renderChat(); } catch(e) { console.error("Chat error:", e); }
+            try { window.renderDailyQuotaUI(); } catch(e) { console.error("Quota error:", e); }
             if (window.lucide) lucide.createIcons();
 
             setInterval(function() {
                 try {
-                    renderDailyQuotaUI();
-                    if (document.pictureInPictureElement) renderPipCanvas();
+                    window.renderDailyQuotaUI();
+                    if (document.pictureInPictureElement) window.renderPipCanvas();
                 } catch(e){}
             }, 1000);
         };
