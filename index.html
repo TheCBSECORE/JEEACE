@@ -1027,46 +1027,79 @@
             lucide.createIcons();
         }
 
-        function renderTaskMetrics() {
-            const tasks = appState.scheduledTasks;
-            const completed = tasks.filter(t => t.status === 'Completed').length;
-            const inProgress = tasks.filter(t => t.status === 'In Progress').length;
-            const notStarted = tasks.filter(t => t.status === 'Not Started' || t.status === 'Pending').length;
+       // --- Multi-Subject Task Status Graphs ---
+        let taskCharts = {};
 
-            document.getElementById('count-completed').innerText = completed;
-            document.getElementById('count-inprogress').innerText = inProgress;
-            document.getElementById('count-notstarted').innerText = notStarted;
-
-            const ratio = tasks.length ? Math.round((completed / tasks.length) * 100) : 0;
-            document.getElementById('overall-task-ratio-text').innerText = `${ratio}% (${completed}/${tasks.length})`;
-            document.getElementById('overall-task-progress-bar').style.width = `${ratio}%`;
-
-            const ctx = document.getElementById('taskDonutChart');
+        function buildDoughnut(canvasId, done, inProg, pending) {
+            const ctx = document.getElementById(canvasId);
             if (!ctx) return;
 
-            const phy = tasks.filter(t => t.subject === 'Physics').length;
-            const chem = tasks.filter(t => t.subject === 'Chemistry').length;
-            const math = tasks.filter(t => t.subject === 'Maths').length;
-            const allen = tasks.filter(t => t.subject === 'Allen' || t.subject === 'General').length;
+            if (taskCharts[canvasId]) {
+                taskCharts[canvasId].destroy();
+            }
 
-            if (taskDonutChart) taskDonutChart.destroy();
-            taskDonutChart = new Chart(ctx, {
+            const total = done + inProg + pending;
+            const data = total === 0 ? [0, 0, 1] : [done, inProg, pending];
+            const colors = total === 0 
+                ? ['#1e293b', '#1e293b', '#334155'] 
+                : ['#10b981', '#f59e0b', '#475569'];
+
+            taskCharts[canvasId] = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Physics', 'Chemistry', 'Maths', 'Routine'],
+                    labels: ['Completed', 'In Progress', 'Pending/Not Started'],
                     datasets: [{
-                        data: tasks.length ? [phy, chem, math, allen] : [1, 1, 1, 1],
-                        backgroundColor: tasks.length ? ['#3b82f6', '#10b981', '#f97316', '#a855f7'] : ['#334155', '#334155', '#334155', '#334155'],
-                        borderWidth: 0
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 0,
+                        hoverOffset: 3
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    cutout: '70%'
+                    cutout: '72%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: total > 0 }
+                    }
                 }
             });
+        }
+
+        function renderTaskMetrics() {
+            const tasks = appState.scheduledTasks;
+
+            const getCounts = (taskList) => {
+                const done = taskList.filter(t => t.status === 'Completed').length;
+                const inProg = taskList.filter(t => t.status === 'In Progress').length;
+                const pending = taskList.filter(t => t.status !== 'Completed' && t.status !== 'In Progress').length;
+                return { done, inProg, pending, total: taskList.length };
+            };
+
+            // 1. Overall
+            const ov = getCounts(tasks);
+            buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
+            const elOv = document.getElementById('stat-text-overall');
+            if (elOv) elOv.innerText = `${ov.done}/${ov.total} Done (${ov.total ? Math.round((ov.done/ov.total)*100) : 0}%)`;
+
+            // 2. Physics
+            const phy = getCounts(tasks.filter(t => t.subject === 'Physics'));
+            buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
+            const elPhy = document.getElementById('stat-text-physics');
+            if (elPhy) elPhy.innerText = `${phy.done}/${phy.total} Done (${phy.total ? Math.round((phy.done/phy.total)*100) : 0}%)`;
+
+            // 3. Chemistry
+            const chm = getCounts(tasks.filter(t => t.subject === 'Chemistry'));
+            buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
+            const elChm = document.getElementById('stat-text-chemistry');
+            if (elChm) elChm.innerText = `${chm.done}/${chm.total} Done (${chm.total ? Math.round((chm.done/chm.total)*100) : 0}%)`;
+
+            // 4. Maths
+            const mth = getCounts(tasks.filter(t => t.subject === 'Maths'));
+            buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
+            const elMth = document.getElementById('stat-text-maths');
+            if (elMth) elMth.innerText = `${mth.done}/${mth.total} Done (${mth.total ? Math.round((mth.done/mth.total)*100) : 0}%)`;
         }
 
         function closeTaskModal() { document.getElementById('task-modal').classList.add('hidden'); }
