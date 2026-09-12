@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEE Ace | Master Hub</title>
+    <title>JEE Ace</title>
     <link rel="icon" type="image/png" href="logo.png?v=2">
     <link rel="shortcut icon" type="image/png" href="logo.png?v=2">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -80,7 +80,7 @@
             </div>
             <div class="flex flex-col gap-4 text-base font-bold">
                 <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('analytics'); toggleMobileMenu()">📊 Analytics</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('planner'); toggleMobileMenu()">🎯 Syllabus Planner</button>
+                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('planner'); toggleMobileMenu()">🎯 Test Planner</button>
                 <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('daily'); toggleMobileMenu()">📅 Daily Planner & Calendar</button>
                 <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('f1hub'); toggleMobileMenu()">🏎️ F1 Hub</button>
                 <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('goals'); toggleMobileMenu()">🏆 Goals</button>
@@ -1659,6 +1659,75 @@
         }
 
         // ==========================================
+        // --- DAILY QUOTA & REWARD LOGIC (12 AM AUTO RESET) ---
+        // ==========================================
+        const QUOTA_KEY = 'jee_daily_quota';
+
+        function getStoredQuota() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const stored = JSON.parse(localStorage.getItem(QUOTA_KEY));
+
+            // Auto-reset if stored date is not today (passes 12:00 AM midnight)
+            if (!stored || stored.date !== todayStr) {
+                const fresh = {
+                    date: todayStr,
+                    revision: false,
+                    maths: false,
+                    phy: false,
+                    chem: false
+                };
+                localStorage.setItem(QUOTA_KEY, JSON.stringify(fresh));
+                return fresh;
+            }
+            return stored;
+        }
+
+        function toggleDailyQuota(taskKey) {
+            const quota = getStoredQuota();
+            const checkbox = document.getElementById(`quota-${taskKey}`);
+            if (checkbox) {
+                quota[taskKey] = checkbox.checked;
+                localStorage.setItem(QUOTA_KEY, JSON.stringify(quota));
+                renderDailyQuotaUI();
+            }
+        }
+
+        function renderDailyQuotaUI() {
+            const quota = getStoredQuota();
+            ['revision', 'maths', 'phy', 'chem'].forEach(key => {
+                const cb = document.getElementById(`quota-${key}`);
+                if (cb) cb.checked = !!quota[key];
+            });
+
+            const completedCount = ['revision', 'maths', 'phy', 'chem'].filter(k => quota[k]).length;
+            const rewardBox = document.getElementById('quota-reward-box');
+            const rewardIcon = document.getElementById('reward-icon');
+            const rewardTitle = document.getElementById('reward-title');
+            const rewardStatus = document.getElementById('reward-status');
+
+            if (completedCount === 4) {
+                // UNLOCKED STATE
+                rewardBox.className = "w-full md:w-auto p-3.5 rounded-2xl border border-amber-500/50 bg-gradient-to-r from-amber-500/20 to-emerald-500/20 shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center gap-3 transition-all min-w-[210px] animate-pulse";
+                rewardIcon.className = "w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shadow-lg";
+                rewardIcon.innerHTML = `<i data-lucide="unlock" class="w-5 h-5 text-slate-950"></i>`;
+                rewardTitle.className = "text-xs font-black text-amber-300";
+                rewardTitle.innerText = "1h Reward Unlocked! 🎮";
+                rewardStatus.className = "text-[10px] text-emerald-400 font-bold";
+                rewardStatus.innerText = "All 4 Done • Enjoy your time";
+            } else {
+                // LOCKED STATE
+                rewardBox.className = "w-full md:w-auto p-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 flex items-center gap-3 transition-all min-w-[210px]";
+                rewardIcon.className = "w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center";
+                rewardIcon.innerHTML = `<i data-lucide="lock" class="w-5 h-5"></i>`;
+                rewardTitle.className = "text-xs font-bold text-slate-400";
+                rewardTitle.innerText = "1h Entertainment Locked";
+                rewardStatus.className = "text-[10px] text-slate-500 font-mono";
+                rewardStatus.innerText = `${completedCount} / 4 Targets Done`;
+            }
+            lucide.createIcons();
+        }
+
+        // ==========================================
         // --- AI COACH (STRUCTURED & CALIBRATED) ---
         // ==========================================
         function toggleAIChat() {
@@ -1840,9 +1909,11 @@ RULES:
             renderCalendar();
             renderPipCanvas();
             renderChat();
+            renderDailyQuotaUI();
             lucide.createIcons();
 
             setInterval(() => {
+                renderDailyQuotaUI();
                 if (document.pictureInPictureElement) renderPipCanvas();
             }, 1000);
         };
