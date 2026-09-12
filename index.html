@@ -804,7 +804,7 @@
             tests: JSON.parse(localStorage.getItem('jee_tests')) || [],
             syllabus: JSON.parse(localStorage.getItem('jee_syllabus')) || [],
             scheduledTasks: JSON.parse(localStorage.getItem('jee_tasks')) || [],
-            nextTest: JSON.parse(localStorage.getItem('jee_next_test')) || { name: 'Next Major Test', date: '' },
+            nextTest: JSON.parse(localStorage.getItem('jee_next_test')) || { name: 'Mains | Minor Test - 8', date: '2026-09-13' },
             apiKey: localStorage.getItem('jee_api_key') || '',
             chatHistory: JSON.parse(localStorage.getItem('jee_ai_chats')) || []
         };
@@ -932,7 +932,6 @@
             document.getElementById('task-modal').classList.remove('hidden');
         }
 
-        // HTML5 Drag and Drop Handlers
         function onTaskDragStart(e, taskId) {
             e.dataTransfer.setData('text/plain', taskId.toString());
             e.dataTransfer.effectAllowed = 'move';
@@ -954,7 +953,6 @@
             const taskId = parseInt(e.dataTransfer.getData('text/plain'));
             const task = appState.scheduledTasks.find(t => t.id === taskId);
             if (task && task.date !== targetDateStr) {
-                const oldDate = task.date;
                 task.date = targetDateStr;
                 saveToStorage();
                 renderCalendar();
@@ -991,7 +989,6 @@
                     const cell = document.createElement('div');
                     cell.className = `calendar-cell p-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors border-r border-b border-slate-800/70 flex flex-col justify-between group ${isToday ? 'bg-indigo-950/20' : ''}`;
                     
-                    // Enable Drag and Drop
                     cell.ondragover = (e) => onCellDragOver(e);
                     cell.ondragleave = (e) => onCellDragLeave(e);
                     cell.ondrop = (e) => onCellDrop(e, dateStr);
@@ -1049,7 +1046,6 @@
             const tasks = appState.scheduledTasks.filter(t => t.date === dateStr).sort((a, b) => (a.start || '').localeCompare(b.start || ''));
             document.getElementById('tasks-stats-badge').innerText = `${tasks.length} Routines Scheduled`;
 
-            // Total day duration
             let totalMins = 0;
             tasks.forEach(t => {
                 if (t.duration) totalMins += Number(t.duration);
@@ -1092,7 +1088,6 @@
             lucide.createIcons();
         }
 
-        // --- Task Status Graphs ---
         let taskCharts = {};
 
         function buildDoughnut(canvasId, done, inProg, pending) {
@@ -1672,7 +1667,7 @@
         }
 
         // ==========================================
-        // --- DAILY QUOTA & REWARDS (AUTO MIDNIGHT RESET) ---
+        // --- DAILY QUOTA & REWARDS ---
         // ==========================================
         const QUOTA_KEY = 'jee_daily_quota';
 
@@ -1732,7 +1727,7 @@
         }
 
         // ==========================================
-        // --- AI COACH WITH CALENDAR ACTIONS & UNDO ---
+        // --- AI COACH & AUTOMATION CORE ---
         // ==========================================
         function toggleAIChat() {
             document.getElementById('ai-chatbox').classList.toggle('hidden');
@@ -1749,7 +1744,7 @@
         function formatMarkdown(text) {
             if (!text) return '';
             let parsed = text
-                .replace(/```json[\s\S]*?```/g, '') // Hide raw action blocks
+                .replace(/```json[\s\S]*?```/g, '')
                 .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-indigo-400 mt-2 mb-1">$1</h4>')
                 .replace(/^## (.*$)/gim, '<h3 class="text-base font-bold text-white mt-3 mb-1.5">$1</h3>')
                 .replace(/^# (.*$)/gim, '<h2 class="text-lg font-black text-white mt-3 mb-2">$1</h2>')
@@ -1762,7 +1757,6 @@
             return parsed;
         }
 
-        // Action Confirmation Box Execution
         function confirmAIAction(batchId) {
             if (!window.aiActionBatches || !window.aiActionBatches[batchId]) return;
             const batch = window.aiActionBatches[batchId];
@@ -1775,7 +1769,7 @@
             if (batch.type === 'schedule') {
                 batch.items.forEach(task => {
                     appState.scheduledTasks.push({
-                        id: task.id || Date.now() + Math.random(),
+                        id: Date.now() + Math.random(),
                         date: task.date || new Date().toISOString().split('T')[0],
                         title: task.title,
                         subject: task.subject || 'General',
@@ -1786,6 +1780,7 @@
                     });
                 });
                 renderCalendar();
+                switchTab('daily');
             } else if (batch.type === 'syllabus') {
                 batch.items.forEach(item => {
                     appState.syllabus.push({
@@ -1797,6 +1792,7 @@
                     });
                 });
                 renderSyllabus();
+                switchTab('planner');
             }
 
             saveToStorage();
@@ -1839,14 +1835,14 @@
             if (!window.aiActionBatches) window.aiActionBatches = {};
 
             if (!appState.chatHistory.length) {
-                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>. You can paste your test syllabus or ask me to prepare your daily schedule — I will organize it and let you lock it directly into your calendar with confirmation!</div>`;
+                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have real-time access to your <strong>Syllabus (${appState.syllabus.length} topics)</strong> and <strong>Daily Planner (${appState.scheduledTasks.length} tasks)</strong>. You can ask me to add topics, plan routines, or track backlogs.</div>`;
             } else {
                 appState.chatHistory.forEach((m, idx) => {
                     const bubble = document.createElement('div');
                     bubble.className = m.role === 'user' ? 'flex justify-end' : 'flex justify-start';
 
                     let actionBoxHtml = '';
-                    if (m.actionData) {
+                    if (m.actionData && m.actionData.items && m.actionData.items.length) {
                         const batchId = `b_${idx}`;
                         window.aiActionBatches[batchId] = m.actionData;
                         const actionItems = m.actionData.items.map(it => `
@@ -1855,20 +1851,20 @@
                                     <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${getSubjectStyle(it.subject)}">${it.subject}</span>
                                     <span class="text-white font-medium truncate">${it.title}</span>
                                 </div>
-                                <span class="text-slate-400 font-mono text-[10px] shrink-0">${it.duration ? it.duration + 'm' : (it.start || 'Planned')}</span>
+                                <span class="text-slate-400 font-mono text-[10px] shrink-0">${it.duration ? it.duration + 'm' : (it.start || 'Pending')}</span>
                             </div>
                         `).join('');
 
                         actionBoxHtml = `
                             <div id="action-box-${batchId}" class="mt-3 p-3 rounded-2xl bg-slate-950/90 border border-indigo-500/40 space-y-2">
                                 <div class="flex items-center justify-between text-[11px] font-bold text-indigo-300">
-                                    <span class="flex items-center gap-1.5"><i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i> ${m.actionData.type === 'schedule' ? 'Proposed Routines' : 'New Syllabus Topics'}</span>
-                                    <span class="font-mono text-slate-500">${m.actionData.items.length} items</span>
+                                    <span class="flex items-center gap-1.5"><i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add to ${m.actionData.type === 'schedule' ? 'Calendar Planner' : 'Test Syllabus'}</span>
+                                    <span class="font-mono text-slate-500">${m.actionData.items.length} item(s)</span>
                                 </div>
                                 <div class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar">${actionItems}</div>
                                 <div class="flex gap-2 pt-1">
-                                    <button onclick="confirmAIAction('${batchId}')" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1">
-                                        <i data-lucide="check" class="w-3.5 h-3.5"></i> Add to Calendar
+                                    <button onclick="confirmAIAction('${batchId}')" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 shadow-md">
+                                        <i data-lucide="check" class="w-3.5 h-3.5"></i> Confirm & Add
                                     </button>
                                 </div>
                             </div>
@@ -1888,6 +1884,39 @@
             lucide.createIcons();
         }
 
+        // Fallback local intent detector in case LLM forgets to format JSON block
+        function detectLocalIntent(userQuery, aiResponse) {
+            const q = userQuery.toLowerCase();
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            if (q.includes('syllabus') || q.includes('topic') || q.includes('chapter') || q.includes('add vectors') || q.includes('add to test')) {
+                let subject = 'General';
+                if (q.includes('physic') || q.includes('vector') || q.includes('kinematic') || q.includes('force') || q.includes('nlm') || q.includes('work')) subject = 'Physics';
+                else if (q.includes('chem') || q.includes('mole') || q.includes('organic') || q.includes('inorganic')) subject = 'Chemistry';
+                else if (q.includes('math') || q.includes('circle') || q.includes('line') || q.includes('calculus') || q.includes('trigo')) subject = 'Maths';
+
+                let title = userQuery.replace(/add|to|my|test|syllabus|in|please/gi, '').trim();
+                if (!title) title = "Vectors";
+                title = title.charAt(0).toUpperCase() + title.slice(1);
+
+                return {
+                    type: 'syllabus',
+                    items: [{ title, subject, note: 'Added via AI Mentor' }]
+                };
+            }
+
+            if (q.includes('daily') || q.includes('routine') || q.includes('calendar') || q.includes('schedule') || q.includes('task')) {
+                return {
+                    type: 'schedule',
+                    items: [
+                        { title: 'Self-Study & Problem Solving', subject: 'General', date: todayStr, start: '14:00', end: '16:00', duration: 120 },
+                        { title: 'Question Solving & Revision', subject: 'Physics', date: todayStr, start: '16:30', end: '18:00', duration: 90 }
+                    ]
+                };
+            }
+            return null;
+        }
+
         async function handleUserSubmit(e) {
             e.preventDefault();
             const input = document.getElementById('ai-user-input');
@@ -1902,7 +1931,7 @@
             const loadingBubble = document.createElement('div');
             loadingBubble.className = "flex justify-start";
             loadingBubble.id = "ai-loading-bubble";
-            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking & Calculating...</div>`;
+            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking & Updating...</div>`;
             thread.appendChild(loadingBubble);
             thread.scrollTop = thread.scrollHeight;
             lucide.createIcons();
@@ -1911,11 +1940,15 @@
                 const response = await callGeminiAPI(prompt);
                 document.getElementById('ai-loading-bubble')?.remove();
 
-                // Detect JSON block for tasks / syllabus actions
                 let actionData = null;
                 const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
                 if (jsonMatch) {
                     try { actionData = JSON.parse(jsonMatch[1]); } catch (e) {}
+                }
+
+                // If LLM returned text but no JSON, apply smart fallback
+                if (!actionData) {
+                    actionData = detectLocalIntent(prompt, response);
                 }
 
                 appState.chatHistory.push({ role: 'assistant', content: response, actionData });
@@ -1928,38 +1961,65 @@
         }
 
         async function callGeminiAPI(userQuery) {
-            if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
+            if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon in top right of chat.");
             
             const now = new Date();
             const todayStr = now.toISOString().split('T')[0];
             const currentRealTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
+            // Complete serialization of app data so model has 100% full visibility
+            const syllabusSummary = JSON.stringify(appState.syllabus.map(s => ({ subject: s.subject, topic: s.name, completed: s.completed })));
+            const scheduleSummary = JSON.stringify(appState.scheduledTasks.map(t => ({ date: t.date, title: t.title, subject: t.subject, start: t.start, end: t.end, duration: t.duration, status: t.status })));
+            const milestoneSummary = JSON.stringify(appState.nextTest);
+
             const systemPrompt = `
 You are Laksh's grounded, candid, and disciplined JEE Mentor.
 Goal: IIT Bombay CSE 2028 (AIR < 60).
-Schedule: Allen Coaching daily 7:00 AM - 12:00 PM. Afternoons & evenings are for self-study and problem-solving.
-Current Time: ${currentRealTime} (IST) | Today: ${currentRealDate} (${todayStr})
+Schedule: Allen Coaching daily 7:00 AM - 12:00 PM.
+Live System Clock: ${currentRealTime} (IST) | Today: ${currentRealDate} (${todayStr})
 
-TASK SCHEDULING & SYLLABUS AUTOMATION RULE:
-If Laksh asks to plan his day, create daily routines, add tasks, or inputs chapters/syllabus for an upcoming test:
-1. Provide a concise, motivating schedule breakdown in text.
-2. In the same response, APPEND a strict JSON block wrapped in \`\`\`json ... \`\`\` describing the items to be added so the UI can present an interactive confirmation box:
+LIVE APP DATA ACCESSED:
+- Upcoming Test Milestone: ${milestoneSummary}
+- Full Syllabus Tracker: ${syllabusSummary}
+- Calendar Scheduled Tasks: ${scheduleSummary}
+
+CRITICAL INSTRUCTION FOR DIRECT ACTIONS:
+When Laksh asks you to add, adjust, schedule, or prepare syllabus topics or daily routines:
+1. Provide a brief, supportive 1-2 sentence response.
+2. YOU MUST APPEND A JSON BLOCK AT THE END OF YOUR RESPONSE wrapped in \`\`\`json ... \`\`\` so the interface can display an interactive confirmation button for Laksh to click.
+
+Format for adding to test syllabus:
+\`\`\`json
 {
-  "type": "schedule", // or "syllabus"
+  "type": "syllabus",
   "items": [
     {
-      "title": "Task or Chapter Name",
-      "subject": "Physics" // "Physics" | "Chemistry" | "Maths" | "General",
-      "date": "${todayStr}",
-      "start": "14:00", // optional 24-hr time
-      "end": "15:00",   // optional 24-hr time
-      "duration": 60,   // estimated duration in minutes
-      "note": "Optional note"
+      "title": "Vectors",
+      "subject": "Physics",
+      "note": "For ${appState.nextTest.name || 'Upcoming Test'}"
     }
   ]
 }
-For regular queries or casual greetings, answer normally without the JSON block.
+\`\`\`
+
+Format for adding daily routines / tasks to Calendar:
+\`\`\`json
+{
+  "type": "schedule",
+  "items": [
+    {
+      "title": "Work Energy Theorem PYQs",
+      "subject": "Physics",
+      "date": "${todayStr}",
+      "start": "14:00",
+      "end": "15:00",
+      "duration": 60
+    }
+  ]
+}
+\`\`\`
+Do not just say "I have added it" without including the JSON block. Always output the JSON block so the UI can execute it.
             `.trim();
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
@@ -2011,7 +2071,7 @@ For regular queries or casual greetings, answer normally without the JSON block.
             reader.readAsText(file);
         }
 
-        // Initialize Application
+        // Initialize Everything
         window.onload = () => {
             renderChart();
             renderSyllabus();
