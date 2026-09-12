@@ -423,11 +423,11 @@
                             <span class="text-xs font-semibold text-slate-200">2. Maths HW</span>
                         </label>
                         <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-phy" onchange="toggleDailyQuota('phy')" class="w-4 h-4 rounded text-blue-500 bg-slate-900 border-slate-700 focus:ring-blue-500">
+                            <input type="checkbox" id="quota-phy" onchange="toggleDailyQuota('phy')" class="w-4 h-4 rounded text-blue-500 bg-slate-950 border-slate-700 focus:ring-blue-500">
                             <span class="text-xs font-semibold text-slate-200">3. Physics HW</span>
                         </label>
                         <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-emerald-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-chem" onchange="toggleDailyQuota('chem')" class="w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
+                            <input type="checkbox" id="quota-chem" onchange="toggleDailyQuota('chem')" class="w-4 h-4 rounded text-emerald-500 bg-slate-950 border-slate-700 focus:ring-emerald-500">
                             <span class="text-xs font-semibold text-slate-200">4. Chem 10-Q</span>
                         </label>
                     </div>
@@ -564,6 +564,57 @@
                     </div>
                 </div>
             </section>
+
+            <!-- INSPIRATIONS (HAM, SENNA, SCHUMI, PICHAI) -->
+            <section>
+                <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> Inspirations
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div class="glass-card p-5 rounded-2xl text-center">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-[#e10600] overflow-hidden bg-slate-900">
+                            <img src="ham.jpg" alt="Sir Lewis Hamilton" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="text-xs font-black text-white">Sir Lewis Hamilton</h4>
+                        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
+                            <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">GOAT</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 7<br>Grand Prix Wins: 105<br>Podium Finishes: 204</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl text-center">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-yellow-500 overflow-hidden bg-slate-900">
+                            <img src="sen.jpg" alt="Ayrton Senna" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="text-xs font-black text-white">Ayrton Senna</h4>
+                        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
+                            <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 3<br>Grand Prix Wins: 41<br>Podium Finishes: 80</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl text-center">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-red-500 overflow-hidden bg-slate-900">
+                            <img src="shu.jpg" alt="Michael Schumacher" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="text-xs font-black text-white">Michael Schumacher</h4>
+                        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
+                            <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 7<br>Grand Prix Wins: 91<br>Podium Finishes: 155</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl text-center">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-blue-500 overflow-hidden bg-slate-900">
+                            <img src="sun.webp" alt="Sundar Pichai" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="text-xs font-black text-white">Sundar Pichai</h4>
+                        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
+                            <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">Google CEO</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">IIT Kharagpur Alumnus</p>
+                    </div>
+                </div>
+            </section>
         </div>
 
     </main>
@@ -648,7 +699,7 @@
             </div>
             <div id="ai-chat-thread" class="flex-1 p-3.5 overflow-y-auto space-y-3 custom-scrollbar text-xs"></div>
             <form onsubmit="handleUserSubmit(event)" class="p-2.5 bg-slate-950 border-t border-slate-800 flex gap-1.5">
-                <input type="text" id="ai-user-input" placeholder="Plan tasks, add syllabus, or ask queries..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                <input type="text" id="ai-user-input" placeholder="Ask questions, add syllabus, or schedule routines..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
                 <button type="submit" id="ai-send-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl"><i data-lucide="send" class="w-3.5 h-3.5"></i></button>
             </form>
         </div>
@@ -824,7 +875,7 @@
             localStorage.setItem('jee_ai_chats', JSON.stringify(appState.chatHistory));
         };
 
-        // --- Time Duration Calculations ---
+        // --- Time Calculations ---
         function calculateDurationMinutes(start, end) {
             if (!start || !end) return 0;
             const [sh, sm] = start.split(':').map(Number);
@@ -1727,7 +1778,7 @@
         }
 
         // ==========================================
-        // --- AI COACH & AUTOMATION CORE ---
+        // --- AI COACH & AUTOMATION (DUAL ACTION BUTTONS) ---
         // ==========================================
         function toggleAIChat() {
             document.getElementById('ai-chatbox').classList.toggle('hidden');
@@ -1757,52 +1808,76 @@
             return parsed;
         }
 
-        function confirmAIAction(batchId) {
+        // Targeted Action: Add directly to Syllabus
+        function addBatchToSyllabus(batchId) {
             if (!window.aiActionBatches || !window.aiActionBatches[batchId]) return;
             const batch = window.aiActionBatches[batchId];
 
             lastActionBatch = {
-                type: batch.type,
+                type: 'syllabus',
                 items: JSON.parse(JSON.stringify(batch.items))
             };
 
-            if (batch.type === 'schedule') {
-                batch.items.forEach(task => {
-                    appState.scheduledTasks.push({
-                        id: Date.now() + Math.random(),
-                        date: task.date || new Date().toISOString().split('T')[0],
-                        title: task.title,
-                        subject: task.subject || 'General',
-                        start: task.start || '',
-                        end: task.end || '',
-                        duration: task.duration || 45,
-                        status: 'Not Started'
-                    });
+            batch.items.forEach(item => {
+                appState.syllabus.push({
+                    id: Date.now() + Math.random(),
+                    subject: item.subject || 'General',
+                    name: item.title,
+                    note: item.note || 'Added via AI Coach',
+                    completed: false
                 });
-                renderCalendar();
-                switchTab('daily');
-            } else if (batch.type === 'syllabus') {
-                batch.items.forEach(item => {
-                    appState.syllabus.push({
-                        id: Date.now() + Math.random(),
-                        subject: item.subject || 'General',
-                        name: item.title,
-                        note: item.note || '',
-                        completed: false
-                    });
-                });
-                renderSyllabus();
-                switchTab('planner');
-            }
+            });
 
             saveToStorage();
+            renderSyllabus();
 
             const box = document.getElementById(`action-box-${batchId}`);
             if (box) {
                 box.innerHTML = `
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/40">
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-indigo-950/50 border border-indigo-500/40">
+                        <div class="flex items-center gap-2 text-indigo-300 text-xs font-bold">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400"></i> Added to Test Syllabus!
+                        </div>
+                        <button onclick="undoAIAction('${batchId}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono border border-slate-700">Undo</button>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        // Targeted Action: Add directly to Daily Planner
+        function addBatchToPlanner(batchId) {
+            if (!window.aiActionBatches || !window.aiActionBatches[batchId]) return;
+            const batch = window.aiActionBatches[batchId];
+            const targetDate = batch.date || new Date().toISOString().split('T')[0];
+
+            lastActionBatch = {
+                type: 'schedule',
+                items: JSON.parse(JSON.stringify(batch.items))
+            };
+
+            batch.items.forEach(task => {
+                appState.scheduledTasks.push({
+                    id: Date.now() + Math.random(),
+                    date: task.date || targetDate,
+                    title: task.title,
+                    subject: task.subject || 'General',
+                    start: task.start || '',
+                    end: task.end || '',
+                    duration: task.duration || 45,
+                    status: 'Not Started'
+                });
+            });
+
+            saveToStorage();
+            renderCalendar();
+
+            const box = document.getElementById(`action-box-${batchId}`);
+            if (box) {
+                box.innerHTML = `
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-emerald-950/50 border border-emerald-500/40">
                         <div class="flex items-center gap-2 text-emerald-300 text-xs font-bold">
-                            <i data-lucide="check-circle" class="w-4 h-4"></i> Added to ${batch.type === 'schedule' ? 'Calendar' : 'Syllabus'}!
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Added to Daily Planner!
                         </div>
                         <button onclick="undoAIAction('${batchId}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono border border-slate-700">Undo</button>
                     </div>
@@ -1813,12 +1888,11 @@
 
         function undoAIAction(batchId) {
             if (!lastActionBatch) return;
+            const titles = lastActionBatch.items.map(i => i.title);
             if (lastActionBatch.type === 'schedule') {
-                const titles = lastActionBatch.items.map(i => i.title);
                 appState.scheduledTasks = appState.scheduledTasks.filter(t => !titles.includes(t.title));
                 renderCalendar();
             } else if (lastActionBatch.type === 'syllabus') {
-                const titles = lastActionBatch.items.map(i => i.title);
                 appState.syllabus = appState.syllabus.filter(s => !titles.includes(s.name));
                 renderSyllabus();
             }
@@ -1835,7 +1909,7 @@
             if (!window.aiActionBatches) window.aiActionBatches = {};
 
             if (!appState.chatHistory.length) {
-                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have real-time access to your <strong>Syllabus (${appState.syllabus.length} topics)</strong> and <strong>Daily Planner (${appState.scheduledTasks.length} tasks)</strong>. You can ask me to add topics, plan routines, or track backlogs.</div>`;
+                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>, daily routines, syllabus progress, and test history. What are we optimizing today?</div>`;
             } else {
                 appState.chatHistory.forEach((m, idx) => {
                     const bubble = document.createElement('div');
@@ -1851,20 +1925,23 @@
                                     <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${getSubjectStyle(it.subject)}">${it.subject}</span>
                                     <span class="text-white font-medium truncate">${it.title}</span>
                                 </div>
-                                <span class="text-slate-400 font-mono text-[10px] shrink-0">${it.duration ? it.duration + 'm' : (it.start || 'Pending')}</span>
+                                <span class="text-slate-400 font-mono text-[10px] shrink-0">${it.duration ? it.duration + 'm' : (it.start || 'Routine')}</span>
                             </div>
                         `).join('');
 
                         actionBoxHtml = `
                             <div id="action-box-${batchId}" class="mt-3 p-3 rounded-2xl bg-slate-950/90 border border-indigo-500/40 space-y-2">
                                 <div class="flex items-center justify-between text-[11px] font-bold text-indigo-300">
-                                    <span class="flex items-center gap-1.5"><i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add to ${m.actionData.type === 'schedule' ? 'Calendar Planner' : 'Test Syllabus'}</span>
+                                    <span class="flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5"></i> Detected Tasks / Chapters</span>
                                     <span class="font-mono text-slate-500">${m.actionData.items.length} item(s)</span>
                                 </div>
-                                <div class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar">${actionItems}</div>
-                                <div class="flex gap-2 pt-1">
-                                    <button onclick="confirmAIAction('${batchId}')" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 shadow-md">
-                                        <i data-lucide="check" class="w-3.5 h-3.5"></i> Confirm & Add
+                                <div class="space-y-1.5 max-h-36 overflow-y-auto custom-scrollbar">${actionItems}</div>
+                                <div class="grid grid-cols-2 gap-2 pt-1">
+                                    <button onclick="addBatchToSyllabus('${batchId}')" class="py-2 px-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all">
+                                        <i data-lucide="book-open" class="w-3 h-3"></i> Add to Syllabus
+                                    </button>
+                                    <button onclick="addBatchToPlanner('${batchId}')" class="py-2 px-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all">
+                                        <i data-lucide="calendar" class="w-3 h-3"></i> Add to Planner
                                     </button>
                                 </div>
                             </div>
@@ -1884,39 +1961,6 @@
             lucide.createIcons();
         }
 
-        // Fallback local intent detector in case LLM forgets to format JSON block
-        function detectLocalIntent(userQuery, aiResponse) {
-            const q = userQuery.toLowerCase();
-            const todayStr = new Date().toISOString().split('T')[0];
-
-            if (q.includes('syllabus') || q.includes('topic') || q.includes('chapter') || q.includes('add vectors') || q.includes('add to test')) {
-                let subject = 'General';
-                if (q.includes('physic') || q.includes('vector') || q.includes('kinematic') || q.includes('force') || q.includes('nlm') || q.includes('work')) subject = 'Physics';
-                else if (q.includes('chem') || q.includes('mole') || q.includes('organic') || q.includes('inorganic')) subject = 'Chemistry';
-                else if (q.includes('math') || q.includes('circle') || q.includes('line') || q.includes('calculus') || q.includes('trigo')) subject = 'Maths';
-
-                let title = userQuery.replace(/add|to|my|test|syllabus|in|please/gi, '').trim();
-                if (!title) title = "Vectors";
-                title = title.charAt(0).toUpperCase() + title.slice(1);
-
-                return {
-                    type: 'syllabus',
-                    items: [{ title, subject, note: 'Added via AI Mentor' }]
-                };
-            }
-
-            if (q.includes('daily') || q.includes('routine') || q.includes('calendar') || q.includes('schedule') || q.includes('task')) {
-                return {
-                    type: 'schedule',
-                    items: [
-                        { title: 'Self-Study & Problem Solving', subject: 'General', date: todayStr, start: '14:00', end: '16:00', duration: 120 },
-                        { title: 'Question Solving & Revision', subject: 'Physics', date: todayStr, start: '16:30', end: '18:00', duration: 90 }
-                    ]
-                };
-            }
-            return null;
-        }
-
         async function handleUserSubmit(e) {
             e.preventDefault();
             const input = document.getElementById('ai-user-input');
@@ -1931,7 +1975,7 @@
             const loadingBubble = document.createElement('div');
             loadingBubble.className = "flex justify-start";
             loadingBubble.id = "ai-loading-bubble";
-            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking & Updating...</div>`;
+            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking...</div>`;
             thread.appendChild(loadingBubble);
             thread.scrollTop = thread.scrollHeight;
             lucide.createIcons();
@@ -1946,11 +1990,6 @@
                     try { actionData = JSON.parse(jsonMatch[1]); } catch (e) {}
                 }
 
-                // If LLM returned text but no JSON, apply smart fallback
-                if (!actionData) {
-                    actionData = detectLocalIntent(prompt, response);
-                }
-
                 appState.chatHistory.push({ role: 'assistant', content: response, actionData });
                 saveToStorage();
                 renderChat();
@@ -1961,65 +2000,44 @@
         }
 
         async function callGeminiAPI(userQuery) {
-            if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon in top right of chat.");
+            if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
             
             const now = new Date();
             const todayStr = now.toISOString().split('T')[0];
             const currentRealTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-            // Complete serialization of app data so model has 100% full visibility
-            const syllabusSummary = JSON.stringify(appState.syllabus.map(s => ({ subject: s.subject, topic: s.name, completed: s.completed })));
-            const scheduleSummary = JSON.stringify(appState.scheduledTasks.map(t => ({ date: t.date, title: t.title, subject: t.subject, start: t.start, end: t.end, duration: t.duration, status: t.status })));
-            const milestoneSummary = JSON.stringify(appState.nextTest);
+            const syllabusList = JSON.stringify(appState.syllabus.map(s => `${s.subject}: ${s.name} (${s.completed ? 'Done' : 'Pending'})`));
+            const activeSchedule = JSON.stringify(appState.scheduledTasks.filter(t => t.date === todayStr).map(t => `${t.title} [${t.start || ''}-${t.end || ''}, ${t.duration || 45}m]`));
 
             const systemPrompt = `
 You are Laksh's grounded, candid, and disciplined JEE Mentor.
 Goal: IIT Bombay CSE 2028 (AIR < 60).
 Schedule: Allen Coaching daily 7:00 AM - 12:00 PM.
-Live System Clock: ${currentRealTime} (IST) | Today: ${currentRealDate} (${todayStr})
+Current Real Time: ${currentRealTime} | Today: ${currentRealDate} (${todayStr})
+Current Test Goal: ${appState.nextTest.name} on ${appState.nextTest.date}
 
-LIVE APP DATA ACCESSED:
-- Upcoming Test Milestone: ${milestoneSummary}
-- Full Syllabus Tracker: ${syllabusSummary}
-- Calendar Scheduled Tasks: ${scheduleSummary}
+LIVE DATA ACCESSED:
+- Current Syllabus Topics: ${syllabusList}
+- Today's Planner Tasks: ${activeSchedule}
 
-CRITICAL INSTRUCTION FOR DIRECT ACTIONS:
-When Laksh asks you to add, adjust, schedule, or prepare syllabus topics or daily routines:
-1. Provide a brief, supportive 1-2 sentence response.
-2. YOU MUST APPEND A JSON BLOCK AT THE END OF YOUR RESPONSE wrapped in \`\`\`json ... \`\`\` so the interface can display an interactive confirmation button for Laksh to click.
-
-Format for adding to test syllabus:
+IMPORTANT ACTION RULES:
+1. For casual chats, advice, queries, or simple replies like "ok", "cool", "hi": respond normally in 1-2 friendly sentences. NEVER include a JSON block for casual conversation.
+2. SPELLING & CHAPTER CORRECTION: Whenever Laksh mentions a chapter or topic with typos, abbreviations, or informal names (e.g., "staright line", "rotatn", "thermo", "chem bondng", "vektors"), ALWAYS correct and normalize it to the official, standard JEE/NCERT chapter title (e.g., "Straight Lines", "Rotational Motion", "Thermodynamics", "Chemical Bonding", "Vectors") inside both your reply and the JSON item title.
+3. ONLY when Laksh asks to ADD a topic/chapter, create tasks, organize tests, or plan his schedule, provide your answer and APPEND a JSON action block at the very end wrapped in \`\`\`json ... \`\`\`:
 \`\`\`json
 {
-  "type": "syllabus",
+  "date": "${todayStr}",
   "items": [
     {
-      "title": "Vectors",
-      "subject": "Physics",
-      "note": "For ${appState.nextTest.name || 'Upcoming Test'}"
+      "title": "Normalized Corrected Chapter Name",
+      "subject": "Physics", // Must be "Physics" | "Chemistry" | "Maths" | "General"
+      "duration": 60,
+      "note": "Allen Test Prep"
     }
   ]
 }
 \`\`\`
-
-Format for adding daily routines / tasks to Calendar:
-\`\`\`json
-{
-  "type": "schedule",
-  "items": [
-    {
-      "title": "Work Energy Theorem PYQs",
-      "subject": "Physics",
-      "date": "${todayStr}",
-      "start": "14:00",
-      "end": "15:00",
-      "duration": 60
-    }
-  ]
-}
-\`\`\`
-Do not just say "I have added it" without including the JSON block. Always output the JSON block so the UI can execute it.
             `.trim();
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
