@@ -26,8 +26,8 @@
         input[type=number] { -moz-appearance: textfield; }
         
         .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-        .calendar-cell { min-height: 125px; }
-        @media (max-width: 768px) { .calendar-cell { min-height: 80px; } }
+        .calendar-cell { min-height: 145px; }
+        @media (max-width: 768px) { .calendar-cell { min-height: 90px; } }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen pb-28">
@@ -56,7 +56,7 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button onclick="exportBackup()" title="Download JSON Backup" class="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 transition-all">
+                    <button onclick="exportBackup()" title="Download Complete Backup" class="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 transition-all">
                         <i data-lucide="download" class="w-4 h-4"></i>
                     </button>
                     <label title="Restore Backup" class="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
@@ -75,7 +75,7 @@
     <div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl hidden p-6 flex flex-col justify-between">
         <div>
             <div class="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
-                <span class="text-xl font-black text-white">Dashboard Menu</span>
+                <span class="text-xl font-black text-white">Menu</span>
                 <button onclick="toggleMobileMenu()" class="p-2 text-slate-400"><i data-lucide="x"></i></button>
             </div>
             <div class="flex flex-col gap-4 text-base font-bold">
@@ -83,7 +83,7 @@
                 <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('planner'); toggleMobileMenu()">🎯 Syllabus Planner</button>
                 <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('daily'); toggleMobileMenu()">📅 Daily Planner & Calendar</button>
                 <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('f1hub'); toggleMobileMenu()">🏎️ F1 Hub</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('goals'); toggleMobileMenu()">🏆 Goals & Inspirations</button>
+                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('goals'); toggleMobileMenu()">🏆 Goals</button>
             </div>
         </div>
         <p class="text-xs text-slate-500 font-mono text-center">JEE Ace • Laksh (Allen 7 AM - 12 PM)</p>
@@ -93,8 +93,6 @@
         
         <!-- TAB 1: ANALYTICS -->
         <div id="view-analytics" class="space-y-8">
-            
-            <!-- IIT BOMBAY MOTIVATION BANNER -->
             <div class="relative overflow-hidden rounded-3xl border border-indigo-500/30 bg-slate-900 shadow-2xl group">
                 <div class="absolute inset-0 z-0">
                     <img src="iitb.jpg" alt="IIT Bombay Campus Gate" class="w-full h-full object-cover object-center filter brightness-[0.35] contrast-125 transition-transform duration-700 group-hover:scale-105">
@@ -120,9 +118,8 @@
                 </div>
             </div>
 
-            <!-- F1 OFFICIAL BROADCAST TEAM RADIO // SCUDERIA FERRARI LH44 -->
+            <!-- F1 TEAM RADIO // LH44 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <!-- RADIO TRANSMISSION 1 -->
                 <div class="relative bg-black border-[3px] border-[#d40000] p-6 shadow-[0_0_30px_rgba(212,0,0,0.35)] flex flex-col justify-between font-mono select-none rounded-2xl" style="min-height: 440px;">
                     <div class="flex items-center justify-between border-b-[2px] border-[#222] pb-3">
                         <div class="text-7xl font-black italic tracking-tighter text-[#e10600] leading-none select-none font-sans">44</div>
@@ -148,7 +145,6 @@
                     </div>
                 </div>
 
-                <!-- RADIO TRANSMISSION 2 -->
                 <div class="relative bg-black border-[3px] border-[#d40000] p-6 shadow-[0_0_30px_rgba(212,0,0,0.35)] flex flex-col justify-between font-mono select-none rounded-2xl" style="min-height: 440px;">
                     <div class="flex items-center justify-between border-b-[2px] border-[#222] pb-3">
                         <div class="text-7xl font-black italic tracking-tighter text-[#e10600] leading-none select-none font-sans">44</div>
@@ -175,7 +171,7 @@
                 </div>
             </div>
 
-            <!-- Quick Stats Grid -->
+            <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div onclick="setChartFilter('all')" class="glass-card p-5 rounded-2xl cursor-pointer hover:border-indigo-500/50 transition-colors">
                     <div class="flex justify-between items-center mb-1">
@@ -189,14 +185,12 @@
                     <p id="stat-avg-perc" class="text-indigo-400 text-sm font-medium mt-1">0% Avg</p>
                 </div>
                 <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
-                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Recent Momentum (Last 3)</p>
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Recent Momentum</p>
                     <h3 id="stat-recent-avg" class="text-3xl font-bold text-white">0</h3>
-                    <div id="momentum-indicator" class="flex items-center gap-1 mt-1 text-sm"></div>
                 </div>
                 <div class="glass-card p-5 rounded-2xl">
                     <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Best Percentile</p>
                     <h3 id="stat-best-percentile" class="text-3xl font-bold text-white">0%</h3>
-                    <p class="text-slate-500 text-sm mt-1">Across all recorded tests</p>
                 </div>
                 <div class="glass-card p-5 rounded-2xl flex flex-col justify-center items-center bg-indigo-600/10 border-indigo-500/30">
                     <button onclick="openTestModal()" class="w-full h-full flex flex-col items-center justify-center gap-2 group">
@@ -251,7 +245,7 @@
                 </div>
             </div>
 
-            <!-- Full Performance Chart with all filters -->
+            <!-- Performance Graph -->
             <div class="glass-card p-6 rounded-3xl">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                     <div>
@@ -273,7 +267,7 @@
                 </div>
             </div>
 
-            <!-- Test History Table -->
+            <!-- Test Table -->
             <div class="glass-card rounded-3xl overflow-hidden">
                 <div class="p-6 border-b border-slate-800 flex justify-between items-center">
                     <h3 class="text-lg font-bold">Test History</h3>
@@ -330,8 +324,8 @@
                                 <option value="Maths">Maths</option>
                                 <option value="General">General/Other</option>
                             </select>
-                            <input type="text" id="topic-name" placeholder="Topic Name (e.g. Fluids)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
-                            <input type="text" id="topic-note" placeholder="Short Note (e.g. Allen Module Ex-2)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
+                            <input type="text" id="topic-name" placeholder="Topic Name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
+                            <input type="text" id="topic-note" placeholder="Short Note" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
                             <button onclick="addTopic()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition-all">Add to Syllabus</button>
                         </div>
                     </div>
@@ -364,7 +358,7 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         <h2 class="text-2xl font-black text-white" id="current-view-title">Schedule Calendar</h2>
                     </div>
-                    <p class="text-slate-400 text-xs" id="current-view-subtitle">Click any day to view or schedule specific routines</p>
+                    <p class="text-slate-400 text-xs" id="current-view-subtitle">Click '+' on any day or tap cell to view routines</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3">
@@ -378,21 +372,21 @@
                         <button onclick="navDate(0)" class="px-3 py-1 text-xs font-bold hover:text-indigo-400 transition-colors">Today</button>
                         <button onclick="navDate(1)" class="p-2 hover:text-indigo-400 transition-colors"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
-                    <button onclick="openTaskModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg active:scale-95 transition-all">
+                    <button onclick="openTaskModalForDate(selectedDate)" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg active:scale-95 transition-all">
                         <i data-lucide="plus" class="w-4 h-4"></i> Add Routine
                     </button>
                 </div>
             </div>
 
             <!-- Month Calendar Grid View -->
-            <div id="calendar-month-view" class="glass-card rounded-3xl overflow-hidden border border-slate-800">
+            <div id="calendar-month-view" class="glass-card rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
                 <div class="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80 font-mono text-[11px] font-black text-slate-400 uppercase tracking-widest text-center py-3">
                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
                 <div id="month-grid" class="calendar-grid divide-x divide-y divide-slate-800 bg-slate-950/40"></div>
             </div>
 
-            <!-- Daily & Selected Date Tasks View -->
+            <!-- Daily Selected Date Tasks View -->
             <div id="calendar-tasks-view" class="hidden space-y-4">
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
@@ -404,9 +398,65 @@
                 <div id="daily-task-list" class="space-y-3"></div>
             </div>
 
-            <!-- Motivation Embed (Full Width directly below planner) -->
-            <div class="w-full rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-slate-900 mt-8">
-                <iframe src="https://thecbsecore.github.io/jhcnb-JBCFEA" class="w-full h-80 border-0" loading="lazy"></iframe>
+           <!-- TASK BREAKDOWN GRAPHS: COMBINED + INDIVIDUAL SUBJECTS -->
+            <div class="glass-card p-6 rounded-3xl border border-slate-800/80 shadow-2xl space-y-6 pt-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                    <div>
+                        <h4 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-400"></i> Subject Task Completion Telemetry
+                        </h4>
+                        <p class="text-xs text-slate-400">Real-time status breakdown for overall routines and core subjects</p>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs font-mono">
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Done</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Active</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span> Pending</span>
+                    </div>
+                </div>
+
+                <!-- 4 Interactive Rings Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- 1. Overall Combined Status -->
+                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
+                        <span class="text-xs font-black text-indigo-400 uppercase tracking-wider">Overall Combined</span>
+                        <div class="w-32 h-32 relative my-2">
+                            <canvas id="chart-task-overall"></canvas>
+                        </div>
+                        <div id="stat-text-overall" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                    </div>
+
+                    <!-- 2. Physics Status -->
+                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
+                        <span class="text-xs font-black text-blue-400 uppercase tracking-wider">Physics Tasks</span>
+                        <div class="w-32 h-32 relative my-2">
+                            <canvas id="chart-task-physics"></canvas>
+                        </div>
+                        <div id="stat-text-physics" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                    </div>
+
+                    <!-- 3. Chemistry Status -->
+                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
+                        <span class="text-xs font-black text-emerald-400 uppercase tracking-wider">Chemistry Tasks</span>
+                        <div class="w-32 h-32 relative my-2">
+                            <canvas id="chart-task-chemistry"></canvas>
+                        </div>
+                        <div id="stat-text-chemistry" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                    </div>
+
+                    <!-- 4. Maths Status -->
+                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
+                        <span class="text-xs font-black text-orange-400 uppercase tracking-wider">Maths Tasks</span>
+                        <div class="w-32 h-32 relative my-2">
+                            <canvas id="chart-task-maths"></canvas>
+                        </div>
+                        <div id="stat-text-maths" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motivation Embed Banner (Increased Height so nothing is cut) -->
+            <div class="w-full rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900 mt-6">
+                <iframe src="https://thecbsecore.github.io/jhcnb-JBCFEA" class="w-full h-[540px] border-0" loading="lazy"></iframe>
             </div>
         </div>
 
@@ -419,7 +469,6 @@
 
         <!-- TAB 5: GOALS GALLERY -->
         <div id="view-goals" class="hidden space-y-12">
-            <!-- Section 1 -->
             <section>
                 <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                     <i data-lucide="target" class="w-4 h-4"></i> Long Term Goals
@@ -458,7 +507,6 @@
                 </div>
             </section>
 
-            <!-- Section 2 -->
             <section>
                 <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                     <i data-lucide="zap" class="w-4 h-4"></i> Short Term Goals
@@ -487,7 +535,6 @@
                 </div>
             </section>
 
-            <!-- Section 3 -->
             <section>
                 <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                     <i data-lucide="sparkles" class="w-4 h-4"></i> Inspirations
@@ -541,7 +588,7 @@
 
     </main>
 
-    <!-- STANDALONE FLOATING FOCUS TIMER (BOTTOM-LEFT) -->
+    <!-- FLOATING FOCUS TIMER (BOTTOM-LEFT) -->
     <div id="focus-timer-container" class="fixed bottom-6 left-6 z-50 flex flex-col items-start select-none touch-none">
         <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-slate-900/95 hover:bg-slate-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-slate-700 transition-transform active:scale-95 backdrop-blur-md">
             <i data-lucide="timer" class="w-5 h-5 text-indigo-400"></i>
@@ -554,7 +601,7 @@
                     <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> Focus Session
                 </span>
                 <div class="flex items-center gap-1.5">
-                    <button onclick="togglePiP()" title="Picture-in-Picture (Pin over lectures)" class="p-1 hover:text-indigo-400 text-slate-400 transition-colors">
+                    <button onclick="togglePiP()" title="Picture-in-Picture" class="p-1 hover:text-indigo-400 text-slate-400 transition-colors">
                         <i data-lucide="picture-in-picture-2" class="w-3.5 h-3.5"></i>
                     </button>
                     <button onclick="toggleFocusTimer()" class="p-1 hover:text-red-400 transition-colors">
@@ -563,14 +610,13 @@
                 </div>
             </div>
 
-            <!-- In-place configuration -->
             <div class="text-center py-2">
                 <div class="flex justify-center items-center gap-1 font-mono text-4xl font-black text-white">
                     <input type="number" id="timer-input-m" min="0" max="60" value="25" class="w-16 bg-transparent text-right text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
                     <span class="text-slate-500">:</span>
                     <input type="number" id="timer-input-s" min="0" max="59" value="00" class="w-16 bg-transparent text-left text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">Tap digits directly to configure (0-60m : 0-59s)</p>
+                <p class="text-[10px] text-slate-500 mt-1">Tap digits directly to configure</p>
             </div>
 
             <div class="flex justify-center gap-1.5 my-2">
@@ -612,7 +658,7 @@
                     </div>
                     <div>
                         <div class="text-xs font-bold text-white">Laksh's JEE Coach</div>
-                        <p class="text-[10px] text-slate-400">Allen Schedule (7 AM - 12 PM) Contextualized</p>
+                        <p class="text-[10px] text-slate-400">Allen Schedule (7 AM - 12 PM)</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-1">
@@ -693,8 +739,12 @@
     <!-- MODAL: ADD / EDIT ROUTINE TASK -->
     <div id="task-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
-            <h3 class="text-xl font-bold mb-4">Add Routine Task</h3>
+            <h3 class="text-xl font-bold mb-4">Schedule Task / Routine</h3>
             <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Date</label>
+                    <input type="date" id="task-date" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
+                </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Task Title</label>
                     <input type="text" id="task-title" placeholder="e.g. Allen Class, Mole Concept PYQs" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
@@ -730,7 +780,7 @@
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button onclick="closeTaskModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
-                    <button onclick="saveTask()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-bold">Add Task</button>
+                    <button onclick="saveTask()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-bold">Lock Task</button>
                 </div>
             </div>
         </div>
@@ -755,7 +805,7 @@
     <div id="api-key-modal" class="fixed inset-0 z-[70] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
             <h3 class="text-lg font-bold mb-2">Gemini API Key</h3>
-            <p class="text-xs text-slate-400 mb-4">Your key is stored strictly on your local browser memory.</p>
+            <p class="text-xs text-slate-400 mb-4">Stored locally on your browser.</p>
             <input type="password" id="custom-api-key" placeholder="Enter Gemini API key" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white mb-4 outline-none">
             <div class="flex gap-2">
                 <button onclick="closeApiKeyModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
@@ -777,6 +827,7 @@
 
         let activeChartFilter = 'all';
         let performanceChart = null;
+        let taskDonutChart = null;
         let calendarView = 'month';
         let selectedDate = new Date();
 
@@ -808,7 +859,7 @@
                 main.className = "max-w-7xl mx-auto px-4 py-8";
             }
 
-            if (view === 'daily') renderCalendar();
+            if (view === 'daily') { renderCalendar(); renderTaskMetrics(); }
             if (view === 'analytics') renderChart();
             if (view === 'planner') { renderSyllabus(); updateCountdown(); }
             lucide.createIcons();
@@ -858,6 +909,14 @@
             return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">Not Started</span>';
         }
 
+        function openTaskModalForDate(targetDate) {
+            const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
+            const dateStr = d.toISOString().split('T')[0];
+            document.getElementById('task-date').value = dateStr;
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-modal').classList.remove('hidden');
+        }
+
         function renderCalendar() {
             const monthView = document.getElementById('calendar-month-view');
             const tasksView = document.getElementById('calendar-tasks-view');
@@ -886,14 +945,16 @@
                     const dayTasks = appState.scheduledTasks.filter(t => t.date === dateStr);
 
                     const cell = document.createElement('div');
-                    cell.className = `calendar-cell p-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors border-r border-b border-slate-800/70 flex flex-col justify-between ${isToday ? 'bg-indigo-950/20' : ''}`;
-                    cell.onclick = () => {
+                    cell.className = `calendar-cell p-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors border-r border-b border-slate-800/70 flex flex-col justify-between group ${isToday ? 'bg-indigo-950/20' : ''}`;
+                    
+                    cell.onclick = (e) => {
+                        if (e.target.closest('button')) return;
                         selectedDate = new Date(year, month, d);
                         setCalendarView('today');
                     };
 
                     let taskPills = dayTasks.slice(0, 3).map(t => `
-                        <div class="text-[10px] px-2 py-0.5 rounded border truncate ${getSubjectStyle(t.subject)}">
+                        <div class="text-[10px] px-2 py-0.5 rounded border truncate ${getSubjectStyle(t.subject)} ${t.status === 'Completed' ? 'line-through opacity-40' : ''}">
                             ${t.start ? t.start + ' ' : ''}${t.title}
                         </div>
                     `).join('');
@@ -905,7 +966,12 @@
                     cell.innerHTML = `
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-bold ${isToday ? 'w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black' : 'text-slate-400'}">${d}</span>
-                            ${dayTasks.length ? `<span class="text-[10px] font-mono text-slate-500">${dayTasks.length}</span>` : ''}
+                            <div class="flex items-center gap-1">
+                                ${dayTasks.length ? `<span class="text-[10px] font-mono text-slate-500 mr-1">${dayTasks.length}</span>` : ''}
+                                <button onclick="event.stopPropagation(); openTaskModalForDate('${dateStr}')" title="Add Routine for this day" class="p-1 text-slate-500 hover:text-indigo-400 hover:bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="space-y-1 my-1 flex-1">${taskPills}</div>
                     `;
@@ -917,6 +983,7 @@
                 title.innerText = calendarView === 'today' ? "Today's Routine & Schedule" : "Weekly Overview";
                 renderTaskList();
             }
+            renderTaskMetrics();
             lucide.createIcons();
         }
 
@@ -960,7 +1027,48 @@
             lucide.createIcons();
         }
 
-        function openTaskModal() { document.getElementById('task-modal').classList.remove('hidden'); }
+        function renderTaskMetrics() {
+            const tasks = appState.scheduledTasks;
+            const completed = tasks.filter(t => t.status === 'Completed').length;
+            const inProgress = tasks.filter(t => t.status === 'In Progress').length;
+            const notStarted = tasks.filter(t => t.status === 'Not Started' || t.status === 'Pending').length;
+
+            document.getElementById('count-completed').innerText = completed;
+            document.getElementById('count-inprogress').innerText = inProgress;
+            document.getElementById('count-notstarted').innerText = notStarted;
+
+            const ratio = tasks.length ? Math.round((completed / tasks.length) * 100) : 0;
+            document.getElementById('overall-task-ratio-text').innerText = `${ratio}% (${completed}/${tasks.length})`;
+            document.getElementById('overall-task-progress-bar').style.width = `${ratio}%`;
+
+            const ctx = document.getElementById('taskDonutChart');
+            if (!ctx) return;
+
+            const phy = tasks.filter(t => t.subject === 'Physics').length;
+            const chem = tasks.filter(t => t.subject === 'Chemistry').length;
+            const math = tasks.filter(t => t.subject === 'Maths').length;
+            const allen = tasks.filter(t => t.subject === 'Allen' || t.subject === 'General').length;
+
+            if (taskDonutChart) taskDonutChart.destroy();
+            taskDonutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Physics', 'Chemistry', 'Maths', 'Routine'],
+                    datasets: [{
+                        data: tasks.length ? [phy, chem, math, allen] : [1, 1, 1, 1],
+                        backgroundColor: tasks.length ? ['#3b82f6', '#10b981', '#f97316', '#a855f7'] : ['#334155', '#334155', '#334155', '#334155'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '70%'
+                }
+            });
+        }
+
         function closeTaskModal() { document.getElementById('task-modal').classList.add('hidden'); }
 
         function saveTask() {
@@ -969,7 +1077,7 @@
             const start = document.getElementById('task-start').value;
             const end = document.getElementById('task-end').value;
             const status = document.getElementById('task-status').value;
-            const dateStr = selectedDate.toISOString().split('T')[0];
+            const dateStr = document.getElementById('task-date').value || selectedDate.toISOString().split('T')[0];
 
             if (!title) return alert("Please enter a task title.");
 
@@ -981,7 +1089,6 @@
 
             saveToStorage();
             closeTaskModal();
-            document.getElementById('task-title').value = '';
             renderCalendar();
         }
 
@@ -1138,7 +1245,6 @@
             }
         }
 
-        // Draggable
         (function makeDraggable() {
             const el = document.getElementById('focus-timer-widget');
             const handle = document.getElementById('timer-drag-handle');
@@ -1301,7 +1407,6 @@
             lucide.createIcons();
         }
 
-        // --- Test Form Events ---
         const pIn = document.getElementById('t-p'), cIn = document.getElementById('t-c'), mIn = document.getElementById('t-m'), totalIn = document.getElementById('t-total');
         [pIn, cIn, mIn].forEach(el => {
             el.addEventListener('input', () => {
@@ -1425,7 +1530,6 @@
             lucide.createIcons();
         }
 
-        // --- Next Milestone Countdown ---
         function updateCountdown() {
             document.getElementById('display-next-name').innerText = appState.nextTest.name || 'Set Your Next Goal';
             if (!appState.nextTest.date) {
@@ -1438,11 +1542,7 @@
             document.getElementById('countdown-days').innerText = diff > 0 ? String(diff).padStart(2, '0') : '00';
         }
 
-        function openNextTestModal() {
-            document.getElementById('next-test-modal').classList.remove('hidden');
-            document.getElementById('nt-name').value = appState.nextTest.name;
-            document.getElementById('nt-date').value = appState.nextTest.date;
-        }
+        function openNextTestModal() { document.getElementById('next-test-modal').classList.remove('hidden'); }
         function closeNextTestModal() { document.getElementById('next-test-modal').classList.add('hidden'); }
         function saveNextTest() {
             appState.nextTest.name = document.getElementById('nt-name').value;
@@ -1452,7 +1552,6 @@
             closeNextTestModal();
         }
 
-        // --- Ferrari Audio Controls ---
         function toggleAudio(audioId, btnId) {
             const audio = document.getElementById(audioId);
             const btn = document.getElementById(btnId);
@@ -1477,7 +1576,7 @@
         }
 
         // ==========================================
-        // --- AI COACH (GROUNDED & DIRECT) ---
+        // --- AI COACH (STRUCTURED & CALIBRATED) ---
         // ==========================================
         function toggleAIChat() {
             document.getElementById('ai-chatbox').classList.toggle('hidden');
@@ -1491,20 +1590,45 @@
             closeApiKeyModal();
         }
 
+        function formatMarkdown(text) {
+            if (!text) return '';
+            let parsed = text
+                .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-indigo-400 mt-2 mb-1">$1</h4>')
+                .replace(/^## (.*$)/gim, '<h3 class="text-base font-bold text-white mt-3 mb-1.5">$1</h3>')
+                .replace(/^# (.*$)/gim, '<h2 class="text-lg font-black text-white mt-3 mb-2">$1</h2>');
+
+            parsed = parsed
+                .replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="text-white font-semibold"><em>$1</em></strong>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<span class="text-indigo-200 font-medium">$1</span>');
+
+            parsed = parsed
+                .replace(/^\s*[\*\-]\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1.5 my-1"><span class="text-indigo-400">•</span><span class="flex-1 text-slate-300">$1</span></div>')
+                .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1.5 my-1"><span class="text-indigo-400 font-bold text-[11px]">$1.</span><span class="flex-1 text-slate-300">$2</span></div>');
+
+            parsed = parsed.replace(/\n/g, '<br>');
+            return parsed;
+        }
+
         function renderChat() {
             const thread = document.getElementById('ai-chat-thread');
             thread.innerHTML = '';
             if (!appState.chatHistory.length) {
-                thread.innerHTML = `<div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-slate-400">Hey Laksh! I'm your JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>, daily routines, syllabus, and test history. What are we optimizing today?</div>`;
+                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>, daily routines, syllabus progress, and test history. What are we optimizing today?</div>`;
             } else {
                 appState.chatHistory.forEach(m => {
                     const bubble = document.createElement('div');
                     bubble.className = m.role === 'user' ? 'flex justify-end' : 'flex justify-start';
-                    bubble.innerHTML = `<div class="p-3 rounded-2xl max-w-[85%] ${m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800 text-slate-200 border border-slate-700/60 rounded-tl-none'}">${m.content}</div>`;
+                    bubble.innerHTML = `
+                        <div class="p-3 rounded-2xl max-w-[88%] break-words ${m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-tl-none leading-relaxed'}">
+                            ${m.role === 'user' ? m.content : formatMarkdown(m.content)}
+                        </div>
+                    `;
                     thread.appendChild(bubble);
                 });
             }
             thread.scrollTop = thread.scrollHeight;
+            lucide.createIcons();
         }
 
         async function handleUserSubmit(e) {
@@ -1517,37 +1641,47 @@
             appState.chatHistory.push({ role: 'user', content: prompt });
             renderChat();
 
+            const thread = document.getElementById('ai-chat-thread');
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = "flex justify-start";
+            loadingBubble.id = "ai-loading-bubble";
+            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking...</div>`;
+            thread.appendChild(loadingBubble);
+            thread.scrollTop = thread.scrollHeight;
+            lucide.createIcons();
+
             try {
                 const response = await callGeminiAPI(prompt);
+                document.getElementById('ai-loading-bubble')?.remove();
                 appState.chatHistory.push({ role: 'assistant', content: response });
                 saveToStorage();
                 renderChat();
             } catch (err) {
+                document.getElementById('ai-loading-bubble')?.remove();
                 alert("AI Error: " + err.message);
             }
         }
 
         async function callGeminiAPI(userQuery) {
             if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
-            const recentTests = JSON.stringify(appState.tests.slice(-4));
+            const recentTests = JSON.stringify(appState.tests.slice(-3));
             const activeSchedule = JSON.stringify(appState.scheduledTasks.filter(t => t.date === new Date().toISOString().split('T')[0]));
-            const pendingSyllabus = appState.syllabus.filter(s => !s.completed).map(s => s.name).slice(0, 10).join(', ');
+            const pendingSyllabus = appState.syllabus.filter(s => !s.completed).map(s => s.name).slice(0, 8).join(', ');
 
             const systemPrompt = `
-You are Laksh's dedicated JEE Mentor.
-Goal: IIT Bombay CSE 2028.
-Schedule: Allen Coaching daily 7:00 AM - 12:00 PM. Afternoons and evenings are for self-study and problem-solving.
-Current Date: 2026.
+You are Laksh's grounded, candid, and disciplined JEE Mentor.
+Target Goal: IIT Bombay CSE 2028 (AIR < 60).
+Coaching Routine: Allen from 7:00 AM to 12:00 PM daily. Afternoons & evenings are for self-study and problem-solving.
 
-Student Data:
+Student Context:
 - Recent Tests: ${recentTests}
 - Today's Scheduled Routines: ${activeSchedule}
-- Incomplete Syllabus Chapters: ${pendingSyllabus}
+- Some Pending Topics: ${pendingSyllabus}
 
-Tone & Rules:
-1. Be direct, candid, concise, and genuinely helpful.
-2. Cut robotic fluff, polite meta-announcements, and exaggerated racing jargon.
-3. Address his exact question with practical, actionable feedback tailored around his Allen routine.
+CRITICAL RULES:
+1. When Laksh says "hi", "hello", "hey", or gives casual greetings, reply briefly and warmly (e.g. "Hey Laksh, what are we tackling today? Ready to review a topic or plan your afternoon study stint?"). DO NOT unleash unprovoked lectures, guilt trips, or sudden diagnostic triage when he just says hi.
+2. Only provide deep diagnostics, schedules, or test triage when he explicitly asks for study plans, test analysis, or topic help.
+3. Keep advice direct, authentic, structured, and realistic. No cheap theatrical motivation or robotic fluff.
             `.trim();
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
@@ -1555,7 +1689,7 @@ Tone & Rules:
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nLaksh asks: "${userQuery}"` }] }],
+                    contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nLaksh says: "${userQuery}"` }] }],
                     generationConfig: { temperature: 0.3, maxOutputTokens: 2500 }
                 })
             });
@@ -1565,12 +1699,12 @@ Tone & Rules:
             return data.candidates[0].content.parts[0].text;
         }
 
-        // --- Backup & Restore ---
+        // --- Backup & Restore (Full JSON with all tabs + chats) ---
         function exportBackup() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
             const dl = document.createElement('a');
             dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", `jee_ace_backup_${new Date().toISOString().split('T')[0]}.json`);
+            dl.setAttribute("download", `jee_ace_complete_backup_${new Date().toISOString().split('T')[0]}.json`);
             document.body.appendChild(dl);
             dl.click();
             dl.remove();
@@ -1586,7 +1720,7 @@ Tone & Rules:
                     appState = { ...appState, ...parsed };
                     saveToStorage();
                     location.reload();
-                } catch (err) { alert('Invalid backup file'); }
+                } catch (err) { alert('Invalid backup file format'); }
             };
             reader.readAsText(file);
         }
@@ -1598,6 +1732,7 @@ Tone & Rules:
             updateCountdown();
             renderCalendar();
             renderPipCanvas();
+            renderChat();
             lucide.createIcons();
 
             setInterval(() => {
