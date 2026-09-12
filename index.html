@@ -1,2161 +1,870 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEE Ace</title>
-    <link rel="icon" type="image/png" href="logo.png?v=2">
-    <link rel="shortcut icon" type="image/png" href="logo.png?v=2">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .tab-active { border-bottom: 2px solid #6366f1; color: #6366f1; }
-        
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
-        
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-        .calendar-cell { min-height: 145px; }
-        @media (max-width: 768px) { .calendar-cell { min-height: 90px; } }
-        .drag-over { border: 2px dashed #6366f1 !important; background: rgba(99, 102, 241, 0.12) !important; }
-    </style>
-</head>
-<body class="bg-slate-950 text-slate-200 min-h-screen pb-28">
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center gap-2">
+                <div class="bg-indigo-600 p-1.5 rounded-lg shadow-lg shadow-indigo-500/20">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-white">JEE<span class="text-indigo-500">Ace</span></span>
+                <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono hidden sm:inline ml-2">Laksh • 11th (JEE 2028)</span>
+            </div>
+            
+            <div class="hidden lg:flex items-center space-x-1">
+                <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="px-4 py-5 text-sm font-semibold transition-all tab-active">Analytics</button>
+                <button onclick="switchTab('planner')" id="tab-btn-planner" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">Syllabus</button>
+                <button onclick="switchTab('daily')" id="tab-btn-daily" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all flex items-center gap-1.5">
+                    <span>Daily Planner</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                </button>
+                <button onclick="switchTab('f1hub')" id="tab-btn-f1hub" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">F1 Hub</button>
+                <button onclick="switchTab('goals')" id="tab-btn-goals" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">Goals</button>
+            </div>
 
-    <!-- NAVIGATION -->
-    <nav class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-2">
-                    <div class="bg-indigo-600 p-1.5 rounded-lg shadow-lg shadow-indigo-500/20">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <span class="text-xl font-bold tracking-tight text-white">JEE<span class="text-indigo-500">Ace</span></span>
-                    <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono hidden sm:inline ml-2">Laksh • 11th (JEE 2028)</span>
-                </div>
-                
-                <div class="hidden lg:flex items-center space-x-1">
-                    <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="px-4 py-5 text-sm font-semibold transition-all tab-active">Analytics</button>
-                    <button onclick="switchTab('planner')" id="tab-btn-planner" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">Syllabus</button>
-                    <button onclick="switchTab('daily')" id="tab-btn-daily" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all flex items-center gap-1.5">
-                        <span>Daily Planner</span>
-                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    </button>
-                    <button onclick="switchTab('f1hub')" id="tab-btn-f1hub" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">F1 Hub</button>
-                    <button onclick="switchTab('goals')" id="tab-btn-goals" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">Goals</button>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button onclick="exportBackup()" title="Download Backup" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-all flex items-center gap-1.5 text-xs font-bold">
-                        <i data-lucide="download" class="w-4 h-4"></i>
-                        <span class="hidden md:inline">Backup</span>
-                    </button>
-                    <label title="Restore Backup" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold">
-                        <i data-lucide="upload" class="w-4 h-4"></i>
-                        <span class="hidden md:inline">Restore</span>
-                        <input type="file" id="import-input" accept=".json" class="hidden" onchange="importBackup(event)">
-                    </label>
-                    <button class="lg:hidden p-2 text-slate-400" onclick="toggleMobileMenu()">
-                        <i data-lucide="menu" class="w-5 h-5"></i>
-                    </button>
-                </div>
+            <div class="flex items-center gap-2">
+                <button onclick="exportBackup()" title="Download Complete Backup" class="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 transition-all">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                </button>
+                <label title="Restore Backup" class="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <input type="file" id="import-input" accept=".json" class="hidden" onchange="importBackup(event)">
+                </label>
+                <button class="lg:hidden p-2 text-slate-400" onclick="toggleMobileMenu()">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
             </div>
         </div>
-    </nav>
-
-    <!-- MOBILE MENU -->
-    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl hidden p-6 flex flex-col justify-between">
-        <div>
-            <div class="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
-                <span class="text-xl font-black text-white">Menu</span>
-                <button onclick="toggleMobileMenu()" class="p-2 text-slate-400"><i data-lucide="x"></i></button>
-            </div>
-            <div class="flex flex-col gap-4 text-base font-bold">
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('analytics'); toggleMobileMenu()">📊 Analytics</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('planner'); toggleMobileMenu()">🎯 Syllabus Planner</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('daily'); toggleMobileMenu()">📅 Daily Planner & Calendar</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('f1hub'); toggleMobileMenu()">🏎️ F1 Hub</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('goals'); toggleMobileMenu()">🏆 Goals</button>
-            </div>
-        </div>
-        <p class="text-xs text-slate-500 font-mono text-center">JEE Ace • Laksh (Allen 7 AM - 12 PM)</p>
     </div>
+</nav>
 
-    <main id="main-container" class="max-w-7xl mx-auto px-4 py-8">
-        
-        <!-- TAB 1: ANALYTICS -->
-        <div id="view-analytics" class="space-y-8">
-            <div class="relative overflow-hidden rounded-3xl border border-indigo-500/30 bg-slate-900 shadow-2xl group">
-                <div class="absolute inset-0 z-0">
-                    <img src="iitb.jpg" alt="IIT Bombay Campus Gate" class="w-full h-full object-cover object-center filter brightness-[0.35] contrast-125 transition-transform duration-700 group-hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
-                </div>
-
-                <div class="relative z-10 p-6 sm:p-8">
-                    <div class="space-y-2 max-w-2xl">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-black rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                                <i data-lucide="target" class="w-3.5 h-3.5 text-amber-400"></i>
-                                AIM: IIT BOMBAY CSE 2028
-                            </span>
-                            <span class="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 text-[11px] font-mono rounded-md">AIR &lt; 60 Goal</span>
-                        </div>
-                        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                            Powai is Calling, Laksh.
-                        </h2>
-                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Every single module question solved today and every mark pulled in Allen tests brings you closer to the CSE department. Stay consistent.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- F1 TEAM RADIO // LH44 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div class="relative bg-black border-[3px] border-[#d40000] p-6 shadow-[0_0_30px_rgba(212,0,0,0.35)] flex flex-col justify-between font-mono select-none rounded-2xl" style="min-height: 440px;">
-                    <div class="flex items-center justify-between border-b-[2px] border-[#222] pb-3">
-                        <div class="text-7xl font-black italic tracking-tighter text-[#e10600] leading-none select-none font-sans">44</div>
-                        <div class="flex items-center gap-3.5">
-                            <span class="text-2xl font-black tracking-widest text-white uppercase font-sans">RADIO</span>
-                            <img src="scf.png" alt="Scuderia Ferrari" class="h-12 w-auto object-contain drop-shadow-md">
-                        </div>
-                    </div>
-                    <div class="my-auto py-4">
-                        <p class="text-[#e10600] font-black text-sm sm:text-base leading-relaxed tracking-tight uppercase">
-                            "LIKE IT'S NOT ABOUT BEING PERFECT, IT'S ABOUT JUST EVERYDAY ONE STEP AT A TIME, TRYING TO BE BETTER, TRYING TO DO MORE. AND I THINK A LOT OF PEOPLE ARE STRUGGLING TO FIND THAT PURPOSE, BUT IT'S OKAY. YOU'LL, YOU WILL FIND IT. DO NOT GIVE UP. KEEP GETTING UP, YOU KNOW, LIKE JUST KEEP SAYING THOSE THINGS TO YOURSELF, AND YOU WILL EVENTUALLY FIND IT."
-                        </p>
-                    </div>
-                    <div class="pt-3 border-t border-[#222] flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <button onclick="toggleAudio('audio-lh-1', 'btn-lh-1')" id="btn-lh-1" class="w-8 h-8 rounded-full bg-[#e10600] hover:bg-red-500 text-white flex items-center justify-center transition-transform active:scale-90 shadow-lg">
-                                <i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>
-                            </button>
-                            <span class="text-[11px] text-[#e10600] uppercase font-bold tracking-wider">TEAM RADIO // 01</span>
-                        </div>
-                        <audio id="audio-lh-1" src="Lewis Hamilton proves why giving up is never an option.mp3" preload="none"></audio>
-                        <span class="text-[10px] text-zinc-500 font-mono">0:19</span>
-                    </div>
-                </div>
-
-                <div class="relative bg-black border-[3px] border-[#d40000] p-6 shadow-[0_0_30px_rgba(212,0,0,0.35)] flex flex-col justify-between font-mono select-none rounded-2xl" style="min-height: 440px;">
-                    <div class="flex items-center justify-between border-b-[2px] border-[#222] pb-3">
-                        <div class="text-7xl font-black italic tracking-tighter text-[#e10600] leading-none select-none font-sans">44</div>
-                        <div class="flex items-center gap-3.5">
-                            <span class="text-2xl font-black tracking-widest text-white uppercase font-sans">RADIO</span>
-                            <img src="scf.png" alt="Scuderia Ferrari" class="h-12 w-auto object-contain drop-shadow-md">
-                        </div>
-                    </div>
-                    <div class="my-auto py-4">
-                        <p class="text-[#e10600] font-black text-sm sm:text-base leading-relaxed tracking-tight uppercase">
-                            "I THINK THAT'S DEFINITELY, FOR SURE, THE MOST DIFFICULT THING IS KEEPING—KEEPING YOUR GOAL AND YOUR EYES SET ON THAT AND NOT BEING DISTRACTED. UM, NOT GIVING UP. I THINK THE EASIEST THING IN LIFE IS TO GIVE UP ON WHATEVER, YOU KNOW, WHATEVER YOU'RE FOCUSED ON OR WHATEVER YOU'RE HOPEFUL FOR. THE HARDEST THING IS TO—TO KEEP GOING. BUT WE HAVE TO, LIKE, WE HAVE TO CONTINUE TO HOLD ON. AND I WOULD IMAGINE FOR SO MANY PEOPLE OUT THERE THAT IS—THAT THAT IS PROBABLY THE MOST DIFFICULT THING."
-                        </p>
-                    </div>
-                    <div class="pt-3 border-t border-[#222] flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <button onclick="toggleAudio('audio-lh-2', 'btn-lh-2')" id="btn-lh-2" class="w-8 h-8 rounded-full bg-[#e10600] hover:bg-red-500 text-white flex items-center justify-center transition-transform active:scale-90 shadow-lg">
-                                <i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>
-                            </button>
-                            <span class="text-[11px] text-[#e10600] uppercase font-bold tracking-wider">TEAM RADIO // 02</span>
-                        </div>
-                        <audio id="audio-lh-2" src="Lewis Hamilton on Giving Up vs Keep Going.mp3" preload="none"></audio>
-                        <span class="text-[10px] text-zinc-500 font-mono">0:30</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div onclick="setChartFilter('all')" class="glass-card p-5 rounded-2xl cursor-pointer hover:border-indigo-500/50 transition-colors">
-                    <div class="flex justify-between items-center mb-1">
-                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Lifetime Average</p>
-                        <i data-lucide="line-chart" class="w-4 h-4 text-indigo-400"></i>
-                    </div>
-                    <div class="flex items-baseline gap-2">
-                        <h3 id="stat-avg-score" class="text-3xl font-bold text-white">0</h3>
-                        <span class="text-slate-500 text-sm">/ 300</span>
-                    </div>
-                    <p id="stat-avg-perc" class="text-indigo-400 text-sm font-medium mt-1">0% Avg</p>
-                </div>
-                <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
-                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Recent Momentum</p>
-                    <h3 id="stat-recent-avg" class="text-3xl font-bold text-white">0</h3>
-                </div>
-                <div class="glass-card p-5 rounded-2xl">
-                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Best Percentile</p>
-                    <h3 id="stat-best-percentile" class="text-3xl font-bold text-white">0%</h3>
-                </div>
-                <div class="glass-card p-5 rounded-2xl flex flex-col justify-center items-center bg-indigo-600/10 border-indigo-500/30">
-                    <button onclick="openTestModal()" class="w-full h-full flex flex-col items-center justify-center gap-2 group">
-                        <div class="bg-indigo-600 p-2 rounded-full group-hover:scale-110 transition-transform">
-                            <i data-lucide="plus" class="w-6 h-6 text-white"></i>
-                        </div>
-                        <span class="font-bold text-indigo-400">Add New Test</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Subject Breakdown -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div onclick="setChartFilter('physics')" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-blue-500/50 transition-colors">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-slate-400 font-medium">Physics Average</h4>
-                        <span class="text-xs text-blue-400 font-semibold uppercase tracking-wider">Filter Graph</span>
-                    </div>
-                    <div class="flex items-end gap-2">
-                        <span id="avg-p" class="text-4xl font-bold">0</span>
-                        <span class="text-slate-500 mb-1">/ 100</span>
-                    </div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
-                        <div id="bar-p" class="bg-blue-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div onclick="setChartFilter('chem')" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-emerald-500/50 transition-colors">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-slate-400 font-medium">Chemistry Average</h4>
-                        <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Filter Graph</span>
-                    </div>
-                    <div class="flex items-end gap-2">
-                        <span id="avg-c" class="text-4xl font-bold">0</span>
-                        <span class="text-slate-500 mb-1">/ 100</span>
-                    </div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
-                        <div id="bar-c" class="bg-emerald-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div onclick="setChartFilter('maths')" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-orange-500/50 transition-colors">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-slate-400 font-medium">Maths Average</h4>
-                        <span class="text-xs text-orange-400 font-semibold uppercase tracking-wider">Filter Graph</span>
-                    </div>
-                    <div class="flex items-end gap-2">
-                        <span id="avg-m" class="text-4xl font-bold">0</span>
-                        <span class="text-slate-500 mb-1">/ 100</span>
-                    </div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
-                        <div id="bar-m" class="bg-orange-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Performance Graph -->
-            <div class="glass-card p-6 rounded-3xl">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <div>
-                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i data-lucide="trending-up" class="w-5 h-5 text-indigo-400"></i> Score Progression Telemetry
-                        </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Chronological score trends across Allen test dates</p>
-                    </div>
-                    <div class="flex flex-wrap gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 text-xs">
-                        <button onclick="setChartFilter('all')" id="btn-chart-all" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm">Total Score</button>
-                        <button onclick="setChartFilter('pcm')" id="btn-chart-pcm" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">PCM Combined</button>
-                        <button onclick="setChartFilter('physics')" id="btn-chart-physics" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-blue-400">Physics</button>
-                        <button onclick="setChartFilter('chem')" id="btn-chart-chem" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-emerald-400">Chemistry</button>
-                        <button onclick="setChartFilter('maths')" id="btn-chart-maths" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-orange-400">Maths</button>
-                    </div>
-                </div>
-                <div class="relative w-full h-[320px]">
-                    <canvas id="scoreChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Test Table -->
-            <div class="glass-card rounded-3xl overflow-hidden">
-                <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                    <h3 class="text-lg font-bold">Test History</h3>
-                    <div class="text-sm text-slate-400" id="test-count">0 Tests Recorded</div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-widest">
-                            <tr>
-                                <th class="px-6 py-4 font-semibold">Date & Name</th>
-                                <th class="px-6 py-4 font-semibold text-center">P / C / M</th>
-                                <th class="px-6 py-4 font-semibold text-center">Total Score</th>
-                                <th class="px-6 py-4 font-semibold text-center">Percentile & Rank</th>
-                                <th class="px-6 py-4 font-semibold text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="test-table-body" class="divide-y divide-slate-800"></tbody>
-                    </table>
-                    <div id="empty-state" class="hidden p-12 text-center text-slate-500">
-                        <i data-lucide="database" class="w-12 h-12 mx-auto mb-4 opacity-20"></i>
-                        <p>No tests recorded yet. Hit "Add New Test" to begin tracking.</p>
-                    </div>
-                </div>
-            </div>
+<!-- MOBILE MENU -->
+<div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl hidden p-6 flex flex-col justify-between">
+    <div>
+        <div class="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
+            <span class="text-xl font-black text-white">Menu</span>
+            <button onclick="toggleMobileMenu()" class="p-2 text-slate-400"><i data-lucide="x"></i></button>
         </div>
-
-        <!-- TAB 2: SYLLABUS PLANNER -->
-        <div id="view-planner" class="hidden space-y-8">
-            <div id="next-test-banner" class="bg-gradient-to-r from-indigo-900/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                    <span class="px-3 py-1 bg-indigo-500/20 text-indigo-400 text-xs font-bold rounded-full uppercase tracking-widest">Next Milestone</span>
-                    <h2 id="display-next-name" class="text-3xl font-bold text-white mt-2">Set Your Next Goal</h2>
-                    <p id="display-next-date" class="text-slate-400 text-sm mt-1">Click settings icon to configure date</p>
-                </div>
-                <div class="flex items-center gap-8">
-                    <div class="text-center">
-                        <div id="countdown-days" class="text-5xl font-black text-indigo-500">00</div>
-                        <div class="text-xs uppercase text-slate-500 font-bold tracking-tighter">Days Left</div>
-                    </div>
-                    <button onclick="openNextTestModal()" class="p-3 bg-slate-800 rounded-xl hover:bg-slate-700 transition-colors">
-                        <i data-lucide="settings" class="w-6 h-6"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="space-y-6">
-                    <div class="glass-card p-6 rounded-3xl">
-                        <h3 class="text-lg font-bold mb-4">Add Topic</h3>
-                        <div class="space-y-4">
-                            <select id="topic-subject" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
-                                <option value="Physics">Physics</option>
-                                <option value="Chemistry">Chemistry</option>
-                                <option value="Maths">Maths</option>
-                                <option value="General">General/Other</option>
-                            </select>
-                            <input type="text" id="topic-name" placeholder="Topic Name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
-                            <input type="text" id="topic-note" placeholder="Short Note" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
-                            <button onclick="addTopic()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition-all">Add to Syllabus</button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card p-6 rounded-3xl">
-                        <h3 class="text-lg font-bold mb-2">Total Progress</h3>
-                        <div class="flex justify-between text-sm mb-2">
-                            <span id="progress-text">0/0 Topics</span>
-                            <span id="progress-percent" class="text-indigo-400 font-bold">0%</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
-                            <div id="overall-progress-bar" class="bg-indigo-500 h-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                        <button onclick="archiveSyllabus()" class="w-full mt-6 text-slate-500 text-sm hover:text-red-400 transition-colors flex items-center justify-center gap-1">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i> Clear All Completed
-                        </button>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 space-y-4" id="syllabus-list"></div>
-            </div>
+        <div class="flex flex-col gap-4 text-base font-bold">
+            <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('analytics'); toggleMobileMenu()">📊 Analytics</button>
+            <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('planner'); toggleMobileMenu()">🎯 Test Planner</button>
+            <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('daily'); toggleMobileMenu()">📅 Daily Planner & Calendar</button>
+            <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('f1hub'); toggleMobileMenu()">🏎️ F1 Hub</button>
+            <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('goals'); toggleMobileMenu()">🏆 Goals</button>
         </div>
+    </div>
+</div>
 
-        <!-- TAB 3: DAILY PLANNER -->
-        <div id="view-daily" class="hidden space-y-6">
-            <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <h2 class="text-2xl font-black text-white" id="current-view-title">Schedule Calendar</h2>
-                    </div>
-                    <p class="text-slate-400 text-xs" id="current-view-subtitle">Click '+' on any day or drag tasks between cells to reschedule</p>
-                </div>
-                
-                <div class="flex flex-wrap items-center gap-3">
-                    <div class="flex bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-xs font-bold">
-                        <button onclick="setCalendarView('month')" id="btn-view-month" class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white">Month</button>
-                        <button onclick="setCalendarView('today')" id="btn-view-today" class="px-4 py-1.5 rounded-lg text-slate-400 hover:text-white">Day List</button>
-                    </div>
-                    <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
-                        <button onclick="navDate(-1)" class="p-2 hover:text-indigo-400 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <button onclick="navDate(0)" class="px-3 py-1 text-xs font-bold hover:text-indigo-400 transition-colors">Today</button>
-                        <button onclick="navDate(1)" class="p-2 hover:text-indigo-400 transition-colors"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-                    </div>
-                    <button onclick="openTaskModalForDate(selectedDate)" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg active:scale-95 transition-all">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Add Routine
-                    </button>
-                </div>
+<main id="main-container" class="max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- TAB 1: ANALYTICS -->
+    <div id="view-analytics" class="space-y-8">
+        <div class="relative overflow-hidden rounded-3xl border border-indigo-500/30 bg-slate-900 shadow-2xl group">
+            <div class="absolute inset-0 z-0">
+                <img src="iitb.jpg" alt="IIT Bombay Campus Gate" class="w-full h-full object-cover object-center filter brightness-[0.35] contrast-125 transition-transform duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
             </div>
 
-            <!-- Month Calendar Grid View -->
-            <div id="calendar-month-view" class="glass-card rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
-                <div class="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80 font-mono text-[11px] font-black text-slate-400 uppercase tracking-widest text-center py-3">
-                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                </div>
-                <div id="month-grid" class="calendar-grid divide-x divide-y divide-slate-800 bg-slate-950/40"></div>
-            </div>
-
-            <!-- Daily Selected Date Tasks View -->
-            <div id="calendar-tasks-view" class="hidden space-y-4">
-                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
-                        <i data-lucide="calendar" class="w-5 h-5 text-indigo-400"></i>
-                        <h3 class="font-bold text-white text-base">Routines for: <span id="tasks-selected-date" class="text-indigo-400 font-mono">...</span></h3>
-                    </div>
-                    <span id="tasks-stats-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">0 Tasks</span>
-                </div>
-                <div id="daily-task-list" class="space-y-3"></div>
-            </div>
-
-            <!-- DAILY NON-NEGOTIABLE CHECKLIST & REWARD SYSTEM -->
-            <div class="glass-card p-5 rounded-3xl border border-indigo-500/20 bg-slate-900/80 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div class="space-y-2 flex-1">
-                    <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                            Daily Quota
+            <div class="relative z-10 p-6 sm:p-8">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-black rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                            <i data-lucide="target" class="w-3.5 h-3.5 text-amber-400"></i>
+                            AIM: IIT BOMBAY CSE 2028
                         </span>
-                        <h3 class="text-sm font-bold text-white">Non-Negotiable Targets (Resets Daily at 12 AM)</h3>
+                        <span class="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 text-[11px] font-mono rounded-md">AIR &lt; 60 Goal</span>
                     </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-indigo-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-revision" onchange="toggleDailyQuota('revision')" class="w-4 h-4 rounded text-indigo-600 bg-slate-900 border-slate-700 focus:ring-indigo-500">
-                            <span class="text-xs font-semibold text-slate-200">1. Daily Revision</span>
-                        </label>
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-orange-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-maths" onchange="toggleDailyQuota('maths')" class="w-4 h-4 rounded text-orange-500 bg-slate-900 border-slate-700 focus:ring-orange-500">
-                            <span class="text-xs font-semibold text-slate-200">2. Maths HW</span>
-                        </label>
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-phy" onchange="toggleDailyQuota('phy')" class="w-4 h-4 rounded text-blue-500 bg-slate-900 border-slate-700 focus:ring-blue-500">
-                            <span class="text-xs font-semibold text-slate-200">3. Physics HW</span>
-                        </label>
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-emerald-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-chem" onchange="toggleDailyQuota('chem')" class="w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
-                            <span class="text-xs font-semibold text-slate-200">4. Chem 10-Q</span>
-                        </label>
-                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                        Powai is Calling, Laksh.
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        Stay consistent. Focus on the process.
+                    </p>
                 </div>
-
-                <div id="quota-reward-box" class="w-full md:w-auto p-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 flex items-center gap-3 transition-all min-w-[210px]">
-                    <div id="reward-icon" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center">
-                        <i data-lucide="lock" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <div id="reward-title" class="text-xs font-bold text-slate-400">1h Entertainment</div>
-                        <div id="reward-status" class="text-[10px] text-slate-500 font-mono">0 / 4 Targets Done</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TASK BREAKDOWN GRAPHS: COMBINED + INDIVIDUAL SUBJECTS -->
-            <div class="glass-card p-6 rounded-3xl border border-slate-800/80 shadow-2xl space-y-6 pt-4">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
-                    <div>
-                        <h4 class="text-base font-bold text-white flex items-center gap-2">
-                            <i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-400"></i> Subject Task Completion Telemetry
-                        </h4>
-                        <p class="text-xs text-slate-400">Real-time status breakdown for overall routines and core subjects</p>
-                    </div>
-                    <div class="flex items-center gap-3 text-xs font-mono">
-                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Done</span>
-                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Active</span>
-                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span> Pending</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                        <span class="text-xs font-black text-indigo-400 uppercase tracking-wider">Overall Combined</span>
-                        <div class="w-32 h-32 relative my-2">
-                            <canvas id="chart-task-overall"></canvas>
-                        </div>
-                        <div id="stat-text-overall" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
-                    </div>
-                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                        <span class="text-xs font-black text-blue-400 uppercase tracking-wider">Physics Tasks</span>
-                        <div class="w-32 h-32 relative my-2">
-                            <canvas id="chart-task-physics"></canvas>
-                        </div>
-                        <div id="stat-text-physics" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
-                    </div>
-                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                        <span class="text-xs font-black text-emerald-400 uppercase tracking-wider">Chemistry Tasks</span>
-                        <div class="w-32 h-32 relative my-2">
-                            <canvas id="chart-task-chemistry"></canvas>
-                        </div>
-                        <div id="stat-text-chemistry" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
-                    </div>
-                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                        <span class="text-xs font-black text-orange-400 uppercase tracking-wider">Maths Tasks</span>
-                        <div class="w-32 h-32 relative my-2">
-                            <canvas id="chart-task-maths"></canvas>
-                        </div>
-                        <div id="stat-text-maths" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Motivation Embed Banner -->
-            <div class="w-full rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900 mt-6">
-                <iframe src="https://thecbsecore.github.io/jhcnb-JBCFEA" class="w-full h-[540px] border-0" loading="lazy"></iframe>
             </div>
         </div>
 
-        <!-- TAB 4: F1 HUB -->
-        <div id="view-f1hub" class="hidden w-full">
-            <div class="w-full h-[calc(100vh-140px)] rounded-3xl overflow-hidden border border-slate-800 bg-black shadow-2xl">
-                <iframe src="https://thecbsecore.github.io/F1/" class="w-full h-full border-0" loading="lazy"></iframe>
+        <!-- Performance Graph -->
+        <div class="glass-card p-6 rounded-3xl">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-indigo-400"></i> Score Progression Telemetry
+                    </h3>
+                </div>
+                <div class="flex flex-wrap gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 text-xs">
+                    <button onclick="setChartFilter('all')" id="btn-chart-all" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm">Total Score</button>
+                    <button onclick="setChartFilter('physics')" id="btn-chart-physics" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-blue-400">Physics</button>
+                    <button onclick="setChartFilter('chem')" id="btn-chart-chem" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-emerald-400">Chemistry</button>
+                    <button onclick="setChartFilter('maths')" id="btn-chart-maths" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-orange-400">Maths</button>
+                </div>
+            </div>
+            <div class="relative w-full h-[320px]">
+                <canvas id="scoreChart"></canvas>
             </div>
         </div>
 
-        <!-- TAB 5: GOALS GALLERY -->
-        <div id="view-goals" class="hidden space-y-12">
-            <section>
-                <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                    <i data-lucide="target" class="w-4 h-4"></i> Long Term Goals
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
-                            <img src="2028.png" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
-                        </div>
-                        <div class="p-5">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
-                            <h4 class="font-bold text-white text-base mt-2">JEE 2028 | IIT CS</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: January 22, 2028</p>
-                        </div>
-                    </div>
-                    <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
-                            <img src="bits.png" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
-                        </div>
-                        <div class="p-5">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
-                            <h4 class="font-bold text-white text-base mt-2">BITS 2028 | CS</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: May 9, 2028</p>
-                        </div>
-                    </div>
-                    <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
-                            <img src="dev.png" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
-                        </div>
-                        <div class="p-5">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
-                            <h4 class="font-bold text-white text-base mt-2">Professional Developer</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: January 1, 2031</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                    <i data-lucide="zap" class="w-4 h-4"></i> Short Term Goals
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
-                            <img src="back.png" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
-                        </div>
-                        <div class="p-5">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
-                            <h4 class="font-bold text-white text-base mt-2">No Backlogs till Class 11th End</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: December 25, 2026</p>
-                        </div>
-                    </div>
-                    <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
-                            <img src="ln.jpg" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
-                        </div>
-                        <div class="p-5">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
-                            <h4 class="font-bold text-white text-base mt-2">ALLEN SRG BATCH</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: December 31, 2026</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i> Inspirations
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="glass-card p-5 rounded-2xl text-center">
-                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-[#e10600] overflow-hidden bg-slate-900">
-                            <img src="ham.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <h4 class="text-xs font-black text-white">Sir Lewis Hamilton</h4>
-                        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
-                            <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
-                            <span class="text-[9px] px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">GOAT</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 7<br>Grand Prix Wins: 105<br>Podium Finishes: 204</p>
-                    </div>
-                    <div class="glass-card p-5 rounded-2xl text-center">
-                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-yellow-500 overflow-hidden bg-slate-900">
-                            <img src="sen.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <h4 class="text-xs font-black text-white">Ayrton Senna</h4>
-                        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
-                            <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 3<br>Grand Prix Wins: 41<br>Podium Finishes: 80</p>
-                    </div>
-                    <div class="glass-card p-5 rounded-2xl text-center">
-                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-red-500 overflow-hidden bg-slate-900">
-                            <img src="shu.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <h4 class="text-xs font-black text-white">Michael Schumacher</h4>
-                        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
-                            <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 7<br>Grand Prix Wins: 91<br>Podium Finishes: 155</p>
-                    </div>
-                    <div class="glass-card p-5 rounded-2xl text-center">
-                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-blue-500 overflow-hidden bg-slate-900">
-                            <img src="sun.webp" class="w-full h-full object-cover">
-                        </div>
-                        <h4 class="text-xs font-black text-white">Sundar Pichai</h4>
-                        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
-                            <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
-                            <span class="text-[9px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">Google CEO</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">IIT Kharagpur Alumnus</p>
-                    </div>
-                </div>
-            </section>
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="glass-card p-5 rounded-2xl">
+                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Average Score</p>
+                <h3 id="stat-avg-score" class="text-3xl font-bold text-white">0</h3>
+            </div>
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
+                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Momentum</p>
+                <h3 id="stat-recent-avg" class="text-3xl font-bold text-white">0</h3>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Best Percentile</p>
+                <h3 id="stat-best-percentile" class="text-3xl font-bold text-white">0%</h3>
+            </div>
+            <button onclick="openTestModal()" class="glass-card p-5 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-indigo-600/10 border-indigo-500/30 transition-all">
+                <i data-lucide="plus" class="w-6 h-6 text-indigo-400"></i>
+                <span class="font-bold text-indigo-400 text-xs uppercase">New Test</span>
+            </button>
         </div>
 
-    </main>
-
-    <!-- FLOATING FOCUS TIMER (BOTTOM-LEFT) -->
-    <div id="focus-timer-container" class="fixed bottom-6 left-6 z-50 flex flex-col items-start select-none touch-none">
-        <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-slate-900/95 hover:bg-slate-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-slate-700 transition-transform active:scale-95 backdrop-blur-md">
-            <i data-lucide="timer" class="w-5 h-5 text-indigo-400"></i>
-            <span class="font-bold text-sm">Focus Timer</span>
-        </button>
-
-        <div id="focus-timer-widget" class="hidden absolute bottom-14 left-0 glass-card bg-slate-900/95 border border-slate-700/80 p-4 rounded-3xl shadow-2xl w-72 backdrop-blur-xl">
-            <div id="timer-drag-handle" class="cursor-move flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-xs text-slate-400 font-semibold">
-                <span class="flex items-center gap-1.5 text-white">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> Focus Session
-                </span>
-                <div class="flex items-center gap-1.5">
-                    <button onclick="togglePiP()" title="Picture-in-Picture" class="p-1 hover:text-indigo-400 text-slate-400 transition-colors">
-                        <i data-lucide="picture-in-picture-2" class="w-3.5 h-3.5"></i>
-                    </button>
-                    <button onclick="toggleFocusTimer()" class="p-1 hover:text-red-400 transition-colors">
-                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="text-center py-2">
-                <div class="flex justify-center items-center gap-1 font-mono text-4xl font-black text-white">
-                    <input type="number" id="timer-input-m" min="0" max="60" value="25" class="w-16 bg-transparent text-right text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
-                    <span class="text-slate-500">:</span>
-                    <input type="number" id="timer-input-s" min="0" max="59" value="00" class="w-16 bg-transparent text-left text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
-                </div>
-                <p class="text-[10px] text-slate-500 mt-1">Tap digits directly to configure</p>
-            </div>
-
-            <div class="flex justify-center gap-1.5 my-2">
-                <button onclick="setTimerDirect(25, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">25m</button>
-                <button onclick="setTimerDirect(45, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">45m</button>
-                <button onclick="setTimerDirect(60, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">60m</button>
-                <button onclick="setTimerDirect(0, 30)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">30s</button>
-            </div>
-
-            <div class="flex items-center justify-center gap-2 pt-1">
-                <button id="timer-start-btn" onclick="startTimer()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md">
-                    <i data-lucide="play" class="w-3.5 h-3.5"></i> Start
-                </button>
-                <button onclick="pauseTimer()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-all">
-                    <i data-lucide="pause" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="resetTimer()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                </button>
-            </div>
-
-            <canvas id="pip-canvas" width="300" height="150" class="hidden"></canvas>
-            <video id="pip-video" autoplay muted class="hidden"></video>
-        </div>
-    </div>
-
-    <!-- FLOATING AI MENTOR WIDGET (BOTTOM-RIGHT) -->
-    <div id="ai-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        <button onclick="toggleAIChat()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-indigo-400/30 transition-transform active:scale-95">
-            <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
-            <span class="font-bold text-sm">Ask AI Mentor</span>
-        </button>
-
-        <div id="ai-chatbox" class="hidden mt-3 w-[360px] sm:w-[420px] h-[540px] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-            <div class="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="bg-indigo-600/30 p-1.5 rounded-lg border border-indigo-500/30">
-                        <i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs font-bold text-white">Laksh's JEE Coach</div>
-                        <p class="text-[10px] text-slate-400">Allen Schedule (7 AM - 12 PM)</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1">
-                    <button onclick="openApiKeyModal()" class="p-1.5 text-slate-400 hover:text-white"><i data-lucide="key" class="w-4 h-4"></i></button>
-                    <button onclick="toggleAIChat()" class="p-1.5 text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
-                </div>
-            </div>
-            <div id="ai-chat-thread" class="flex-1 p-3.5 overflow-y-auto space-y-3 custom-scrollbar text-xs"></div>
-            <form onsubmit="handleUserSubmit(event)" class="p-2.5 bg-slate-950 border-t border-slate-800 flex gap-1.5">
-                <input type="text" id="ai-user-input" placeholder="Ask question, or: 'Add 2 Physics tasks for today'..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
-                <button type="submit" id="ai-send-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl"><i data-lucide="send" class="w-3.5 h-3.5"></i></button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: ADD / EDIT TEST SCORE -->
-    <div id="test-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden">
-            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                <h3 id="modal-title" class="text-xl font-bold">Add Test Record</h3>
-                <button onclick="closeTestModal()" class="text-slate-400 hover:text-white"><i data-lucide="x"></i></button>
-            </div>
-            <form id="test-form" class="p-6 space-y-5">
-                <input type="hidden" id="edit-index" value="-1">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Test Title</label>
-                        <input type="text" id="t-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Test Date</label>
-                        <input type="date" id="t-date" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-blue-400 uppercase mb-1 text-center">Physics</label>
-                        <input type="number" id="t-p" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-emerald-400 uppercase mb-1 text-center">Chem</label>
-                        <input type="number" id="t-c" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-orange-400 uppercase mb-1 text-center">Math</label>
-                        <input type="number" id="t-m" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center outline-none">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4 border-t border-slate-800 pt-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Max Marks</label>
-                        <input type="number" id="t-max" value="300" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Total Scored (Auto)</label>
-                        <input type="number" id="t-total" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-indigo-400 font-bold outline-none">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Your Rank</label>
-                        <input type="number" id="t-rank" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Total Students</label>
-                        <input type="number" id="t-students" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Analysis / Reflections</label>
-                    <textarea id="t-notes" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all">Save Performance</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: ADD / EDIT ROUTINE TASK WITH AUTO-DURATION -->
-    <div id="task-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
-            <h3 class="text-xl font-bold mb-4">Schedule Routine Task</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Date</label>
-                    <input type="date" id="task-date" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Task Title</label>
-                    <input type="text" id="task-title" placeholder="e.g. Allen Class, Mole Concept PYQs" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Subject</label>
-                    <select id="task-subject" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Maths">Maths</option>
-                        <option value="Allen">Allen Coaching</option>
-                        <option value="General">General/Revision</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Start Time</label>
-                        <input type="time" id="task-start" oninput="calculateModalDuration()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">End Time</label>
-                        <input type="time" id="task-end" oninput="calculateModalDuration()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Duration (Auto or Custom e.g. 45m)</label>
-                    <input type="text" id="task-duration" placeholder="e.g. 1h 30m, 45m" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-indigo-400 font-mono outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Status</label>
-                    <select id="task-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Completed">Completed</option>
-                    </select>
-                </div>
-                <div class="flex gap-2 pt-2">
-                    <button onclick="closeTaskModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
-                    <button onclick="saveTask()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-bold">Lock Task</button>
-                </div>
+        <!-- Test Table -->
+        <div class="glass-card rounded-3xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-widest">
+                        <tr>
+                            <th class="px-6 py-4">Test Date</th>
+                            <th class="px-6 py-4 text-center">PCM Breakdown</th>
+                            <th class="px-6 py-4 text-center">Total</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="test-table-body" class="divide-y divide-slate-800"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: NEXT GOAL -->
-    <div id="next-test-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
-            <h3 class="text-xl font-bold mb-4">Set Upcoming Milestone</h3>
-            <div class="space-y-4">
-                <input type="text" id="nt-name" placeholder="Test Name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
-                <input type="date" id="nt-date" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
-                <div class="flex gap-2 pt-2">
-                    <button onclick="closeNextTestModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
-                    <button onclick="saveNextTest()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl font-bold text-xs">Save Milestone</button>
+    <!-- TAB 2: SYLLABUS -->
+    <div id="view-planner" class="hidden space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="space-y-6">
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="text-lg font-bold mb-4">Add Topic</h3>
+                    <div class="space-y-4">
+                        <select id="topic-subject" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                            <option value="Maths">Maths</option>
+                        </select>
+                        <input type="text" id="topic-name" placeholder="Topic Name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
+                        <input type="text" id="topic-note" placeholder="Note (Optional)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
+                        <button onclick="addTopic()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl">Add to Syllabus</button>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="text-lg font-bold mb-2">Progress</h3>
+                    <div id="progress-percent" class="text-3xl font-black text-indigo-500 mb-1">0%</div>
+                    <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
+                        <div id="overall-progress-bar" class="bg-indigo-500 h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
                 </div>
             </div>
+            <div class="lg:col-span-2 space-y-4" id="syllabus-list"></div>
         </div>
     </div>
 
-    <!-- MODAL: API KEY -->
-    <div id="api-key-modal" class="fixed inset-0 z-[70] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
-            <h3 class="text-lg font-bold mb-2">Gemini API Key</h3>
-            <p class="text-xs text-slate-400 mb-4">Stored locally on your browser.</p>
-            <input type="password" id="custom-api-key" placeholder="Enter Gemini API key" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white mb-4 outline-none">
+    <!-- TAB 3: DAILY PLANNER -->
+    <div id="view-daily" class="hidden space-y-6">
+        <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-black text-white" id="current-view-title">Schedule Calendar</h2>
+                <p class="text-slate-400 text-xs">Drag and drop tasks to reschedule.</p>
+            </div>
             <div class="flex gap-2">
-                <button onclick="closeApiKeyModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
-                <button onclick="saveApiKey()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-bold">Save Key</button>
+                <button onclick="setCalendarView('month')" id="btn-view-month" class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold">Month</button>
+                <button onclick="setCalendarView('today')" id="btn-view-today" class="px-4 py-1.5 rounded-lg bg-slate-800 text-slate-400 text-xs font-bold">Today</button>
+                <button onclick="openTaskModalForDate(new Date())" class="px-4 py-1.5 bg-indigo-600 rounded-lg text-xs font-bold text-white">+ Add Routine</button>
+            </div>
+        </div>
+
+        <!-- Month Grid -->
+        <div id="calendar-month-view" class="glass-card rounded-3xl overflow-hidden border border-slate-800">
+            <div class="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80 font-mono text-[11px] font-black text-slate-400 uppercase text-center py-3">
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            <div id="month-grid" class="calendar-grid divide-x divide-y divide-slate-800 bg-slate-950/40"></div>
+        </div>
+
+        <!-- Day View -->
+        <div id="calendar-tasks-view" class="hidden space-y-4">
+            <div id="daily-task-list" class="space-y-3"></div>
+        </div>
+
+        <!-- Task Status Rings -->
+        <div class="glass-card p-6 rounded-3xl border border-slate-800">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900/60 p-4 rounded-2xl flex flex-col items-center">
+                    <span class="text-[10px] font-black text-indigo-400 uppercase mb-3">Overall Completion</span>
+                    <div class="w-32 h-32 relative"><canvas id="chart-task-overall"></canvas></div>
+                    <div id="stat-text-overall" class="text-[10px] font-mono text-slate-500 mt-2">0/0 Done</div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-2xl flex flex-col items-center">
+                    <span class="text-[10px] font-black text-blue-400 uppercase mb-3">Physics</span>
+                    <div class="w-32 h-32 relative"><canvas id="chart-task-physics"></canvas></div>
+                    <div id="stat-text-physics" class="text-[10px] font-mono text-slate-500 mt-2">0/0 Done</div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-2xl flex flex-col items-center">
+                    <span class="text-[10px] font-black text-emerald-400 uppercase mb-3">Chemistry</span>
+                    <div class="w-32 h-32 relative"><canvas id="chart-task-chemistry"></canvas></div>
+                    <div id="stat-text-chemistry" class="text-[10px] font-mono text-slate-500 mt-2">0/0 Done</div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-2xl flex flex-col items-center">
+                    <span class="text-[10px] font-black text-orange-400 uppercase mb-3">Maths</span>
+                    <div class="w-32 h-32 relative"><canvas id="chart-task-maths"></canvas></div>
+                    <div id="stat-text-maths" class="text-[10px] font-mono text-slate-500 mt-2">0/0 Done</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // ==========================================
-        // 1. DATA STATE MANAGEMENT
-        // ==========================================
-        function safeJSON(key, fallback) {
-            try {
-                var val = localStorage.getItem(key);
-                if (!val || val === 'undefined' || val === 'null') return fallback;
-                return JSON.parse(val);
-            } catch(e) {
-                return fallback;
-            }
+    <!-- TAB 4: F1 HUB -->
+    <div id="view-f1hub" class="hidden w-full h-[calc(100vh-160px)] rounded-3xl overflow-hidden border border-slate-800">
+        <iframe src="https://thecbsecore.github.io/F1/" class="w-full h-full border-0"></iframe>
+    </div>
+
+    <!-- TAB 5: GOALS -->
+    <div id="view-goals" class="hidden space-y-12">
+        <h3 class="text-indigo-400 font-bold uppercase tracking-widest text-sm">Targets</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="glass-card p-6 rounded-2xl">
+                <h4 class="font-bold text-white">IIT Bombay CSE</h4>
+                <p class="text-xs text-slate-500 mt-1">JEE Advanced 2028</p>
+            </div>
+            <div class="glass-card p-6 rounded-2xl">
+                <h4 class="font-bold text-white">AIR Under 60</h4>
+                <p class="text-xs text-slate-500 mt-1">Consistent Mock Marks > 260</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- FOCUS TIMER -->
+<div id="focus-timer-container" class="fixed bottom-6 left-6 z-50">
+    <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-slate-900/95 hover:bg-slate-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-slate-700">
+        <i data-lucide="timer" class="w-4 h-4 text-indigo-400"></i>
+        <span class="font-bold text-xs uppercase">Focus</span>
+    </button>
+    <div id="focus-timer-widget" class="hidden absolute bottom-14 left-0 glass-card p-4 rounded-3xl shadow-2xl w-64">
+        <div id="timer-drag-handle" class="cursor-move border-b border-slate-800 pb-2 mb-2 flex justify-between">
+            <span class="text-[10px] font-bold text-slate-500">TIMER</span>
+            <button onclick="toggleFocusTimer()"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </div>
+        <div class="text-center font-mono text-4xl font-black py-2" id="timer-display">25:00</div>
+        <div class="flex gap-2 pt-2">
+            <button onclick="startTimer()" id="timer-start-btn" class="flex-1 bg-indigo-600 py-2 rounded-xl text-[10px] font-bold">START</button>
+            <button onclick="resetTimer()" class="bg-slate-800 px-3 py-2 rounded-xl"><i data-lucide="rotate-ccw" class="w-3 h-3"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- AI MENTOR -->
+<div id="ai-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <button onclick="toggleAIChat()" class="bg-indigo-600 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2 border border-indigo-400/30">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        <span class="font-bold text-xs uppercase">Ask Mentor</span>
+    </button>
+    <div id="ai-chatbox" class="hidden mt-3 w-[360px] h-[500px] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div class="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-bold">Coach Laksh</span>
+            <button onclick="toggleAIChat()"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div id="ai-chat-thread" class="flex-1 p-3.5 overflow-y-auto space-y-3 custom-scrollbar text-xs"></div>
+        <form onsubmit="handleUserSubmit(event)" class="p-2.5 bg-slate-950 border-t border-slate-800 flex gap-2">
+            <input type="text" id="ai-user-input" placeholder="Ask or schedule something..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs outline-none text-white">
+            <button type="submit" class="bg-indigo-600 text-white p-2 rounded-xl"><i data-lucide="send" class="w-4 h-4"></i></button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: TEST -->
+<div id="test-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
+        <h3 class="text-lg font-bold mb-4">Test Performance</h3>
+        <form id="test-form" class="space-y-4">
+            <input type="hidden" id="edit-index" value="-1">
+            <input type="text" id="t-name" placeholder="Test Name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none">
+            <input type="date" id="t-date" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none">
+            <div class="grid grid-cols-3 gap-2">
+                <input type="number" id="t-p" placeholder="P" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2 text-center text-xs outline-none">
+                <input type="number" id="t-c" placeholder="C" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2 text-center text-xs outline-none">
+                <input type="number" id="t-m" placeholder="M" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2 text-center text-xs outline-none">
+            </div>
+            <div class="flex gap-2">
+                <button type="button" onclick="closeTestModal()" class="flex-1 bg-slate-800 py-2 rounded-xl text-xs">Cancel</button>
+                <button type="submit" class="flex-1 bg-indigo-600 py-2 rounded-xl text-xs font-bold">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: TASK -->
+<div id="task-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
+        <h3 class="text-lg font-bold mb-4">Routine Task</h3>
+        <div class="space-y-4">
+            <input type="text" id="task-title" placeholder="What are you doing?" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none text-white">
+            <select id="task-subject" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none text-white">
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Maths">Maths</option>
+                <option value="General">General</option>
+            </select>
+            <input type="date" id="task-date" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none text-white">
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[10px] text-slate-500 font-bold block mb-1">START</label>
+                    <input type="time" id="task-start" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none text-white">
+                </div>
+                <div>
+                    <label class="text-[10px] text-slate-500 font-bold block mb-1">END</label>
+                    <input type="time" id="task-end" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none text-white">
+                </div>
+            </div>
+            <div>
+                <label class="text-[10px] text-slate-500 font-bold block mb-1">DURATION (AUTO)</label>
+                <input type="text" id="task-duration" readonly class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none text-indigo-400 font-mono">
+            </div>
+            <div class="flex gap-2">
+                <button onclick="closeTaskModal()" class="flex-1 bg-slate-800 py-2 rounded-xl text-xs">Cancel</button>
+                <button onclick="saveTask()" class="flex-1 bg-indigo-600 py-2 rounded-xl text-xs font-bold">Save Task</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Core Application State ---
+    let appState = {
+        tests: [],
+        syllabus: [],
+        scheduledTasks: [],
+        chatHistory: [],
+        nextTest: { name: 'JEE Main 1', date: '' },
+        apiKey: localStorage.getItem('jee_api_key') || '',
+        lastBatchIds: [] // For Undo
+    };
+
+    const loadFromStorage = () => {
+        try {
+            appState.tests = JSON.parse(localStorage.getItem('jee_tests')) || [];
+            appState.syllabus = JSON.parse(localStorage.getItem('jee_syllabus')) || [];
+            appState.scheduledTasks = JSON.parse(localStorage.getItem('jee_tasks')) || [];
+            appState.chatHistory = JSON.parse(localStorage.getItem('jee_chats')) || [];
+        } catch (e) {
+            console.error("Storage corruption detected. Resetting to defaults.");
         }
+    };
 
-        window.appState = {
-            tests: safeJSON('jee_tests', []),
-            syllabus: safeJSON('jee_syllabus', []),
-            scheduledTasks: safeJSON('jee_tasks', []),
-            nextTest: safeJSON('jee_next_test', { name: 'Next Major Test', date: '' }),
-            apiKey: localStorage.getItem('jee_api_key') || '',
-            chatHistory: safeJSON('jee_ai_chats', [])
-        };
+    const saveToStorage = () => {
+        localStorage.setItem('jee_tests', JSON.stringify(appState.tests));
+        localStorage.setItem('jee_syllabus', JSON.stringify(appState.syllabus));
+        localStorage.setItem('jee_tasks', JSON.stringify(appState.scheduledTasks));
+        localStorage.setItem('jee_chats', JSON.stringify(appState.chatHistory));
+    };
 
-        window.activeChartFilter = 'all';
-        window.performanceChart = null;
-        window.taskCharts = {};
-        window.calendarView = 'month';
-        window.selectedDate = new Date();
-        window.lastActionUndoStack = null;
+    // --- GLOBAL UTILITIES ---
+    window.switchTab = (view) => {
+        ['analytics', 'planner', 'daily', 'f1hub', 'goals'].forEach(v => {
+            const el = document.getElementById(`view-${v}`);
+            if (el) el.classList.toggle('hidden', v !== view);
+            const btn = document.getElementById(`tab-btn-${v}`);
+            if (btn) btn.classList.toggle('tab-active', v === view);
+        });
+        if (view === 'daily') { window.renderCalendar(); window.renderTaskMetrics(); }
+        if (view === 'analytics') window.renderChart();
+        if (view === 'planner') window.renderSyllabus();
+        lucide.createIcons();
+    };
 
-        window.saveToStorage = function() {
-            try {
-                localStorage.setItem('jee_tests', JSON.stringify(window.appState.tests || []));
-                localStorage.setItem('jee_syllabus', JSON.stringify(window.appState.syllabus || []));
-                localStorage.setItem('jee_tasks', JSON.stringify(window.appState.scheduledTasks || []));
-                localStorage.setItem('jee_next_test', JSON.stringify(window.appState.nextTest || { name: 'Next Major Test', date: '' }));
-                localStorage.setItem('jee_api_key', window.appState.apiKey || '');
-                localStorage.setItem('jee_ai_chats', JSON.stringify(window.appState.chatHistory || []));
-            } catch(e) {
-                console.error("Storage save failed", e);
-            }
-        };
+    // --- 1. DURATION CALCULATION ---
+    const calcDuration = () => {
+        const start = document.getElementById('task-start').value;
+        const end = document.getElementById('task-end').value;
+        const durField = document.getElementById('task-duration');
+        if (!start || !end) { durField.value = '--'; return; }
+        
+        const [sh, sm] = start.split(':').map(Number);
+        const [eh, em] = end.split(':').map(Number);
+        let diff = (eh * 60 + em) - (sh * 60 + sm);
+        if (diff < 0) diff += 1440; // overnight
 
-        // ==========================================
-        // 2. NAVIGATION & TABS
-        // ==========================================
-        window.switchTab = function(view) {
-            ['analytics', 'planner', 'daily', 'f1hub', 'goals'].forEach(function(v) {
-                var el = document.getElementById('view-' + v);
-                if (el) el.classList.toggle('hidden', v !== view);
-                var btn = document.getElementById('tab-btn-' + v);
-                if (btn) {
-                    btn.classList.toggle('tab-active', v === view);
-                    btn.classList.toggle('text-slate-400', v !== view);
-                }
-            });
+        const h = Math.floor(diff / 60);
+        const m = diff % 60;
+        durField.value = (h > 0 ? `${h}h ` : '') + (m > 0 ? `${m}m` : (h === 0 ? '0m' : ''));
+    };
 
-            var main = document.getElementById('main-container');
-            if (main) {
-                if (view === 'f1hub') main.className = "w-full max-w-[99%] mx-auto px-1 py-2";
-                else main.className = "max-w-7xl mx-auto px-4 py-8";
-            }
+    document.getElementById('task-start').addEventListener('change', calcDuration);
+    document.getElementById('task-end').addEventListener('change', calcDuration);
 
-            if (view === 'daily') { window.renderCalendar(); window.renderTaskMetrics(); }
-            if (view === 'analytics') window.renderChart();
-            if (view === 'planner') { window.renderSyllabus(); window.updateCountdown(); }
-            if (window.lucide) lucide.createIcons();
-        };
+    // --- 2. NATIVE DRAG & DROP ---
+    window.onTaskDragStart = (e, taskId) => {
+        e.dataTransfer.setData('taskId', taskId);
+        e.target.style.opacity = '0.4';
+    };
 
-        window.toggleMobileMenu = function() {
-            var menu = document.getElementById('mobile-menu');
-            if (menu) menu.classList.toggle('hidden');
-        };
+    window.onCellDragOver = (e) => {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+    };
 
-        // ==========================================
-        // 3. ANALYTICS & CHART.JS
-        // ==========================================
-        window.setChartFilter = function(type) {
-            window.activeChartFilter = type;
-            ['all', 'pcm', 'physics', 'chem', 'maths'].forEach(function(b) {
-                var btn = document.getElementById('btn-chart-' + b);
-                if (!btn) return;
-                btn.className = (b === type) 
-                    ? "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm" 
-                    : "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
-            });
-            window.renderChart();
-        };
+    window.onCellDragLeave = (e) => {
+        e.currentTarget.classList.remove('drag-over');
+    };
 
-        window.renderChart = function() {
-            var ctx = document.getElementById('scoreChart');
-            if (!ctx) return;
-            var tests = window.appState.tests || [];
-            var sorted = tests.slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
-            var labels = sorted.map(function(t) { return t.name; });
-
-            var datasets = [];
-            if (window.activeChartFilter === 'all') {
-                datasets = [{
-                    label: 'Total Score',
-                    data: sorted.map(function(t) { return Number(t.total || 0); }),
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
-                    borderWidth: 3, fill: true, tension: 0.35, pointRadius: 4
-                }];
-            } else if (window.activeChartFilter === 'pcm') {
-                datasets = [
-                    { label: 'Physics', data: sorted.map(function(t) { return Number(t.p || 0); }), borderColor: '#3b82f6', tension: 0.35, pointRadius: 4 },
-                    { label: 'Chemistry', data: sorted.map(function(t) { return Number(t.c || 0); }), borderColor: '#10b981', tension: 0.35, pointRadius: 4 },
-                    { label: 'Maths', data: sorted.map(function(t) { return Number(t.m || 0); }), borderColor: '#f97316', tension: 0.35, pointRadius: 4 }
-                ];
-            } else if (window.activeChartFilter === 'physics') {
-                datasets = [{ label: 'Physics Score', data: sorted.map(function(t) { return Number(t.p || 0); }), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            } else if (window.activeChartFilter === 'chem') {
-                datasets = [{ label: 'Chemistry Score', data: sorted.map(function(t) { return Number(t.c || 0); }), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            } else if (window.activeChartFilter === 'maths') {
-                datasets = [{ label: 'Maths Score', data: sorted.map(function(t) { return Number(t.m || 0); }), borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            }
-
-            try {
-                if (window.performanceChart) window.performanceChart.destroy();
-                window.performanceChart = new Chart(ctx, {
-                    type: 'line',
-                    data: { labels: labels.length ? labels : ['No tests yet'], datasets: datasets.length ? datasets : [{ label: 'No Data', data: [0], borderColor: '#334155' }] },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        scales: {
-                            x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } },
-                            y: { min: 0, max: (window.activeChartFilter === 'all') ? 300 : 100, grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } }
-                        }
-                    }
-                });
-            } catch(e) {
-                console.warn("Chart render skipped", e);
-            }
-            window.calculateAnalytics();
-        };
-
-        window.calculateAnalytics = function() {
-            var tests = window.appState.tests || [];
-            var emptyEl = document.getElementById('empty-state');
-            if (emptyEl) emptyEl.classList.toggle('hidden', tests.length > 0);
-            
-            var totalScore = tests.reduce(function(sum, t) { return sum + Number(t.total || 0); }, 0);
-            var avgScore = tests.length ? (totalScore / tests.length).toFixed(1) : 0;
-            var avgEl = document.getElementById('stat-avg-score');
-            if (avgEl) avgEl.innerText = avgScore;
-            var avgPercEl = document.getElementById('stat-avg-perc');
-            if (avgPercEl) avgPercEl.innerText = (tests.length ? ((avgScore / 300) * 100).toFixed(1) : 0) + '% Avg';
-
-            var recent = tests.slice(-3);
-            var recentAvg = recent.length ? (recent.reduce(function(sum, t) { return sum + Number(t.total || 0); }, 0) / recent.length).toFixed(1) : 0;
-            var recEl = document.getElementById('stat-recent-avg');
-            if (recEl) recEl.innerText = recentAvg;
-
-            var avgP = tests.length ? (tests.reduce(function(sum, t) { return sum + Number(t.p || 0); }, 0) / tests.length).toFixed(1) : 0;
-            var avgC = tests.length ? (tests.reduce(function(sum, t) { return sum + Number(t.c || 0); }, 0) / tests.length).toFixed(1) : 0;
-            var avgM = tests.length ? (tests.reduce(function(sum, t) { return sum + Number(t.m || 0), 0; }, 0) / tests.length).toFixed(1) : 0;
-            
-            var pEl = document.getElementById('avg-p'); if (pEl) pEl.innerText = avgP;
-            var cEl = document.getElementById('avg-c'); if (cEl) cEl.innerText = avgC;
-            var mEl = document.getElementById('avg-m'); if (mEl) mEl.innerText = avgM;
-
-            var bpEl = document.getElementById('bar-p'); if (bpEl) bpEl.style.width = avgP + '%';
-            var bcEl = document.getElementById('bar-c'); if (bcEl) bcEl.style.width = avgC + '%';
-            var bmEl = document.getElementById('bar-m'); if (bmEl) bmEl.style.width = avgM + '%';
-
-            var percentiles = tests.map(function(t) { return (t.rank && t.students) ? ((t.students - t.rank) / t.students * 100) : 0; });
-            var bestP = document.getElementById('stat-best-percentile');
-            if (bestP) bestP.innerText = (percentiles.length ? Math.max.apply(null, percentiles).toFixed(1) : 0) + '%';
-            window.renderTestTable();
-        };
-
-        window.renderTestTable = function() {
-            var tbody = document.getElementById('test-table-body');
-            var countEl = document.getElementById('test-count');
-            var tests = window.appState.tests || [];
-            if (countEl) countEl.innerText = tests.length + ' Tests Recorded';
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            tests.slice().reverse().forEach(function(test, originalIndex) {
-                var actualIdx = tests.length - 1 - originalIndex;
-                var perc = (test.students && test.rank) ? ((test.students - test.rank) / test.students * 100).toFixed(1) : 'N/A';
-                var row = document.createElement('tr');
-                row.className = "hover:bg-slate-800/30 transition-colors group";
-                row.innerHTML = 
-                    '<td class="px-6 py-4">' +
-                        '<div class="font-bold text-white">' + test.name + '</div>' +
-                        '<div class="text-xs text-slate-500">' + test.date + '</div>' +
-                        (test.notes ? '<div class="text-xs text-slate-400 italic mt-1 bg-slate-900/40 p-1.5 rounded border border-slate-800">' + test.notes + '</div>' : '') +
-                    '</td>' +
-                    '<td class="px-6 py-4 text-center font-mono text-xs">' +
-                        '<span class="text-blue-400">' + test.p + '</span> | <span class="text-emerald-400">' + test.c + '</span> | <span class="text-orange-400">' + test.m + '</span>' +
-                    '</td>' +
-                    '<td class="px-6 py-4 text-center font-bold text-indigo-400 text-base">' +
-                        test.total + ' <span class="text-xs text-slate-500 font-normal">/ ' + test.max + '</span>' +
-                    '</td>' +
-                    '<td class="px-6 py-4 text-center">' +
-                        '<span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 text-xs font-bold border border-indigo-500/20 inline-block">' +
-                            perc + (perc !== 'N/A' ? '%' : '') +
-                        '</span>' +
-                        ((test.rank && test.students) ? '<div class="text-[11px] text-slate-400 font-mono mt-1">Rank <span class="text-white font-bold">' + test.rank + '</span> / ' + test.students + '</div>' : '') +
-                    '</td>' +
-                    '<td class="px-6 py-4 text-right">' +
-                        '<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">' +
-                            '<button onclick="editTest(' + actualIdx + ')" class="p-1 hover:text-indigo-400"><i data-lucide="edit-3" class="w-4 h-4"></i></button>' +
-                            '<button onclick="deleteTest(' + actualIdx + ')" class="p-1 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>' +
-                        </div>' +
-                    '</td>';
-                tbody.appendChild(row);
-            });
-            if (window.lucide) lucide.createIcons();
-        };
-
-        var pIn = document.getElementById('t-p'), cIn = document.getElementById('t-c'), mIn = document.getElementById('t-m'), totalIn = document.getElementById('t-total');
-        if (pIn && cIn && mIn && totalIn) {
-            [pIn, cIn, mIn].forEach(function(el) {
-                el.addEventListener('input', function() {
-                    totalIn.value = Number(pIn.value || 0) + Number(cIn.value || 0) + Number(mIn.value || 0);
-                });
-            });
+    window.onCellDrop = (e, targetDate) => {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+        const taskId = e.dataTransfer.getData('taskId');
+        const task = appState.scheduledTasks.find(t => t.id == taskId);
+        if (task) {
+            task.date = targetDate;
+            saveToStorage();
+            window.renderCalendar();
         }
+    };
 
-        var testFormEl = document.getElementById('test-form');
-        if (testFormEl) {
-            testFormEl.onsubmit = function(e) {
-                e.preventDefault();
-                var editIdx = parseInt(document.getElementById('edit-index').value);
-                var data = {
-                    name: document.getElementById('t-name').value,
-                    date: document.getElementById('t-date').value,
-                    p: pIn.value, c: cIn.value, m: mIn.value, total: totalIn.value,
-                    max: document.getElementById('t-max').value,
-                    rank: document.getElementById('t-rank').value,
-                    students: document.getElementById('t-students').value,
-                    notes: document.getElementById('t-notes').value
-                };
-                if (!window.appState.tests) window.appState.tests = [];
-                if (editIdx > -1) window.appState.tests[editIdx] = data;
-                else window.appState.tests.push(data);
-                window.saveToStorage();
-                window.calculateAnalytics();
-                window.renderChart();
-                window.closeTestModal();
-            };
-        }
-
-        window.openTestModal = function(idx) {
-            if (idx === undefined) idx = -1;
-            var m = document.getElementById('test-modal');
-            if (!m) return;
-            m.classList.remove('hidden');
-            document.getElementById('edit-index').value = idx;
-            document.getElementById('modal-title').innerText = idx > -1 ? 'Edit Test' : 'Add New Test';
-            if (idx > -1) {
-                var t = window.appState.tests[idx];
-                document.getElementById('t-name').value = t.name;
-                document.getElementById('t-date').value = t.date;
-                pIn.value = t.p; cIn.value = t.c; mIn.value = t.m; totalIn.value = t.total;
-                document.getElementById('t-max').value = t.max;
-                document.getElementById('t-rank').value = t.rank;
-                document.getElementById('t-students').value = t.students;
-                document.getElementById('t-notes').value = t.notes || '';
-            } else {
-                if (testFormEl) testFormEl.reset();
-                document.getElementById('t-max').value = 300;
-            }
-        };
-
-        window.closeTestModal = function() { 
-            var m = document.getElementById('test-modal');
-            if (m) m.classList.add('hidden'); 
-        };
-
-        window.deleteTest = function(idx) {
-            if (confirm('Delete this test score?')) {
-                window.appState.tests.splice(idx, 1);
-                window.saveToStorage();
-                window.renderChart();
-            }
-        };
-
-        window.editTest = function(idx) { window.openTestModal(idx); };
-
-        // ==========================================
-        // 4. CALENDAR & DAILY PLANNER
-        // ==========================================
-        window.getSubjectStyle = function(sub) {
-            if (sub === 'Physics') return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-            if (sub === 'Chemistry') return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-            if (sub === 'Maths') return 'bg-orange-500/20 text-orange-300 border-orange-500/30';
-            if (sub === 'Allen') return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-            return 'bg-slate-700/50 text-slate-300 border-slate-600';
-        };
-
-        window.getStatusBadge = function(status) {
-            if (status === 'Completed') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Completed</span>';
-            if (status === 'In Progress') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">In Progress</span>';
-            if (status === 'Pending') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30">Pending</span>';
-            return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">Not Started</span>';
-        };
-
-        window.calculateTaskDuration = function(start, end) {
-            if (!start || !end) return '';
-            var sParts = start.split(':').map(Number);
-            var eParts = end.split(':').map(Number);
-            var diff = (eParts[0] * 60 + eParts[1]) - (sParts[0] * 60 + sParts[1]);
-            if (diff < 0) diff += 24 * 60;
-            var h = Math.floor(diff / 60);
-            var m = diff % 60;
-            if (h > 0 && m > 0) return h + 'h ' + m + 'm';
-            if (h > 0) return h + 'h';
-            return m + 'm';
-        };
-
-        window.calculateModalDuration = function() {
-            var s = document.getElementById('task-start').value;
-            var e = document.getElementById('task-end').value;
-            var dur = window.calculateTaskDuration(s, e);
-            if (dur) document.getElementById('task-duration').value = dur;
-        };
-
-        window.openTaskModalForDate = function(targetDate) {
-            var d = targetDate instanceof Date ? targetDate : new Date(targetDate);
-            var dateStr = d.toISOString().split('T')[0];
-            document.getElementById('task-date').value = dateStr;
-            document.getElementById('task-title').value = '';
-            document.getElementById('task-start').value = '';
-            document.getElementById('task-end').value = '';
-            document.getElementById('task-duration').value = '';
-            document.getElementById('task-modal').classList.remove('hidden');
-        };
-
-        window.renderCalendar = function() {
-            var monthView = document.getElementById('calendar-month-view');
-            var tasksView = document.getElementById('calendar-tasks-view');
-            var monthGrid = document.getElementById('month-grid');
-            var title = document.getElementById('current-view-title');
-
-            if (!monthGrid) return;
-
-            if (window.calendarView === 'month') {
-                if (monthView) monthView.classList.remove('hidden');
-                if (tasksView) tasksView.classList.add('hidden');
-                monthGrid.innerHTML = '';
-
-                var year = window.selectedDate.getFullYear();
-                var month = window.selectedDate.getMonth();
-                if (title) title.innerText = window.selectedDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
-
-                var firstDayIndex = new Date(year, month, 1).getDay();
-                var totalDays = new Date(year, month + 1, 0).getDate();
-
-                for (var i = 0; i < firstDayIndex; i++) {
-                    monthGrid.innerHTML += '<div class="calendar-cell bg-slate-900/20 p-2 border-r border-b border-slate-800/40"></div>';
-                }
-
-                for (var d = 1; d <= totalDays; d++) {
-                    var dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-                    var isToday = new Date().toISOString().split('T')[0] === dateStr;
-                    var dayTasks = (window.appState.scheduledTasks || []).filter(function(t) { return t.date === dateStr; });
-
-                    var cell = document.createElement('div');
-                    cell.className = "calendar-cell p-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors border-r border-b border-slate-800/70 flex flex-col justify-between group relative " + (isToday ? 'bg-indigo-950/20' : '');
-                    cell.dataset.date = dateStr;
-
-                    cell.ondragover = function(e) { e.preventDefault(); this.classList.add('drag-over'); };
-                    cell.ondragleave = function() { this.classList.remove('drag-over'); };
-                    cell.ondrop = function(e) {
-                        e.preventDefault();
-                        this.classList.remove('drag-over');
-                        var taskId = parseInt(e.dataTransfer.getData('text/plain'));
-                        var targetDateStr = this.dataset.date;
-                        var task = (window.appState.scheduledTasks || []).find(function(t) { return t.id === taskId; });
-                        if (task && task.date !== targetDateStr) {
-                            task.date = targetDateStr;
-                            window.saveToStorage();
-                            window.renderCalendar();
-                        }
-                    };
-
-                    cell.onclick = (function(yr, mo, dayNum) {
-                        return function(e) {
-                            if (e.target.closest('button') || e.target.closest('.task-item')) return;
-                            window.selectedDate = new Date(yr, mo, dayNum);
-                            window.setCalendarView('today');
-                        };
-                    })(year, month, d);
-
-                    var taskPills = dayTasks.slice(0, 3).map(function(t) {
-                        var dur = t.duration || window.calculateTaskDuration(t.start, t.end);
-                        return '<div draggable="true" ondragstart="event.dataTransfer.setData(\'text/plain\', \'' + t.id + '\')" class="task-item text-[10px] px-2 py-0.5 rounded border truncate flex items-center justify-between gap-1 shadow-sm ' + window.getSubjectStyle(t.subject) + ' ' + (t.status === 'Completed' ? 'line-through opacity-40' : '') + '">' +
-                            '<span class="truncate">' + t.title + '</span>' +
-                            (dur ? '<span class="text-[9px] font-mono opacity-80 flex-shrink-0">' + dur + '</span>' : '') +
-                        '</div>';
-                    }).join('');
-
-                    if (dayTasks.length > 3) {
-                        taskPills += '<div class="text-[9px] font-bold text-indigo-400 pl-1">+' + (dayTasks.length - 3) + ' more</div>';
-                    }
-
-                    cell.innerHTML = 
-                        '<div class="flex justify-between items-center">' +
-                            '<span class="text-xs font-bold ' + (isToday ? 'w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black' : 'text-slate-400') + '">' + d + '</span>' +
-                            '<div class="flex items-center gap-1">' +
-                                (dayTasks.length ? '<span class="text-[10px] font-mono text-slate-500 mr-1">' + dayTasks.length + '</span>' : '') +
-                                '<button onclick="event.stopPropagation(); openTaskModalForDate(\'' + dateStr + '\')" title="Add Routine" class="p-1 text-slate-500 hover:text-indigo-400 hover:bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">' +
-                                    '<i data-lucide="plus" class="w-3.5 h-3.5"></i>' +
-                                '</button>' +
-                            </div>' +
-                        '</div>' +
-                        '<div class="space-y-1 my-1 flex-1">' + taskPills + '</div>';
-                    monthGrid.appendChild(cell);
-                }
-            } else {
-                if (monthView) monthView.classList.add('hidden');
-                if (tasksView) tasksView.classList.remove('hidden');
-                if (title) title.innerText = "Daily Briefing & Routines";
-                window.renderTaskList();
-            }
-            window.renderTaskMetrics();
-            if (window.lucide) lucide.createIcons();
-        };
-
-        window.renderTaskList = function() {
-            var list = document.getElementById('daily-task-list');
-            if (!list) return;
-            var dateStr = window.selectedDate.toISOString().split('T')[0];
-            var dateLabel = document.getElementById('tasks-selected-date');
-            if (dateLabel) dateLabel.innerText = window.selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            list.innerHTML = '';
-
-            var tasks = (window.appState.scheduledTasks || []).filter(function(t) { return t.date === dateStr; }).sort(function(a, b) { return (a.start || '').localeCompare(b.start || ''); });
-            var badge = document.getElementById('tasks-stats-badge');
-            if (badge) badge.innerText = tasks.length + ' Routines Scheduled';
-
-            if (tasks.length === 0) {
-                list.innerHTML = '<div class="glass-card p-12 text-center rounded-3xl border border-dashed border-slate-800 text-slate-500">No tasks or lectures scheduled for this date. Click "Add Routine" to schedule.</div>';
-            } else {
-                tasks.forEach(function(t) {
-                    var dur = t.duration || window.calculateTaskDuration(t.start, t.end);
-                    var row = document.createElement('div');
-                    row.className = "glass-card p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group";
-                    row.innerHTML = 
-                        '<div class="flex items-center gap-3">' +
-                            '<button onclick="cycleTaskStatus(' + t.id + ')" title="Click to cycle status" class="transition-transform active:scale-95">' +
-                                window.getStatusBadge(t.status) +
-                            '</button>' +
-                            '<div>' +
-                                '<h4 class="font-bold text-sm text-white ' + (t.status === 'Completed' ? 'line-through opacity-50' : '') + '">' + t.title + '</h4>' +
-                                '<div class="flex items-center gap-2 mt-1">' +
-                                    '<span class="text-[10px] font-bold px-2 py-0.5 rounded border ' + window.getSubjectStyle(t.subject) + '">' + t.subject + '</span>' +
-                                    (dur ? '<span class="text-xs text-indigo-400 font-mono font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">' + dur + '</span>' : '') +
-                                    '<span class="text-xs text-slate-400 font-mono">' + (t.start ? t.start + ' - ' + t.end : '') + '</span>' +
-                                </div>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="flex items-center gap-2 self-end sm:self-center">' +
-                            '<button onclick="deleteTask(' + t.id + ')" class="p-2 text-slate-600 hover:text-red-400 rounded-lg hover:bg-slate-800/60 transition-colors">' +
-                                '<i data-lucide="trash-2" class="w-4 h-4"></i>' +
-                            '</button>' +
-                        '</div>';
-                    list.appendChild(row);
-                });
-            }
-            if (window.lucide) lucide.createIcons();
-        };
-
-        window.buildDoughnut = function(canvasId, done, inProg, pending) {
-            var ctx = document.getElementById(canvasId);
-            if (!ctx) return;
-            try {
-                if (window.taskCharts[canvasId]) window.taskCharts[canvasId].destroy();
-
-                var total = done + inProg + pending;
-                var data = total === 0 ? [0, 0, 1] : [done, inProg, pending];
-                var colors = total === 0 ? ['#1e293b', '#1e293b', '#334155'] : ['#10b981', '#f59e0b', '#475569'];
-
-                window.taskCharts[canvasId] = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Completed', 'In Progress', 'Pending'],
-                        datasets: [{ data: data, backgroundColor: colors, borderWidth: 0, hoverOffset: 3 }]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false, cutout: '72%',
-                        plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } }
-                    }
-                });
-            } catch(e) {
-                console.warn("Doughnut render skipped", e);
-            }
-        };
-
-        window.renderTaskMetrics = function() {
-            var tasks = window.appState.scheduledTasks || [];
-            function getCounts(taskList) {
-                var done = taskList.filter(function(t) { return t.status === 'Completed'; }).length;
-                var inProg = taskList.filter(function(t) { return t.status === 'In Progress'; }).length;
-                var pending = taskList.filter(function(t) { return t.status !== 'Completed' && t.status !== 'In Progress'; }).length;
-                return { done: done, inProg: inProg, pending: pending, total: taskList.length };
-            }
-
-            var ov = getCounts(tasks);
-            window.buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
-            var elOv = document.getElementById('stat-text-overall');
-            if (elOv) elOv.innerText = ov.done + '/' + ov.total + ' Done (' + (ov.total ? Math.round((ov.done/ov.total)*100) : 0) + '%)';
-
-            var phy = getCounts(tasks.filter(function(t) { return t.subject === 'Physics'; }));
-            window.buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
-            var elPhy = document.getElementById('stat-text-physics');
-            if (elPhy) elPhy.innerText = phy.done + '/' + phy.total + ' Done (' + (phy.total ? Math.round((phy.done/phy.total)*100) : 0) + '%)';
-
-            var chm = getCounts(tasks.filter(function(t) { return t.subject === 'Chemistry'; }));
-            window.buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
-            var elChm = document.getElementById('stat-text-chemistry');
-            if (elChm) elChm.innerText = chm.done + '/' + chm.total + ' Done (' + (chm.total ? Math.round((chm.done/chm.total)*100) : 0) + '%)';
-
-            var mth = getCounts(tasks.filter(function(t) { return t.subject === 'Maths'; }));
-            window.buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
-            var elMth = document.getElementById('stat-text-maths');
-            if (elMth) elMth.innerText = mth.done + '/' + mth.total + ' Done (' + (mth.total ? Math.round((mth.done/mth.total)*100) : 0) + '%)';
-        };
-
-        window.closeTaskModal = function() { 
-            var m = document.getElementById('task-modal');
-            if (m) m.classList.add('hidden'); 
-        };
-
-        window.saveTask = function() {
-            var title = document.getElementById('task-title').value.trim();
-            var subject = document.getElementById('task-subject').value;
-            var start = document.getElementById('task-start').value;
-            var end = document.getElementById('task-end').value;
-            var duration = document.getElementById('task-duration').value.trim();
-            if (!duration && start && end) duration = window.calculateTaskDuration(start, end);
-            var status = document.getElementById('task-status').value;
-            var dateStr = document.getElementById('task-date').value || window.selectedDate.toISOString().split('T')[0];
-
-            if (!title) return alert("Please enter a task title.");
-
-            if (!window.appState.scheduledTasks) window.appState.scheduledTasks = [];
-            window.appState.scheduledTasks.push({
-                id: Date.now(),
-                date: dateStr,
-                title: title, subject: subject, start: start, end: end, duration: duration, status: status
-            });
-
-            window.saveToStorage();
-            window.closeTaskModal();
-            window.renderCalendar();
-        };
-
-        window.cycleTaskStatus = function(id) {
-            var t = (window.appState.scheduledTasks || []).find(function(x) { return x.id === id; });
-            if (!t) return;
-            var seq = ['Not Started', 'In Progress', 'Completed', 'Pending'];
-            var nextIdx = (seq.indexOf(t.status) + 1) % seq.length;
-            t.status = seq[nextIdx];
-            window.saveToStorage();
-            window.renderCalendar();
-        };
-
-        window.deleteTask = function(id) {
-            window.appState.scheduledTasks = (window.appState.scheduledTasks || []).filter(function(x) { return x.id !== id; });
-            window.saveToStorage();
-            window.renderCalendar();
-        };
-
-        // ==========================================
-        // 5. FOCUS TIMER & PIP
-        // ==========================================
-        window.timerRemaining = 25 * 60;
-        window.timerInterval = null;
-        window.isTimerRunning = false;
-
-        window.getDirectConfiguredSeconds = function() {
-            var m = parseInt(document.getElementById('timer-input-m').value) || 0;
-            var s = parseInt(document.getElementById('timer-input-s').value) || 0;
-            return Math.max(1, Math.min(3600, (m * 60) + s));
-        };
-
-        window.onDirectTimeChange = function() {
-            if (window.isTimerRunning) return;
-            window.timerRemaining = window.getDirectConfiguredSeconds();
-            window.renderPipCanvas();
-        };
-
-        window.setTimerDirect = function(mins, secs) {
-            window.pauseTimer();
-            document.getElementById('timer-input-m').value = mins.toString().padStart(2, '0');
-            document.getElementById('timer-input-s').value = secs.toString().padStart(2, '0');
-            window.timerRemaining = (mins * 60) + secs;
-            window.renderPipCanvas();
-        };
-
-        window.updateTimerFields = function() {
-            var mins = Math.floor(window.timerRemaining / 60);
-            var secs = window.timerRemaining % 60;
-            var mi = document.getElementById('timer-input-m');
-            var si = document.getElementById('timer-input-s');
-            if (mi) mi.value = mins.toString().padStart(2, '0');
-            if (si) si.value = secs.toString().padStart(2, '0');
-            window.renderPipCanvas();
-        };
-
-        window.startTimer = function() {
-            if (window.isTimerRunning) return;
-            if (window.timerRemaining <= 0) window.timerRemaining = window.getDirectConfiguredSeconds();
-            window.isTimerRunning = true;
-            var btn = document.getElementById('timer-start-btn');
-            if (btn) {
-                btn.classList.add('bg-emerald-600');
-                btn.innerHTML = '<i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse"></i> Focus';
-            }
-            if (window.lucide) lucide.createIcons();
-
-            window.timerInterval = setInterval(function() {
-                if (window.timerRemaining > 0) {
-                    window.timerRemaining--;
-                    window.updateTimerFields();
-                } else {
-                    clearInterval(window.timerInterval);
-                    window.isTimerRunning = false;
-                    alert("⏰ Focus Session Finished! Great work Laksh.");
-                    window.resetTimer();
-                }
-            }, 1000);
-        };
-
-        window.pauseTimer = function() {
-            clearInterval(window.timerInterval);
-            window.isTimerRunning = false;
-            var btn = document.getElementById('timer-start-btn');
-            if (btn) {
-                btn.classList.remove('bg-emerald-600');
-                btn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume';
-            }
-            if (window.lucide) lucide.createIcons();
-            window.renderPipCanvas();
-        };
-
-        window.resetTimer = function() {
-            clearInterval(window.timerInterval);
-            window.isTimerRunning = false;
-            window.timerRemaining = window.getDirectConfiguredSeconds();
-            var btn = document.getElementById('timer-start-btn');
-            if (btn) {
-                btn.classList.remove('bg-emerald-600');
-                btn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5"></i> Start';
-            }
-            window.updateTimerFields();
-            if (window.lucide) lucide.createIcons();
-        };
-
-        window.toggleFocusTimer = function() {
-            var w = document.getElementById('focus-timer-widget');
-            if (w) w.classList.toggle('hidden');
-        };
-
-        window.renderPipCanvas = function() {
-            var canvas = document.getElementById('pip-canvas');
+    // --- 3. DOUGHNUT METRICS ---
+    let taskCharts = {};
+    window.renderTaskMetrics = () => {
+        const subjects = ['overall', 'physics', 'chemistry', 'maths'];
+        subjects.forEach(sub => {
+            const canvas = document.getElementById(`chart-task-${sub}`);
             if (!canvas) return;
-            var ctx = canvas.getContext('2d');
-            var mins = Math.floor(window.timerRemaining / 60).toString().padStart(2, '0');
-            var secs = (window.timerRemaining % 60).toString().padStart(2, '0');
-            var liveClock = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-
-            ctx.fillStyle = '#020617';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = '#f59e0b';
-            ctx.font = 'bold 15px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('AIM: IIT', 18, 28);
+            const filtered = (sub === 'overall') 
+                ? appState.scheduledTasks 
+                : appState.scheduledTasks.filter(t => t.subject.toLowerCase() === sub);
+            
+            const done = filtered.filter(t => t.status === 'Completed').length;
+            const progress = filtered.filter(t => t.status === 'In Progress').length;
+            const pending = filtered.length - done - progress;
 
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '600 12px monospace';
-            ctx.textAlign = 'right';
-            ctx.fillText(liveClock, canvas.width - 18, 28);
+            if (taskCharts[sub]) taskCharts[sub].destroy();
+            
+            taskCharts[sub] = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Done', 'Progress', 'Pending'],
+                    datasets: [{
+                        data: filtered.length ? [done, progress, pending] : [0, 0, 1],
+                        backgroundColor: filtered.length ? ['#10b981', '#f59e0b', '#475569'] : ['#1e293b', '#1e293b', '#1e293b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { 
+                    cutout: '75%', 
+                    plugins: { legend: { display: false }, tooltip: { enabled: !!filtered.length } },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
 
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(18, 38);
-            ctx.lineTo(canvas.width - 18, 38);
-            ctx.stroke();
+            document.getElementById(`stat-text-${sub}`).innerText = `${done}/${filtered.length} Done`;
+        });
+    };
 
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 50px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText(mins + ':' + secs, canvas.width / 2, 95);
+    // --- 4. AI COACH WITH ACTION CONFIRMATION ---
+    window.handleUserSubmit = async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('ai-user-input');
+        const prompt = input.value.trim();
+        if (!prompt) return;
+        input.value = '';
 
-            ctx.fillStyle = window.isTimerRunning ? '#10b981' : '#64748b';
-            ctx.font = 'bold 11px Inter, sans-serif';
-            ctx.fillText(window.isTimerRunning ? '● FOCUS ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 128);
-        };
+        appState.chatHistory.push({ role: 'user', content: prompt });
+        renderChat();
 
-        window.togglePiP = function() {
-            var canvas = document.getElementById('pip-canvas');
-            var video = document.getElementById('pip-video');
-            window.renderPipCanvas();
+        const response = await callMentor(prompt);
+        
+        // Look for JSON in response
+        const jsonRegex = /```json\s*([\s\S]*?)\s*```/;
+        const match = response.match(jsonRegex);
+        let displayContent = response.replace(jsonRegex, '').trim();
+        let actionData = null;
 
-            if (document.pictureInPictureElement) {
-                document.exitPictureInPicture();
+        if (match) {
+            try {
+                actionData = JSON.parse(match[1]);
+            } catch (e) { console.error("AI JSON Parse Error"); }
+        }
+
+        appState.chatHistory.push({ 
+            role: 'assistant', 
+            content: displayContent, 
+            action: actionData 
+        });
+        saveToStorage();
+        renderChat();
+    };
+
+    const callMentor = async (userQuery) => {
+        if (!appState.apiKey) return "API Key missing. Please set it in storage.";
+        
+        const systemPrompt = `You are a JEE Mentor for Laksh (11th). Allen classes: 7AM-12PM. 
+        If the student asks to schedule tasks or add syllabus, fulfill the request and provide a JSON block.
+        JSON Format:
+        For tasks: {"action": "add_tasks", "items": [{"title": "X", "subject": "Physics", "duration": "1h", "date": "YYYY-MM-DD"}]}
+        For syllabus: {"action": "add_syllabus", "items": [{"name": "X", "subject": "Maths", "note": "Y"}]}
+        Only include JSON if an action is requested. Date today: ${new Date().toISOString().split('T')[0]}.`;
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${appState.apiKey}`;
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + "\n\n" + userQuery }] }] })
+            });
+            const data = await res.json();
+            return data.candidates[0].content.parts[0].text;
+        } catch (err) { return "Mentor unreachable."; }
+    };
+
+    window.confirmAIAction = (chatIdx) => {
+        const chat = appState.chatHistory[chatIdx];
+        if (!chat || !chat.action) return;
+
+        const batchIds = [];
+        if (chat.action.action === 'add_tasks') {
+            chat.action.items.forEach(item => {
+                const id = Date.now() + Math.random();
+                appState.scheduledTasks.push({
+                    id: id,
+                    title: item.title,
+                    subject: item.subject,
+                    date: item.date || new Date().toISOString().split('T')[0],
+                    status: 'Not Started',
+                    duration: item.duration || '45m'
+                });
+                batchIds.push({ type: 'task', id });
+            });
+        } else if (chat.action.action === 'add_syllabus') {
+            chat.action.items.forEach(item => {
+                const id = Date.now() + Math.random();
+                appState.syllabus.push({
+                    id: id,
+                    name: item.name,
+                    subject: item.subject,
+                    note: item.note || '',
+                    completed: false
+                });
+                batchIds.push({ type: 'syllabus', id });
+            });
+        }
+
+        appState.lastBatchIds = batchIds;
+        chat.confirmed = true;
+        saveToStorage();
+        renderChat();
+        if (chat.action.action === 'add_tasks') window.renderCalendar();
+        else window.renderSyllabus();
+    };
+
+    window.undoAIAction = () => {
+        appState.lastBatchIds.forEach(item => {
+            if (item.type === 'task') {
+                appState.scheduledTasks = appState.scheduledTasks.filter(t => t.id !== item.id);
             } else {
-                if (!video.srcObject) {
-                    video.srcObject = canvas.captureStream(10);
-                    video.play().then(function() {
-                        video.requestPictureInPicture();
-                    }).catch(function(err) {
-                        alert("PiP error: " + err.message);
-                    });
+                appState.syllabus = appState.syllabus.filter(s => s.id !== item.id);
+            }
+        });
+        appState.lastBatchIds = [];
+        alert("Last AI action reverted.");
+        saveToStorage();
+        window.renderCalendar();
+        window.renderSyllabus();
+        renderChat();
+    };
+
+    const renderChat = () => {
+        const thread = document.getElementById('ai-chat-thread');
+        thread.innerHTML = '';
+        appState.chatHistory.forEach((m, idx) => {
+            const bubble = document.createElement('div');
+            bubble.className = `flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`;
+            
+            let actionHtml = '';
+            if (m.action && m.role === 'assistant') {
+                if (!m.confirmed) {
+                    actionHtml = `
+                    <div class="ai-action-card">
+                        <p class="text-[10px] font-bold text-indigo-400 mb-2">PROPOSED ACTION:</p>
+                        ${m.action.items.map(i => `<div class="text-[10px] text-slate-300">• ${i.title || i.name} (${i.subject})</div>`).join('')}
+                        <button onclick="confirmAIAction(${idx})" class="w-full bg-indigo-600 mt-3 py-1.5 rounded-lg text-[10px] font-bold">EXECUTE</button>
+                    </div>`;
                 } else {
-                    video.requestPictureInPicture();
+                    actionHtml = `
+                    <div class="ai-action-card border-emerald-500 bg-emerald-500/10">
+                        <p class="text-[10px] font-bold text-emerald-400">ACTION COMPLETED</p>
+                        <button onclick="undoAIAction()" class="text-[9px] underline text-slate-500 mt-1">Undo Action</button>
+                    </div>`;
                 }
             }
+
+            bubble.innerHTML = `
+                <div class="p-3 rounded-2xl max-w-[85%] ${m.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-200'}">
+                    ${m.content}
+                    ${actionHtml}
+                </div>
+            `;
+            thread.appendChild(bubble);
+        });
+        thread.scrollTop = thread.scrollHeight;
+    };
+
+    // --- 5. BACKUP & RESTORE ---
+    window.exportBackup = () => {
+        const blob = new Blob([JSON.stringify(appState, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `jee_ace_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+    };
+
+    window.importBackup = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                appState.tests = data.tests || [];
+                appState.syllabus = data.syllabus || [];
+                appState.scheduledTasks = data.scheduledTasks || data.tasks || []; // Backward compatibility
+                appState.chatHistory = data.chatHistory || [];
+                saveToStorage();
+                location.reload();
+            } catch (err) { alert("Invalid Backup File"); }
         };
+        reader.readAsText(file);
+    };
 
-        (function() {
-            var el = document.getElementById('focus-timer-widget');
-            var handle = document.getElementById('timer-drag-handle');
-            if (!handle || !el) return;
-            var isDragging = false, startX, startY, origX, origY;
+    // --- CALENDAR RENDERER ---
+    let currentCalendarDate = new Date();
+    window.renderCalendar = () => {
+        const grid = document.getElementById('month-grid');
+        grid.innerHTML = '';
+        const y = currentCalendarDate.getFullYear();
+        const m = currentCalendarDate.getMonth();
+        const first = new Date(y, m, 1).getDay();
+        const last = new Date(y, m + 1, 0).getDate();
 
-            handle.addEventListener('mousedown', function(e) {
-                isDragging = true;
-                startX = e.clientX;
-                startY = e.clientY;
-                var rect = el.getBoundingClientRect();
-                origX = rect.left;
-                origY = rect.top;
-                el.style.position = 'fixed';
-                el.style.bottom = 'auto';
-                el.style.left = origX + 'px';
-                el.style.top = origY + 'px';
+        for (let i = 0; i < first; i++) grid.innerHTML += `<div class="calendar-cell opacity-20"></div>`;
 
-                function onMove(ev) {
-                    if (!isDragging) return;
-                    el.style.left = (origX + (ev.clientX - startX)) + 'px';
-                    el.style.top = (origY + (ev.clientY - startY)) + 'px';
+        for (let d = 1; d <= last; d++) {
+            const ds = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            const tasks = appState.scheduledTasks.filter(t => t.date === ds);
+            const cell = document.createElement('div');
+            cell.className = 'calendar-cell p-2 border-r border-b border-slate-800 relative group';
+            cell.setAttribute('ondragover', 'onCellDragOver(event)');
+            cell.setAttribute('ondragleave', 'onCellDragLeave(event)');
+            cell.setAttribute('ondrop', `onCellDrop(event, '${ds}')`);
+            
+            let taskHtml = tasks.map(t => `
+                <div draggable="true" ondragstart="onTaskDragStart(event, ${t.id})" class="text-[9px] p-1 mb-1 rounded bg-indigo-500/20 border border-indigo-500/30 truncate text-indigo-300 font-medium">
+                    ${t.title} <span class="font-mono opacity-60 ml-1">${t.duration || ''}</span>
+                </div>
+            `).join('');
+
+            cell.innerHTML = `
+                <div class="flex justify-between">
+                    <span class="text-[10px] font-bold text-slate-600">${d}</span>
+                    <button onclick="openTaskModalForDate('${ds}')" class="opacity-0 group-hover:opacity-100"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                </div>
+                <div class="mt-1">${taskHtml}</div>
+            `;
+            grid.appendChild(cell);
+        }
+        lucide.createIcons();
+    };
+
+    // --- TEST ANALYTICS ---
+    let scoreChart = null;
+    window.renderChart = () => {
+        const ctx = document.getElementById('scoreChart');
+        if (!ctx) return;
+        const sorted = [...appState.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
+        if (scoreChart) scoreChart.destroy();
+        scoreChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: sorted.map(t => t.name),
+                datasets: [{
+                    label: 'Total Score',
+                    data: sorted.map(t => t.total),
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99,102,241,0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                scales: { 
+                    y: { min: 0, max: 300, grid: { color: '#1e293b' } },
+                    x: { grid: { color: '#1e293b' } }
                 }
-                function onUp() {
-                    isDragging = false;
-                    document.removeEventListener('mousemove', onMove);
-                    document.removeEventListener('mouseup', onUp);
-                }
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onUp);
-            });
-        })();
-
-        // ==========================================
-        // 6. DAILY QUOTA (MIDNIGHT RESET)
-        // ==========================================
-        window.QUOTA_KEY = 'jee_daily_quota';
-
-        window.getStoredQuota = function() {
-            var todayStr = new Date().toISOString().split('T')[0];
-            var stored = safeJSON(window.QUOTA_KEY, null);
-
-            if (!stored || stored.date !== todayStr) {
-                var fresh = { date: todayStr, revision: false, maths: false, phy: false, chem: false };
-                localStorage.setItem(window.QUOTA_KEY, JSON.stringify(fresh));
-                return fresh;
             }
-            return stored;
-        };
+        });
+        renderTestTable();
+    };
 
-        window.toggleDailyQuota = function(taskKey) {
-            var quota = window.getStoredQuota();
-            var checkbox = document.getElementById('quota-' + taskKey);
-            if (checkbox) {
-                quota[taskKey] = checkbox.checked;
-                localStorage.setItem(window.QUOTA_KEY, JSON.stringify(quota));
-                window.renderDailyQuotaUI();
-            }
-        };
+    const renderTestTable = () => {
+        const tbody = document.getElementById('test-table-body');
+        tbody.innerHTML = '';
+        appState.tests.forEach((t, i) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="px-6 py-4 text-xs"><b>${t.name}</b><br><span class="text-slate-500">${t.date}</span></td>
+                <td class="px-6 py-4 text-center text-[10px] font-mono"><span class="text-blue-400">${t.p}</span> · <span class="text-emerald-400">${t.c}</span> · <span class="text-orange-400">${t.m}</span></td>
+                <td class="px-6 py-4 text-center font-bold text-indigo-400">${t.total}</td>
+                <td class="px-6 py-4 text-right"><button onclick="deleteTest(${i})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+            `;
+            tbody.appendChild(row);
+        });
+        lucide.createIcons();
+    };
 
-        window.renderDailyQuotaUI = function() {
-            var quota = window.getStoredQuota();
-            ['revision', 'maths', 'phy', 'chem'].forEach(function(key) {
-                var cb = document.getElementById('quota-' + key);
-                if (cb) cb.checked = !!quota[key];
-            });
+    window.deleteTest = (i) => { appState.tests.splice(i, 1); saveToStorage(); window.renderChart(); };
 
-            var completedCount = ['revision', 'maths', 'phy', 'chem'].filter(function(k) { return quota[k]; }).length;
-            var rewardBox = document.getElementById('quota-reward-box');
-            var rewardIcon = document.getElementById('reward-icon');
-            var rewardTitle = document.getElementById('reward-title');
-            var rewardStatus = document.getElementById('reward-status');
+    document.getElementById('test-form').onsubmit = (e) => {
+        e.preventDefault();
+        const p = Number(document.getElementById('t-p').value);
+        const c = Number(document.getElementById('t-c').value);
+        const m = Number(document.getElementById('t-m').value);
+        appState.tests.push({
+            name: document.getElementById('t-name').value,
+            date: document.getElementById('t-date').value,
+            p, c, m, total: p+c+m
+        });
+        saveToStorage();
+        closeTestModal();
+        window.renderChart();
+    };
 
-            if (rewardBox && rewardIcon && rewardTitle && rewardStatus) {
-                if (completedCount === 4) {
-                    rewardBox.className = "w-full md:w-auto p-3.5 rounded-2xl border border-amber-500/50 bg-gradient-to-r from-amber-500/20 to-emerald-500/20 shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center gap-3 transition-all min-w-[210px] animate-pulse";
-                    rewardIcon.className = "w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shadow-lg";
-                    rewardIcon.innerHTML = '<i data-lucide="unlock" class="w-5 h-5 text-slate-950"></i>';
-                    rewardTitle.className = "text-xs font-black text-amber-300";
-                    rewardTitle.innerText = "1h Reward Unlocked! 🎮";
-                    rewardStatus.className = "text-[10px] text-emerald-400 font-bold";
-                    rewardStatus.innerText = "All 4 Done • Enjoy your time";
-                } else {
-                    rewardBox.className = "w-full md:w-auto p-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 flex items-center gap-3 transition-all min-w-[210px]";
-                    rewardIcon.className = "w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center";
-                    rewardIcon.innerHTML = '<i data-lucide="lock" class="w-5 h-5"></i>';
-                    rewardTitle.className = "text-xs font-bold text-slate-400";
-                    rewardTitle.innerText = "1h Entertainment Locked";
-                    rewardStatus.className = "text-[10px] text-slate-500 font-mono";
-                    rewardStatus.innerText = completedCount + " / 4 Targets Done";
-                }
-            }
-            if (window.lucide) lucide.createIcons();
-        };
+    // --- SYLLABUS ---
+    window.addTopic = () => {
+        const name = document.getElementById('topic-name').value;
+        if (!name) return;
+        appState.syllabus.push({
+            id: Date.now(),
+            name,
+            subject: document.getElementById('topic-subject').value,
+            note: document.getElementById('topic-note').value,
+            completed: false
+        });
+        saveToStorage();
+        window.renderSyllabus();
+        document.getElementById('topic-name').value = '';
+    };
 
-        // ==========================================
-        // 7. AI MENTOR & AUTONOMOUS ACTIONS
-        // ==========================================
-        window.toggleAIChat = function() {
-            var box = document.getElementById('ai-chatbox');
-            if (box) box.classList.toggle('hidden');
-            window.renderChat();
-        };
-
-        window.openApiKeyModal = function() { 
-            var m = document.getElementById('api-key-modal');
-            if (m) m.classList.remove('hidden'); 
-            var k = document.getElementById('custom-api-key');
-            if (k) k.value = window.appState.apiKey || ''; 
-        };
-
-        window.closeApiKeyModal = function() { 
-            var m = document.getElementById('api-key-modal');
-            if (m) m.classList.add('hidden'); 
-        };
-
-        window.saveApiKey = function() {
-            var k = document.getElementById('custom-api-key');
-            if (k) {
-                window.appState.apiKey = k.value.trim();
-                window.saveToStorage();
-            }
-            window.closeApiKeyModal();
-        };
-
-        window.formatMarkdown = function(text) {
-            if (!text) return '';
-            var parsed = text
-                .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-indigo-400 mt-2 mb-1">$1</h4>')
-                .replace(/^## (.*$)/gim, '<h3 class="text-base font-bold text-white mt-3 mb-1.5">$1</h3>')
-                .replace(/^# (.*$)/gim, '<h2 class="text-lg font-black text-white mt-3 mb-2">$1</h2>');
-
-            parsed = parsed
-                .replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="text-white font-semibold"><em>$1</em></strong>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
-                .replace(/\*(.*?)\*/g, '<span class="text-indigo-200 font-medium">$1</span>');
-
-            parsed = parsed
-                .replace(/^\s*[\*\-]\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1.5 my-1"><span class="text-indigo-400">•</span><span class="flex-1 text-slate-300">$1</span></div>')
-                .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1.5 my-1"><span class="text-indigo-400 font-bold text-[11px]">$1.</span><span class="flex-1 text-slate-300">$2</span></div>');
-
-            parsed = parsed.replace(/\n/g, '<br>');
-            return parsed;
-        };
-
-        window.renderAIActionCard = function(act, idx) {
-            var isDone = act.executed;
-            return '<div class="p-4 rounded-2xl max-w-[92%] bg-slate-900 border border-indigo-500/40 text-white space-y-3 shadow-xl">' +
-                '<div class="flex items-center gap-2 text-xs font-bold text-indigo-400 uppercase tracking-wider">' +
-                    '<i data-lucide="calendar-plus" class="w-4 h-4"></i> ' +
-                    (act.type === 'tasks' ? ('PROPOSED ' + act.items.length + ' TARGETS TO CALENDAR') : ('PROPOSED ' + act.items.length + ' CHAPTERS TO SYLLABUS')) +
-                '</div>' +
-                '<div class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar">' +
-                    act.items.map(function(item) {
-                        return '<div class="p-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs flex justify-between items-center gap-2">' +
-                            '<span class="font-semibold text-slate-200 truncate">' + (item.title || item.name) + '</span>' +
-                            '<span class="text-[10px] px-2 py-0.5 rounded font-mono ' + window.getSubjectStyle(item.subject) + '">' + item.subject + '</span>' +
-                        '</div>';
-                    }).join('') +
-                '</div>' +
-                '<div class="flex items-center gap-2 pt-1">' +
-                    (isDone ? 
-                        ('<button disabled class="flex-1 py-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> Added</button>' +
-                        '<button onclick="undoAIAction(' + idx + ')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold flex items-center gap-1"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Undo</button>')
-                        :
-                        ('<button onclick="executeAIAction(' + idx + ')" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to ' + (act.type === 'tasks' ? 'Calendar' : 'Syllabus') + '</button>')
-                    ) +
-                '</div>' +
-            '</div>';
-        };
-
-        window.renderChat = function() {
-            var thread = document.getElementById('ai-chat-thread');
-            if (!thread) return;
-            thread.innerHTML = '';
-            var history = window.appState.chatHistory || [];
-            if (!history.length) {
-                thread.innerHTML = '<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I\'m your dedicated JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>, daily routines, syllabus progress, and test history. Ask a question or tell me to schedule tasks for today!</div>';
-            } else {
-                history.forEach(function(m, idx) {
-                    var bubble = document.createElement('div');
-                    bubble.className = m.role === 'user' ? 'flex justify-end' : 'flex justify-start';
-                    
-                    if (m.actionData) {
-                        bubble.innerHTML = window.renderAIActionCard(m.actionData, idx);
-                    } else {
-                        var content = m.content || m.response || m.prompt || '';
-                        bubble.innerHTML = '<div class="p-3 rounded-2xl max-w-[88%] break-words ' + (m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-tl-none leading-relaxed') + '">' +
-                            (m.role === 'user' ? content : window.formatMarkdown(content)) +
-                        '</div>';
-                    }
-                    thread.appendChild(bubble);
+    window.renderSyllabus = () => {
+        const list = document.getElementById('syllabus-list');
+        list.innerHTML = '';
+        ['Physics', 'Chemistry', 'Maths'].forEach(sub => {
+            const items = appState.syllabus.filter(s => s.subject === sub);
+            if (items.length) {
+                const group = document.createElement('div');
+                group.innerHTML = `<h4 class="text-[10px] font-black uppercase text-slate-500 mb-2">${sub}</h4>`;
+                items.forEach(s => {
+                    const row = document.createElement('div');
+                    row.className = 'glass-card p-3 rounded-xl flex items-center gap-3 mb-2';
+                    row.innerHTML = `
+                        <input type="checkbox" ${s.completed ? 'checked' : ''} onclick="toggleSyllabus(${s.id})" class="w-4 h-4 rounded border-slate-700 bg-slate-800">
+                        <div class="flex-1 text-xs font-bold ${s.completed ? 'line-through text-slate-500' : ''}">${s.name}</div>
+                        <button onclick="deleteSyllabus(${s.id})"><i data-lucide="trash-2" class="w-3 h-3 text-slate-600"></i></button>
+                    `;
+                    group.appendChild(row);
                 });
+                list.appendChild(group);
             }
-            thread.scrollTop = thread.scrollHeight;
-            if (window.lucide) lucide.createIcons();
-        };
+        });
+        const done = appState.syllabus.filter(s => s.completed).length;
+        const perc = appState.syllabus.length ? Math.round((done / appState.syllabus.length) * 100) : 0;
+        document.getElementById('progress-percent').innerText = perc + '%';
+        document.getElementById('overall-progress-bar').style.width = perc + '%';
+        lucide.createIcons();
+    };
 
-        window.executeAIAction = function(idx) {
-            var m = window.appState.chatHistory[idx];
-            if (!m || !m.actionData) return;
-            var act = m.actionData;
+    window.toggleSyllabus = (id) => {
+        const item = appState.syllabus.find(s => s.id === id);
+        if (item) item.completed = !item.completed;
+        saveToStorage();
+        window.renderSyllabus();
+    };
 
-            if (act.type === 'tasks') {
-                var addedIds = [];
-                if (!window.appState.scheduledTasks) window.appState.scheduledTasks = [];
-                act.items.forEach(function(it) {
-                    var id = Date.now() + Math.floor(Math.random() * 1000);
-                    addedIds.push(id);
-                    window.appState.scheduledTasks.push({
-                        id: id,
-                        date: it.date || new Date().toISOString().split('T')[0],
-                        title: it.title,
-                        subject: it.subject || 'General',
-                        duration: it.duration || '45m',
-                        status: 'Not Started'
-                    });
-                });
-                window.lastActionUndoStack = { type: 'tasks', ids: addedIds };
-            } else if (act.type === 'syllabus') {
-                var addedSyllIds = [];
-                if (!window.appState.syllabus) window.appState.syllabus = [];
-                act.items.forEach(function(it) {
-                    var id = Date.now() + Math.floor(Math.random() * 1000);
-                    addedSyllIds.push(id);
-                    window.appState.syllabus.push({
-                        id: id,
-                        subject: it.subject || 'Physics',
-                        name: it.name,
-                        note: it.note || 'Added by AI',
-                        completed: false
-                    });
-                });
-                window.lastActionUndoStack = { type: 'syllabus', ids: addedSyllIds };
-            }
+    window.deleteSyllabus = (id) => {
+        appState.syllabus = appState.syllabus.filter(s => s.id !== id);
+        saveToStorage();
+        window.renderSyllabus();
+    };
 
-            act.executed = true;
-            window.saveToStorage();
-            window.renderChat();
-            window.renderCalendar();
-            window.renderSyllabus();
-        };
+    // --- TASK MODAL & SAVING ---
+    window.openTaskModalForDate = (date) => {
+        document.getElementById('task-date').value = date;
+        document.getElementById('task-modal').classList.remove('hidden');
+    };
 
-        window.undoAIAction = function(idx) {
-            var m = window.appState.chatHistory[idx];
-            if (!m || !m.actionData) return;
-            var act = m.actionData;
+    window.closeTaskModal = () => document.getElementById('task-modal').classList.add('hidden');
 
-            if (window.lastActionUndoStack) {
-                if (window.lastActionUndoStack.type === 'tasks') {
-                    window.appState.scheduledTasks = (window.appState.scheduledTasks || []).filter(function(t) { return !window.lastActionUndoStack.ids.includes(t.id); });
-                } else if (window.lastActionUndoStack.type === 'syllabus') {
-                    window.appState.syllabus = (window.appState.syllabus || []).filter(function(s) { return !window.lastActionUndoStack.ids.includes(s.id); });
-                }
-            }
+    window.saveTask = () => {
+        const title = document.getElementById('task-title').value;
+        if (!title) return;
+        appState.scheduledTasks.push({
+            id: Date.now(),
+            title,
+            subject: document.getElementById('task-subject').value,
+            date: document.getElementById('task-date').value,
+            start: document.getElementById('task-start').value,
+            end: document.getElementById('task-end').value,
+            duration: document.getElementById('task-duration').value,
+            status: 'Not Started'
+        });
+        saveToStorage();
+        closeTaskModal();
+        window.renderCalendar();
+        window.renderTaskMetrics();
+    };
 
-            act.executed = false;
-            window.saveToStorage();
-            window.renderChat();
-            window.renderCalendar();
-            window.renderSyllabus();
-        };
+    // --- TIMER ---
+    let timerSeconds = 1500;
+    let timerInterval = null;
+    window.toggleFocusTimer = () => document.getElementById('focus-timer-widget').classList.toggle('hidden');
+    window.startTimer = () => {
+        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; document.getElementById('timer-start-btn').innerText = 'START'; return; }
+        document.getElementById('timer-start-btn').innerText = 'PAUSE';
+        timerInterval = setInterval(() => {
+            timerSeconds--;
+            const m = Math.floor(timerSeconds / 60);
+            const s = timerSeconds % 60;
+            document.getElementById('timer-display').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            if (timerSeconds <= 0) { clearInterval(timerInterval); alert("Time's up!"); resetTimer(); }
+        }, 1000);
+    };
+    window.resetTimer = () => { 
+        clearInterval(timerInterval); timerInterval = null; timerSeconds = 1500; 
+        document.getElementById('timer-display').innerText = '25:00'; 
+        document.getElementById('timer-start-btn').innerText = 'START';
+    };
 
-        window.handleUserSubmit = function(e) {
-            e.preventDefault();
-            var input = document.getElementById('ai-user-input');
-            if (!input) return;
-            var prompt = input.value.trim();
-            if (!prompt) return;
-            input.value = '';
+    // --- INITIALIZE ---
+    window.openTestModal = () => document.getElementById('test-modal').classList.remove('hidden');
+    window.closeTestModal = () => document.getElementById('test-modal').classList.add('hidden');
+    window.toggleMobileMenu = () => document.getElementById('mobile-menu').classList.toggle('hidden');
 
-            if (!window.appState.chatHistory) window.appState.chatHistory = [];
-            window.appState.chatHistory.push({ role: 'user', content: prompt });
-            window.renderChat();
-
-            var thread = document.getElementById('ai-chat-thread');
-            var loadingBubble = document.createElement('div');
-            loadingBubble.className = "flex justify-start";
-            loadingBubble.id = "ai-loading-bubble";
-            loadingBubble.innerHTML = '<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Working...</div>';
-            if (thread) {
-                thread.appendChild(loadingBubble);
-                thread.scrollTop = thread.scrollHeight;
-            }
-            if (window.lucide) lucide.createIcons();
-
-            window.callGeminiAPI(prompt).then(function(response) {
-                var el = document.getElementById('ai-loading-bubble');
-                if (el) el.remove();
-
-                var parsedAction = null;
-                var jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
-                var cleanResponse = response;
-
-                if (jsonMatch) {
-                    try {
-                        var parsed = JSON.parse(jsonMatch[1]);
-                        if (parsed.action && (parsed.action === 'add_tasks' || parsed.action === 'add_syllabus')) {
-                            parsedAction = {
-                                type: parsed.action === 'add_tasks' ? 'tasks' : 'syllabus',
-                                items: parsed.items || [],
-                                executed: false
-                            };
-                            cleanResponse = response.replace(/```json[\s\S]*?```/, '').trim();
-                        }
-                    } catch(err) { console.warn("Action parse failed", err); }
-                }
-
-                window.appState.chatHistory.push({ role: 'assistant', content: cleanResponse, actionData: parsedAction });
-                window.saveToStorage();
-                window.renderChat();
-            }).catch(function(err) {
-                var el = document.getElementById('ai-loading-bubble');
-                if (el) el.remove();
-                alert("AI Error: " + err.message);
-            });
-        };
-
-        window.callGeminiAPI = function(userQuery) {
-            return new Promise(function(resolve, reject) {
-                if (!window.appState.apiKey) return reject(new Error("Gemini API Key missing. Add it via the key icon."));
-                
-                var recentTests = JSON.stringify((window.appState.tests || []).slice(-3));
-                var todayStr = new Date().toISOString().split('T')[0];
-                var activeSchedule = JSON.stringify((window.appState.scheduledTasks || []).filter(function(t) { return t.date === todayStr; }));
-                var pendingSyllabus = (window.appState.syllabus || []).filter(function(s) { return !s.completed; }).map(function(s) { return s.name; }).slice(0, 8).join(', ');
-
-                var systemPrompt = "You are Laksh's grounded, candid, and disciplined JEE Mentor.\n" +
-                    "Target Goal: IIT Bombay CSE 2028 (AIR < 60).\n" +
-                    "Coaching Routine: Allen from 7:00 AM to 12:00 PM daily.\n\n" +
-                    "Student Context:\n" +
-                    "- Today's Date: " + todayStr + "\n" +
-                    "- Recent Tests: " + recentTests + "\n" +
-                    "- Today's Scheduled Routines: " + activeSchedule + "\n" +
-                    "- Pending Chapters: " + pendingSyllabus + "\n\n" +
-                    "SPECIAL AUTONOMOUS ACTION CAPABILITY:\n" +
-                    "When Laksh asks you to schedule tasks, plan his day, or add chapters to his syllabus:\n" +
-                    "1. Provide a brief, supportive confirmation message.\n" +
-                    "2. At the very end of your response, output a single JSON block wrapped strictly in ```json ... ``` with this exact schema:\n\n" +
-                    "For tasks:\n" +
-                    "```json\n" +
-                    "{\n" +
-                    '  "action": "add_tasks",\n' +
-                    '  "items": [\n' +
-                    '    { "title": "Study: Work Done by Constant Forces", "subject": "Physics", "duration": "45m", "date": "' + todayStr + '" }\n' +
-                    '  ]\n' +
-                    "}\n" +
-                    "```\n\n" +
-                    "For syllabus chapters:\n" +
-                    "```json\n" +
-                    "{\n" +
-                    '  "action": "add_syllabus",\n' +
-                    '  "items": [\n' +
-                    '    { "name": "Rotational Dynamics", "subject": "Physics", "note": "HCV + PYQs" }\n' +
-                    '  ]\n' +
-                    "}\n" +
-                    "```\n\n" +
-                    "RULES:\n" +
-                    "- When he greets you ('hi', 'hello'), reply in 1-2 friendly sentences. Never lecture without being asked.\n" +
-                    "- Only generate the JSON action block when he explicitly asks to schedule, plan, or add items.";
-
-                var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(window.appState.apiKey);
-                fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: systemPrompt + '\n\nLaksh says: "' + userQuery + '"' }] }],
-                        tools: [{ google_search: {} }],
-                        generationConfig: { temperature: 0.2, maxOutputTokens: 2500 }
-                    })
-                }).then(function(res) {
-                    if (!res.ok) throw new Error("API returned code " + res.status);
-                    return res.json();
-                }).then(function(data) {
-                    resolve(data.candidates[0].content.parts[0].text);
-                }).catch(function(err) {
-                    reject(err);
-                });
-            });
-        };
-
-        // ==========================================
-        // 8. SYLLABUS & COUNTDOWN
-        // ==========================================
-        window.addTopic = function() {
-            var name = document.getElementById('topic-name').value.trim();
-            var subject = document.getElementById('topic-subject').value;
-            var note = document.getElementById('topic-note').value.trim();
-            if (!name) return alert('Enter topic name');
-            if (!window.appState.syllabus) window.appState.syllabus = [];
-            window.appState.syllabus.push({ id: Date.now(), subject: subject, name: name, note: note, completed: false });
-            document.getElementById('topic-name').value = '';
-            document.getElementById('topic-note').value = '';
-            window.saveToStorage();
-            window.renderSyllabus();
-        };
-
-        window.toggleTopic = function(id) {
-            var t = (window.appState.syllabus || []).find(function(x) { return x.id === id; });
-            if (t) { t.completed = !t.completed; window.saveToStorage(); window.renderSyllabus(); }
-        };
-
-        window.deleteTopic = function(id) {
-            window.appState.syllabus = (window.appState.syllabus || []).filter(function(x) { return x.id !== id; });
-            window.saveToStorage();
-            window.renderSyllabus();
-        };
-
-        window.archiveSyllabus = function() {
-            if (confirm('Clear all completed topics?')) {
-                window.appState.syllabus = (window.appState.syllabus || []).filter(function(t) { return !t.completed; });
-                window.saveToStorage();
-                window.renderSyllabus();
-            }
-        };
-
-        window.renderSyllabus = function() {
-            var list = document.getElementById('syllabus-list');
-            if (!list) return;
-            list.innerHTML = '';
-            var syllabus = window.appState.syllabus || [];
-            ['Physics', 'Chemistry', 'Maths', 'General'].forEach(function(sub) {
-                var subTopics = syllabus.filter(function(t) { return t.subject === sub; });
-                if (!subTopics.length) return;
-                var sec = document.createElement('div');
-                sec.className = "mb-6";
-                sec.innerHTML = '<h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">' + sub + '</h4><div class="space-y-2"></div>';
-                var container = sec.querySelector('div');
-                subTopics.forEach(function(t) {
-                    var row = document.createElement('div');
-                    row.className = "flex items-center gap-3 p-4 rounded-xl border " + (t.completed ? 'bg-slate-900/30 border-slate-800' : 'glass-card border-slate-700/50');
-                    row.innerHTML = 
-                        '<button onclick="toggleTopic(' + t.id + ')" class="w-6 h-6 rounded-md border-2 flex items-center justify-center ' + (t.completed ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-slate-600') + '">' +
-                            (t.completed ? '<i data-lucide="check" class="w-4 h-4"></i>' : '') +
-                        '</button>' +
-                        '<div class="flex-1 ' + (t.completed ? 'line-through text-slate-500' : 'text-white') + ' font-bold text-sm">' +
-                            t.name + ' <span class="text-xs font-normal text-slate-400 ml-2">' + (t.note || '') + '</span>' +
-                        '</div>' +
-                        '<button onclick="deleteTopic(' + t.id + ')" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>';
-                    container.appendChild(row);
-                });
-                list.appendChild(sec);
-            });
-
-            var total = syllabus.length;
-            var done = syllabus.filter(function(t) { return t.completed; }).length;
-            var perc = total ? Math.round((done / total) * 100) : 0;
-            var pTxt = document.getElementById('progress-text'); if (pTxt) pTxt.innerText = done + '/' + total + ' Topics';
-            var pPerc = document.getElementById('progress-percent'); if (pPerc) pPerc.innerText = perc + '%';
-            var pBar = document.getElementById('overall-progress-bar'); if (pBar) pBar.style.width = perc + '%';
-            if (window.lucide) lucide.createIcons();
-        };
-
-        window.updateCountdown = function() {
-            var next = window.appState.nextTest || { name: 'Set Your Next Goal', date: '' };
-            var nameEl = document.getElementById('display-next-name');
-            if (nameEl) nameEl.innerText = next.name || 'Set Your Next Goal';
-            var dateEl = document.getElementById('display-next-date');
-            var countEl = document.getElementById('countdown-days');
-            if (!next.date) {
-                if (dateEl) dateEl.innerText = 'No date configured';
-                if (countEl) countEl.innerText = '00';
-                return;
-            }
-            var diff = Math.ceil((new Date(next.date) - new Date()) / (1000 * 60 * 60 * 24));
-            if (dateEl) dateEl.innerText = new Date(next.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-            if (countEl) countEl.innerText = diff > 0 ? String(diff).padStart(2, '0') : '00';
-        };
-
-        window.openNextTestModal = function() { 
-            var m = document.getElementById('next-test-modal');
-            if (m) m.classList.remove('hidden'); 
-        };
-        window.closeNextTestModal = function() { 
-            var m = document.getElementById('next-test-modal');
-            if (m) m.classList.add('hidden'); 
-        };
-        window.saveNextTest = function() {
-            if (!window.appState.nextTest) window.appState.nextTest = {};
-            window.appState.nextTest.name = document.getElementById('nt-name').value;
-            window.appState.nextTest.date = document.getElementById('nt-date').value;
-            window.saveToStorage();
-            window.updateCountdown();
-            window.closeNextTestModal();
-        };
-
-        window.toggleAudio = function(audioId, btnId) {
-            var audio = document.getElementById(audioId);
-            var btn = document.getElementById(btnId);
-            if (!audio || !btn) return;
-            ['audio-lh-1', 'audio-lh-2'].forEach(function(id) {
-                if (id !== audioId) {
-                    var otherAudio = document.getElementById(id);
-                    if (otherAudio) { otherAudio.pause(); otherAudio.currentTime = 0; }
-                    var otherBtn = document.getElementById(id === 'audio-lh-1' ? 'btn-lh-1' : 'btn-lh-2');
-                    if (otherBtn) otherBtn.innerHTML = '<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>';
-                }
-            });
-
-            if (audio.paused) {
-                audio.play();
-                btn.innerHTML = '<i data-lucide="pause" class="w-4 h-4 fill-white"></i>';
-            } else {
-                audio.pause();
-                btn.innerHTML = '<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>';
-            }
-            if (window.lucide) lucide.createIcons();
-            audio.onended = function() { 
-                btn.innerHTML = '<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>'; 
-                if (window.lucide) lucide.createIcons(); 
-            };
-        };
-
-        // ==========================================
-        // 9. BACKUP & RESTORE
-        // ==========================================
-        window.exportBackup = function() {
-            var payload = {
-                tests: window.appState.tests || [],
-                syllabus: window.appState.syllabus || [],
-                scheduledTasks: window.appState.scheduledTasks || [],
-                nextTest: window.appState.nextTest || {},
-                chatHistory: window.appState.chatHistory || []
-            };
-            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
-            var dl = document.createElement('a');
-            dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", "jee_ace_complete_backup_" + (new Date().toISOString().split('T')[0]) + ".json");
-            document.body.appendChild(dl);
-            dl.click();
-            dl.remove();
-        };
-
-        window.importBackup = function(event) {
-            var file = event.target.files[0];
-            if (!file) return;
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    var parsed = JSON.parse(e.target.result);
-                    if (parsed.tests) window.appState.tests = parsed.tests;
-                    if (parsed.syllabus) window.appState.syllabus = parsed.syllabus;
-                    if (parsed.scheduledTasks) window.appState.scheduledTasks = parsed.scheduledTasks;
-                    else if (parsed.tasks) window.appState.scheduledTasks = parsed.tasks;
-                    if (parsed.nextTest) window.appState.nextTest = parsed.nextTest;
-                    if (parsed.chatHistory) window.appState.chatHistory = parsed.chatHistory;
-                    
-                    window.saveToStorage();
-                    window.renderChart();
-                    window.renderSyllabus();
-                    window.updateCountdown();
-                    window.renderCalendar();
-                    window.renderChat();
-                    window.renderDailyQuotaUI();
-                    alert('Data successfully restored!');
-                } catch(err) {
-                    alert('Invalid backup file format: ' + err.message);
-                } finally {
-                    event.target.value = '';
-                }
-            };
-            reader.readAsText(file);
-        };
-
-        // ==========================================
-        // 10. INITIALIZATION
-        // ==========================================
-        window.onload = function() {
-            try { window.renderChart(); } catch(e) { console.error("Chart error:", e); }
-            try { window.renderSyllabus(); } catch(e) { console.error("Syllabus error:", e); }
-            try { window.updateCountdown(); } catch(e) { console.error("Countdown error:", e); }
-            try { window.renderCalendar(); } catch(e) { console.error("Calendar error:", e); }
-            try { window.renderPipCanvas(); } catch(e) { console.error("PiP error:", e); }
-            try { window.renderChat(); } catch(e) { console.error("Chat error:", e); }
-            try { window.renderDailyQuotaUI(); } catch(e) { console.error("Quota error:", e); }
-            if (window.lucide) lucide.createIcons();
-
-            setInterval(function() {
-                try {
-                    window.renderDailyQuotaUI();
-                    if (document.pictureInPictureElement) window.renderPipCanvas();
-                } catch(e){}
-            }, 1000);
-        };
-    </script>
-</body>
-</html>
+    window.onload = () => {
+        loadFromStorage();
+        window.renderChart();
+        window.renderSyllabus();
+        window.renderCalendar();
+        window.renderChat();
+        lucide.createIcons();
+    };
+</script>
