@@ -1064,7 +1064,7 @@
                             <span class="text-xs font-bold ${isToday ? 'w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black' : 'text-slate-400'}">${d}</span>
                             <div class="flex items-center gap-1">
                                 ${dayTasks.length ? `<span class="text-[10px] font-mono text-slate-500 mr-1">${dayTasks.length}</span>` : ''}
-                                <button onclick="event.stopPropagation(); openTaskModalForDate('${dateStr}')" title="Add Routine" class="p-1 text-slate-500 hover:text-indigo-400 hover:bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="event.stopPropagation(); openTaskModalForDate('${dateStr}')" title="Add Routine for this day" class="p-1 text-slate-500 hover:text-indigo-400 hover:bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -1680,7 +1680,7 @@
                 document.getElementById('ai-loading-bubble')?.remove();
 
                 let parsedAction = null;
-                const jsonMatch = response.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+                const jsonMatch = response.match(new RegExp('```json\\s*(\\{[\\s\\S]*?\\})\\s*```'));
                 let cleanResponse = response;
 
                 if (jsonMatch) {
@@ -1692,4 +1692,54 @@
                                 items: parsed.items || [],
                                 executed: false
                             };
-                            cleanResponse = response.replace(/```json[\s\S]*?
+                            cleanResponse = response.replace(/```json[\s\S]*?```/, '').trim();
+                        }
+                    } catch (err) { console.warn("Action parse failed", err); }
+                }
+
+                appState.chatHistory.push({ role: 'assistant', content: cleanResponse, actionData: parsedAction });
+                saveToStorage();
+                renderChat();
+            } catch (err) {
+                document.getElementById('ai-loading-bubble')?.remove();
+                alert("AI Error: " + err.message);
+            }
+        }
+
+        async function callGeminiAPI(userQuery) {
+            if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
+            const recentTests = JSON.stringify((appState.tests || []).slice(-3));
+            const todayStr = new Date().toISOString().split('T')[0];
+            const activeSchedule = JSON.stringify((appState.scheduledTasks || []).filter(t => t.date === todayStr));
+            const pendingSyllabus = (appState.syllabus || []).filter(s => !s.completed).map(s => s.name).slice(0, 8).join(', ');
+
+            const systemPrompt = "You are Laksh's grounded, candid, and disciplined JEE Mentor.\n" +
+                "Target Goal: IIT Bombay CSE 2028 (AIR < 60).\n" +
+                "Coaching Routine: Allen from 7:00 AM to 12:00 PM daily.\n\n" +
+                "Student Context:\n" +
+                "- Today's Date: " + todayStr + "\n" +
+                "- Recent Tests: " + recentTests + "\n" +
+                "- Today's Scheduled Routines: " + activeSchedule + "\n" +
+                "- Pending Chapters: " + pendingSyllabus + "\n\n" +
+                "SPECIAL AUTONOMOUS ACTION CAPABILITY:\n" +
+                "When Laksh asks you to schedule tasks, plan his day, or add chapters to his syllabus:\n" +
+                "1. Provide a brief, supportive confirmation message.\n" +
+                "2. At the very end of your response, output a single JSON block wrapped strictly in ```json ... ``` with this exact schema:\n\n" +
+                "For tasks:\n" +
+                "```json\n" +
+                "{\n" +
+                '  "action": "add_tasks",\n' +
+                '  "items": [\n' +
+                '    { "title": "Study: Work Done by Constant Forces", "subject": "Physics", "duration": "45m", "date": "' + todayStr + '" }\n' +
+                '  ]\n' +
+                "}\n" +
+                "```\n\n" +
+                "For syllabus chapters:\n" +
+                "```json\n" +
+                "{\n" +
+                '  "action": "add_syllabus",\n' +
+                '  "items": [\n' +
+                '    { "name": "Rotational Dynamics", "subject": "Physics", "note": "HCV + PYQs" }\n' +
+                '  ]\n' +
+                "}\n" +
+                "
