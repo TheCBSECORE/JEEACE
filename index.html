@@ -1697,37 +1697,61 @@
 
         async function callGeminiAPI(userQuery) {
             if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
+            
+            // Real system time & date straight from browser
+            const now = new Date();
+            const currentRealTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+            const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
             const recentTests = JSON.stringify(appState.tests.slice(-3));
-            const activeSchedule = JSON.stringify(appState.scheduledTasks.filter(t => t.date === new Date().toISOString().split('T')[0]));
+            const activeSchedule = JSON.stringify(appState.scheduledTasks.filter(t => t.date === now.toISOString().split('T')[0]));
             const pendingSyllabus = appState.syllabus.filter(s => !s.completed).map(s => s.name).slice(0, 8).join(', ');
 
             const systemPrompt = `
 You are Laksh's grounded, candid, and disciplined JEE Mentor.
-Target Goal: IIT Bombay CSE 2028 (AIR < 60).
-Coaching Routine: Allen from 7:00 AM to 12:00 PM daily. Afternoons & evenings are for self-study and problem-solving.
+Goal: IIT Bombay CSE 2028 (AIR < 60).
+Schedule: Allen Coaching daily 7:00 AM - 12:00 PM. Afternoons & evenings are for self-study and problem-solving.
+
+Live System Reference:
+- Local Time: ${currentRealTime} (IST / India)
+- Today's Date: ${currentRealDate}
 
 Student Context:
 - Recent Tests: ${recentTests}
 - Today's Scheduled Routines: ${activeSchedule}
-- Some Pending Topics: ${pendingSyllabus}
+- Incomplete Syllabus Chapters: ${pendingSyllabus}
 
-CRITICAL RULES:
-1. When Laksh says "hi", "hello", "hey", or gives casual greetings, reply briefly and warmly (e.g. "Hey Laksh, what are we tackling today? Ready to review a topic or plan your afternoon study stint?"). DO NOT unleash unprovoked lectures, guilt trips, or sudden diagnostic triage when he just says hi.
-2. Only provide deep diagnostics, schedules, or test triage when he explicitly asks for study plans, test analysis, or topic help.
-3. Keep advice direct, authentic, structured, and realistic. No cheap theatrical motivation or robotic fluff.
+RULES:
+1. You have live Google Search enabled. If Laksh asks about current events, live weather, sports/F1 updates, or questions requiring external facts, retrieve the answer accurately.
+2. For casual greetings ("hi", "hello", "sup"), reply in 1-2 friendly sentences. Do not start lecturing unprompted.
+3. Be direct, authentic, and answer exactly what is asked.
             `.trim();
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
+            
             const res = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nLaksh says: "${userQuery}"` }] }],
-                    generationConfig: { temperature: 0.3, maxOutputTokens: 2500 }
+                    contents: [
+                        { role: "user", parts: [{ text: `${systemPrompt}\n\nLaksh says: "${userQuery}"` }] }
+                    ],
+                    // Enable live Google Search grounding
+                    tools: [
+                        { google_search: {} }
+                    ],
+                    generationConfig: { 
+                        temperature: 0.2, 
+                        maxOutputTokens: 2000 
+                    }
                 })
             });
 
-            if (!res.ok) throw new Error(`API returned code ${res.status}`);
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData?.error?.message || `API error ${res.status}`);
+            }
+
             const data = await res.json();
             return data.candidates[0].content.parts[0].text;
         }
