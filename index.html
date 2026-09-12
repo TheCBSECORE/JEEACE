@@ -13,57 +13,61 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .glass-card {
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(18, 18, 22, 0.85);
             backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .tab-active { border-bottom: 2px solid #6366f1; color: #6366f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        .tab-active { border-bottom: 2px solid #ea580c; color: #ea580c; }
         
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
         
         .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-        .calendar-cell { min-height: 145px; }
-        @media (max-width: 768px) { .calendar-cell { min-height: 90px; } }
+        .calendar-cell { min-height: 155px; }
+        @media (max-width: 768px) { .calendar-cell { min-height: 100px; } }
+
+        .drag-over { border: 2px dashed #ea580c !important; background: rgba(234, 88, 12, 0.08) !important; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen pb-28">
+<body class="bg-[#0b0b0e] text-zinc-200 min-h-screen pb-28 selection:bg-orange-500/30 selection:text-orange-200">
 
     <!-- NAVIGATION -->
-    <nav class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
+    <nav class="sticky top-0 z-40 bg-[#0b0b0e]/90 backdrop-blur-md border-b border-zinc-800/80">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-2">
-                    <div class="bg-indigo-600 p-1.5 rounded-lg shadow-lg shadow-indigo-500/20">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-orange-500 to-amber-600 p-1.5 rounded-xl shadow-lg shadow-orange-500/20">
                         <i data-lucide="layout-dashboard" class="w-5 h-5 text-white"></i>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-white">JEE<span class="text-indigo-500">Ace</span></span>
-                    <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono hidden sm:inline ml-2">Laksh • 11th (JEE 2028)</span>
+                    <div>
+                        <span class="text-lg font-black tracking-tight text-white">JEE<span class="text-orange-500">Ace</span></span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-zinc-800/80 text-zinc-400 font-mono hidden sm:inline ml-2 border border-zinc-700/50">Laksh • JEE 2028</span>
+                    </div>
                 </div>
                 
                 <div class="hidden lg:flex items-center space-x-1">
                     <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="px-4 py-5 text-sm font-semibold transition-all tab-active">Analytics</button>
-                    <button onclick="switchTab('planner')" id="tab-btn-planner" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">Syllabus</button>
-                    <button onclick="switchTab('daily')" id="tab-btn-daily" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all flex items-center gap-1.5">
+                    <button onclick="switchTab('planner')" id="tab-btn-planner" class="px-4 py-5 text-sm font-semibold text-zinc-400 hover:text-zinc-200 transition-all">Test Planner</button>
+                    <button onclick="switchTab('daily')" id="tab-btn-daily" class="px-4 py-5 text-sm font-semibold text-zinc-400 hover:text-zinc-200 transition-all flex items-center gap-1.5">
                         <span>Daily Planner</span>
-                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
                     </button>
-                    <button onclick="switchTab('f1hub')" id="tab-btn-f1hub" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">F1 Hub</button>
-                    <button onclick="switchTab('goals')" id="tab-btn-goals" class="px-4 py-5 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">Goals</button>
+                    <button onclick="switchTab('f1hub')" id="tab-btn-f1hub" class="px-4 py-5 text-sm font-semibold text-zinc-400 hover:text-zinc-200 transition-all">F1 Hub</button>
+                    <button onclick="switchTab('goals')" id="tab-btn-goals" class="px-4 py-5 text-sm font-semibold text-zinc-400 hover:text-zinc-200 transition-all">Goals</button>
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button onclick="exportBackup()" title="Download Complete Backup" class="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 transition-all">
+                    <button onclick="exportBackup()" title="Download Complete Backup" class="p-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 transition-all">
                         <i data-lucide="download" class="w-4 h-4"></i>
                     </button>
-                    <label title="Restore Backup" class="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
+                    <label title="Restore Backup" class="p-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 transition-all cursor-pointer">
                         <i data-lucide="upload" class="w-4 h-4"></i>
                         <input type="file" id="import-input" accept=".json" class="hidden" onchange="importBackup(event)">
                     </label>
-                    <button class="lg:hidden p-2 text-slate-400" onclick="toggleMobileMenu()">
+                    <button class="lg:hidden p-2 text-zinc-400" onclick="toggleMobileMenu()">
                         <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -72,31 +76,31 @@
     </nav>
 
     <!-- MOBILE MENU -->
-    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl hidden p-6 flex flex-col justify-between">
+    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-[#0b0b0e]/95 backdrop-blur-2xl hidden p-6 flex flex-col justify-between">
         <div>
-            <div class="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
-                <span class="text-xl font-black text-white">Menu</span>
-                <button onclick="toggleMobileMenu()" class="p-2 text-slate-400"><i data-lucide="x"></i></button>
+            <div class="flex justify-between items-center mb-8 border-b border-zinc-800 pb-4">
+                <span class="text-xl font-black text-white">Navigation</span>
+                <button onclick="toggleMobileMenu()" class="p-2 text-zinc-400"><i data-lucide="x"></i></button>
             </div>
             <div class="flex flex-col gap-4 text-base font-bold">
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('analytics'); toggleMobileMenu()">📊 Analytics</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('planner'); toggleMobileMenu()">🎯 Test Planner</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('daily'); toggleMobileMenu()">📅 Daily Planner & Calendar</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('f1hub'); toggleMobileMenu()">🏎️ F1 Hub</button>
-                <button class="text-left py-2 hover:text-indigo-400" onclick="switchTab('goals'); toggleMobileMenu()">🏆 Goals</button>
+                <button class="text-left py-2 hover:text-orange-400" onclick="switchTab('analytics'); toggleMobileMenu()">📊 Analytics</button>
+                <button class="text-left py-2 hover:text-orange-400" onclick="switchTab('planner'); toggleMobileMenu()">🎯 Test Planner</button>
+                <button class="text-left py-2 hover:text-orange-400" onclick="switchTab('daily'); toggleMobileMenu()">📅 Daily Planner & Calendar</button>
+                <button class="text-left py-2 hover:text-orange-400" onclick="switchTab('f1hub'); toggleMobileMenu()">🏎️ F1 Hub</button>
+                <button class="text-left py-2 hover:text-orange-400" onclick="switchTab('goals'); toggleMobileMenu()">🏆 Goals</button>
             </div>
         </div>
-        <p class="text-xs text-slate-500 font-mono text-center">JEE Ace • Laksh (Allen 7 AM - 12 PM)</p>
+        <p class="text-xs text-zinc-500 font-mono text-center">JEE Ace • Laksh (Allen 7 AM - 12 PM)</p>
     </div>
 
     <main id="main-container" class="max-w-7xl mx-auto px-4 py-8">
         
         <!-- TAB 1: ANALYTICS -->
         <div id="view-analytics" class="space-y-8">
-            <div class="relative overflow-hidden rounded-3xl border border-indigo-500/30 bg-slate-900 shadow-2xl group">
+            <div class="relative overflow-hidden rounded-3xl border border-orange-500/20 bg-zinc-900 shadow-2xl group">
                 <div class="absolute inset-0 z-0">
-                    <img src="iitb.jpg" alt="IIT Bombay Campus Gate" class="w-full h-full object-cover object-center filter brightness-[0.35] contrast-125 transition-transform duration-700 group-hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+                    <img src="iitb.jpg" alt="IIT Bombay Campus Gate" class="w-full h-full object-cover object-center filter brightness-[0.3] contrast-125 transition-transform duration-700 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#0b0b0e] via-[#0b0b0e]/85 to-transparent"></div>
                 </div>
 
                 <div class="relative z-10 p-6 sm:p-8">
@@ -106,13 +110,13 @@
                                 <i data-lucide="target" class="w-3.5 h-3.5 text-amber-400"></i>
                                 AIM: IIT BOMBAY CSE 2028
                             </span>
-                            <span class="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 text-[11px] font-mono rounded-md">AIR &lt; 60 Goal</span>
+                            <span class="px-2.5 py-0.5 bg-orange-500/20 text-orange-300 text-[11px] font-mono rounded-md border border-orange-500/20">AIR &lt; 60 Goal</span>
                         </div>
                         <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
                             Powai is Calling, Laksh.
                         </h2>
-                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Every single module question solved today and every mark pulled in Allen tests brings you closer to the CSE department. Stay consistent.
+                        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                            Every module question solved today and every mark pulled in Allen tests brings you closer to the CSE department. Stay consistent.
                         </p>
                     </div>
                 </div>
@@ -120,8 +124,8 @@
 
             <!-- F1 TEAM RADIO // LH44 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div class="relative bg-black border-[3px] border-[#d40000] p-6 shadow-[0_0_30px_rgba(212,0,0,0.35)] flex flex-col justify-between font-mono select-none rounded-2xl" style="min-height: 440px;">
-                    <div class="flex items-center justify-between border-b-[2px] border-[#222] pb-3">
+                <div class="relative bg-black border-[3px] border-[#d40000] p-6 shadow-[0_0_30px_rgba(212,0,0,0.25)] flex flex-col justify-between font-mono select-none rounded-2xl" style="min-height: 440px;">
+                    <div class="flex items-center justify-between border-b-[2px] border-zinc-900 pb-3">
                         <div class="text-7xl font-black italic tracking-tighter text-[#e10600] leading-none select-none font-sans">44</div>
                         <div class="flex items-center gap-3.5">
                             <span class="text-2xl font-black tracking-widest text-white uppercase font-sans">RADIO</span>
@@ -133,7 +137,7 @@
                             "LIKE IT'S NOT ABOUT BEING PERFECT, IT'S ABOUT JUST EVERYDAY ONE STEP AT A TIME, TRYING TO BE BETTER, TRYING TO DO MORE. AND I THINK A LOT OF PEOPLE ARE STRUGGLING TO FIND THAT PURPOSE, BUT IT'S OKAY. YOU'LL, YOU WILL FIND IT. DO NOT GIVE UP. KEEP GETTING UP, YOU KNOW, LIKE JUST KEEP SAYING THOSE THINGS TO YOURSELF, AND YOU WILL EVENTUALLY FIND IT."
                         </p>
                     </div>
-                    <div class="pt-3 border-t border-[#222] flex items-center justify-between">
+                    <div class="pt-3 border-t border-zinc-900 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <button onclick="toggleAudio('audio-lh-1', 'btn-lh-1')" id="btn-lh-1" class="w-8 h-8 rounded-full bg-[#e10600] hover:bg-red-500 text-white flex items-center justify-center transition-transform active:scale-90 shadow-lg">
                                 <i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>
@@ -145,8 +149,8 @@
                     </div>
                 </div>
 
-                <div class="relative bg-black border-[3px] border-[#d40000] p-6 shadow-[0_0_30px_rgba(212,0,0,0.35)] flex flex-col justify-between font-mono select-none rounded-2xl" style="min-height: 440px;">
-                    <div class="flex items-center justify-between border-b-[2px] border-[#222] pb-3">
+                <div class="relative bg-black border-[3px] border-[#d40000] p-6 shadow-[0_0_30px_rgba(212,0,0,0.25)] flex flex-col justify-between font-mono select-none rounded-2xl" style="min-height: 440px;">
+                    <div class="flex items-center justify-between border-b-[2px] border-zinc-900 pb-3">
                         <div class="text-7xl font-black italic tracking-tighter text-[#e10600] leading-none select-none font-sans">44</div>
                         <div class="flex items-center gap-3.5">
                             <span class="text-2xl font-black tracking-widest text-white uppercase font-sans">RADIO</span>
@@ -158,7 +162,7 @@
                             "I THINK THAT'S DEFINITELY, FOR SURE, THE MOST DIFFICULT THING IS KEEPING—KEEPING YOUR GOAL AND YOUR EYES SET ON THAT AND NOT BEING DISTRACTED. UM, NOT GIVING UP. I THINK THE EASIEST THING IN LIFE IS TO GIVE UP ON WHATEVER, YOU KNOW, WHATEVER YOU'RE FOCUSED ON OR WHATEVER YOU'RE HOPEFUL FOR. THE HARDEST THING IS TO—TO KEEP GOING. BUT WE HAVE TO, LIKE, WE HAVE TO CONTINUE TO HOLD ON. AND I WOULD IMAGINE FOR SO MANY PEOPLE OUT THERE THAT IS—THAT THAT IS PROBABLY THE MOST DIFFICULT THING."
                         </p>
                     </div>
-                    <div class="pt-3 border-t border-[#222] flex items-center justify-between">
+                    <div class="pt-3 border-t border-zinc-900 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <button onclick="toggleAudio('audio-lh-2', 'btn-lh-2')" id="btn-lh-2" class="w-8 h-8 rounded-full bg-[#e10600] hover:bg-red-500 text-white flex items-center justify-center transition-transform active:scale-90 shadow-lg">
                                 <i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>
@@ -173,31 +177,31 @@
 
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div onclick="setChartFilter('all')" class="glass-card p-5 rounded-2xl cursor-pointer hover:border-indigo-500/50 transition-colors">
+                <div onclick="setChartFilter('all')" class="glass-card p-5 rounded-2xl cursor-pointer hover:border-orange-500/50 transition-colors">
                     <div class="flex justify-between items-center mb-1">
-                        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Lifetime Average</p>
-                        <i data-lucide="line-chart" class="w-4 h-4 text-indigo-400"></i>
+                        <p class="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Lifetime Average</p>
+                        <i data-lucide="line-chart" class="w-4 h-4 text-orange-400"></i>
                     </div>
                     <div class="flex items-baseline gap-2">
                         <h3 id="stat-avg-score" class="text-3xl font-bold text-white">0</h3>
-                        <span class="text-slate-500 text-sm">/ 300</span>
+                        <span class="text-zinc-500 text-sm">/ 300</span>
                     </div>
-                    <p id="stat-avg-perc" class="text-indigo-400 text-sm font-medium mt-1">0% Avg</p>
+                    <p id="stat-avg-perc" class="text-orange-400 text-sm font-medium mt-1">0% Avg</p>
                 </div>
                 <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
-                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Recent Momentum</p>
+                    <p class="text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-1">Recent Momentum</p>
                     <h3 id="stat-recent-avg" class="text-3xl font-bold text-white">0</h3>
                 </div>
                 <div class="glass-card p-5 rounded-2xl">
-                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Best Percentile</p>
+                    <p class="text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-1">Best Percentile</p>
                     <h3 id="stat-best-percentile" class="text-3xl font-bold text-white">0%</h3>
                 </div>
-                <div class="glass-card p-5 rounded-2xl flex flex-col justify-center items-center bg-indigo-600/10 border-indigo-500/30">
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-center items-center bg-orange-600/10 border-orange-500/30">
                     <button onclick="openTestModal()" class="w-full h-full flex flex-col items-center justify-center gap-2 group">
-                        <div class="bg-indigo-600 p-2 rounded-full group-hover:scale-110 transition-transform">
+                        <div class="bg-orange-600 p-2 rounded-full group-hover:scale-110 transition-transform">
                             <i data-lucide="plus" class="w-6 h-6 text-white"></i>
                         </div>
-                        <span class="font-bold text-indigo-400">Add New Test</span>
+                        <span class="font-bold text-orange-400">Add New Test</span>
                     </button>
                 </div>
             </div>
@@ -206,40 +210,40 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div onclick="setChartFilter('physics')" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-blue-500/50 transition-colors">
                     <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-slate-400 font-medium">Physics Average</h4>
+                        <h4 class="text-zinc-400 font-medium">Physics Average</h4>
                         <span class="text-xs text-blue-400 font-semibold uppercase tracking-wider">Filter Graph</span>
                     </div>
                     <div class="flex items-end gap-2">
                         <span id="avg-p" class="text-4xl font-bold">0</span>
-                        <span class="text-slate-500 mb-1">/ 100</span>
+                        <span class="text-zinc-500 mb-1">/ 100</span>
                     </div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
+                    <div class="w-full bg-zinc-800 h-1.5 rounded-full mt-4">
                         <div id="bar-p" class="bg-blue-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
                 <div onclick="setChartFilter('chem')" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-emerald-500/50 transition-colors">
                     <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-slate-400 font-medium">Chemistry Average</h4>
+                        <h4 class="text-zinc-400 font-medium">Chemistry Average</h4>
                         <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Filter Graph</span>
                     </div>
                     <div class="flex items-end gap-2">
                         <span id="avg-c" class="text-4xl font-bold">0</span>
-                        <span class="text-slate-500 mb-1">/ 100</span>
+                        <span class="text-zinc-500 mb-1">/ 100</span>
                     </div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
+                    <div class="w-full bg-zinc-800 h-1.5 rounded-full mt-4">
                         <div id="bar-c" class="bg-emerald-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
                 <div onclick="setChartFilter('maths')" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-orange-500/50 transition-colors">
                     <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-slate-400 font-medium">Maths Average</h4>
+                        <h4 class="text-zinc-400 font-medium">Maths Average</h4>
                         <span class="text-xs text-orange-400 font-semibold uppercase tracking-wider">Filter Graph</span>
                     </div>
                     <div class="flex items-end gap-2">
                         <span id="avg-m" class="text-4xl font-bold">0</span>
-                        <span class="text-slate-500 mb-1">/ 100</span>
+                        <span class="text-zinc-500 mb-1">/ 100</span>
                     </div>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
+                    <div class="w-full bg-zinc-800 h-1.5 rounded-full mt-4">
                         <div id="bar-m" class="bg-orange-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
@@ -250,16 +254,16 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                     <div>
                         <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i data-lucide="trending-up" class="w-5 h-5 text-indigo-400"></i> Score Progression Telemetry
+                            <i data-lucide="trending-up" class="w-5 h-5 text-orange-400"></i> Score Progression Telemetry
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Chronological score trends across Allen test dates</p>
+                        <p class="text-xs text-zinc-400 mt-0.5">Chronological score trends across Allen test dates</p>
                     </div>
-                    <div class="flex flex-wrap gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 text-xs">
-                        <button onclick="setChartFilter('all')" id="btn-chart-all" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm">Total Score</button>
-                        <button onclick="setChartFilter('pcm')" id="btn-chart-pcm" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">PCM Combined</button>
-                        <button onclick="setChartFilter('physics')" id="btn-chart-physics" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-blue-400">Physics</button>
-                        <button onclick="setChartFilter('chem')" id="btn-chart-chem" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-emerald-400">Chemistry</button>
-                        <button onclick="setChartFilter('maths')" id="btn-chart-maths" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-orange-400">Maths</button>
+                    <div class="flex flex-wrap gap-1.5 bg-zinc-900/90 p-1.5 rounded-xl border border-zinc-800 text-xs">
+                        <button onclick="setChartFilter('all')" id="btn-chart-all" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-orange-600 text-white shadow-sm">Total Score</button>
+                        <button onclick="setChartFilter('pcm')" id="btn-chart-pcm" class="px-3 py-1.5 rounded-lg font-medium transition-all text-zinc-400 hover:text-white">PCM Combined</button>
+                        <button onclick="setChartFilter('physics')" id="btn-chart-physics" class="px-3 py-1.5 rounded-lg font-medium transition-all text-zinc-400 hover:text-blue-400">Physics</button>
+                        <button onclick="setChartFilter('chem')" id="btn-chart-chem" class="px-3 py-1.5 rounded-lg font-medium transition-all text-zinc-400 hover:text-emerald-400">Chemistry</button>
+                        <button onclick="setChartFilter('maths')" id="btn-chart-maths" class="px-3 py-1.5 rounded-lg font-medium transition-all text-zinc-400 hover:text-orange-400">Maths</button>
                     </div>
                 </div>
                 <div class="relative w-full h-[320px]">
@@ -269,13 +273,13 @@
 
             <!-- Test Table -->
             <div class="glass-card rounded-3xl overflow-hidden">
-                <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <div class="p-6 border-b border-zinc-800 flex justify-between items-center">
                     <h3 class="text-lg font-bold">Test History</h3>
-                    <div class="text-sm text-slate-400" id="test-count">0 Tests Recorded</div>
+                    <div class="text-sm text-zinc-400" id="test-count">0 Tests Recorded</div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-widest">
+                        <thead class="bg-zinc-900/60 text-zinc-400 text-xs uppercase tracking-widest">
                             <tr>
                                 <th class="px-6 py-4 font-semibold">Date & Name</th>
                                 <th class="px-6 py-4 font-semibold text-center">P / C / M</th>
@@ -284,9 +288,9 @@
                                 <th class="px-6 py-4 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="test-table-body" class="divide-y divide-slate-800"></tbody>
+                        <tbody id="test-table-body" class="divide-y divide-zinc-800"></tbody>
                     </table>
-                    <div id="empty-state" class="hidden p-12 text-center text-slate-500">
+                    <div id="empty-state" class="hidden p-12 text-center text-zinc-500">
                         <i data-lucide="database" class="w-12 h-12 mx-auto mb-4 opacity-20"></i>
                         <p>No tests recorded yet. Hit "Add New Test" to begin tracking.</p>
                     </div>
@@ -296,18 +300,18 @@
 
         <!-- TAB 2: SYLLABUS PLANNER -->
         <div id="view-planner" class="hidden space-y-8">
-            <div id="next-test-banner" class="bg-gradient-to-r from-indigo-900/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div id="next-test-banner" class="bg-gradient-to-r from-orange-950/30 to-zinc-900 border border-orange-500/20 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
-                    <span class="px-3 py-1 bg-indigo-500/20 text-indigo-400 text-xs font-bold rounded-full uppercase tracking-widest">Next Milestone</span>
+                    <span class="px-3 py-1 bg-orange-500/20 text-orange-400 text-xs font-bold rounded-full uppercase tracking-widest border border-orange-500/20">Next Milestone</span>
                     <h2 id="display-next-name" class="text-3xl font-bold text-white mt-2">Set Your Next Goal</h2>
-                    <p id="display-next-date" class="text-slate-400 text-sm mt-1">Click settings icon to configure date</p>
+                    <p id="display-next-date" class="text-zinc-400 text-sm mt-1">Click settings icon to configure date</p>
                 </div>
                 <div class="flex items-center gap-8">
                     <div class="text-center">
-                        <div id="countdown-days" class="text-5xl font-black text-indigo-500">00</div>
-                        <div class="text-xs uppercase text-slate-500 font-bold tracking-tighter">Days Left</div>
+                        <div id="countdown-days" class="text-5xl font-black text-orange-500">00</div>
+                        <div class="text-xs uppercase text-zinc-500 font-bold tracking-tighter">Days Left</div>
                     </div>
-                    <button onclick="openNextTestModal()" class="p-3 bg-slate-800 rounded-xl hover:bg-slate-700 transition-colors">
+                    <button onclick="openNextTestModal()" class="p-3 bg-zinc-800 rounded-xl hover:bg-zinc-700 transition-colors">
                         <i data-lucide="settings" class="w-6 h-6"></i>
                     </button>
                 </div>
@@ -318,15 +322,15 @@
                     <div class="glass-card p-6 rounded-3xl">
                         <h3 class="text-lg font-bold mb-4">Add Topic</h3>
                         <div class="space-y-4">
-                            <select id="topic-subject" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
+                            <select id="topic-subject" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white">
                                 <option value="Physics">Physics</option>
                                 <option value="Chemistry">Chemistry</option>
                                 <option value="Maths">Maths</option>
                                 <option value="General">General/Other</option>
                             </select>
-                            <input type="text" id="topic-name" placeholder="Topic Name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
-                            <input type="text" id="topic-note" placeholder="Short Note" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white">
-                            <button onclick="addTopic()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition-all">Add to Syllabus</button>
+                            <input type="text" id="topic-name" placeholder="Topic Name" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white">
+                            <input type="text" id="topic-note" placeholder="Short Note" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-white">
+                            <button onclick="addTopic()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-orange-600/20">Add to Syllabus</button>
                         </div>
                     </div>
 
@@ -334,12 +338,12 @@
                         <h3 class="text-lg font-bold mb-2">Total Progress</h3>
                         <div class="flex justify-between text-sm mb-2">
                             <span id="progress-text">0/0 Topics</span>
-                            <span id="progress-percent" class="text-indigo-400 font-bold">0%</span>
+                            <span id="progress-percent" class="text-orange-400 font-bold">0%</span>
                         </div>
-                        <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
-                            <div id="overall-progress-bar" class="bg-indigo-500 h-full transition-all duration-500" style="width: 0%"></div>
+                        <div class="w-full bg-zinc-800 h-3 rounded-full overflow-hidden">
+                            <div id="overall-progress-bar" class="bg-orange-500 h-full transition-all duration-500" style="width: 0%"></div>
                         </div>
-                        <button onclick="archiveSyllabus()" class="w-full mt-6 text-slate-500 text-sm hover:text-red-400 transition-colors flex items-center justify-center gap-1">
+                        <button onclick="archiveSyllabus()" class="w-full mt-6 text-zinc-500 text-sm hover:text-red-400 transition-colors flex items-center justify-center gap-1">
                             <i data-lucide="trash-2" class="w-4 h-4"></i> Clear All Completed
                         </button>
                     </div>
@@ -349,170 +353,156 @@
             </div>
         </div>
 
-        <!-- TAB 3: DAILY PLANNER (EXPANDED FULL-WIDTH MASTER VIEW) -->
+        <!-- TAB 3: DAILY PLANNER (CHAOSPREP STYLE FULL CALENDAR & TARGETS) -->
         <div id="view-daily" class="hidden space-y-6">
-            <!-- Header Bar -->
-            <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <h2 class="text-2xl font-black text-white" id="current-view-title">Schedule Calendar</h2>
+            
+            <!-- ChaosPrep Header Controls -->
+            <div class="glass-card p-5 rounded-3xl border border-zinc-800/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="bg-orange-500/10 border border-orange-500/20 px-3.5 py-2 rounded-2xl flex items-center gap-2.5">
+                        <span class="text-2xl font-black text-orange-400" id="header-days-left">497</span>
+                        <div class="text-[9px] font-black uppercase text-zinc-400 tracking-wider leading-none">Days<br>Remaining</div>
                     </div>
-                    <p class="text-slate-400 text-xs" id="current-view-subtitle">Click '+' on any day or tap cell to view routines</p>
+                    <div>
+                        <h2 class="text-xl font-black text-white" id="current-view-title">September 2026</h2>
+                        <p class="text-zinc-500 text-xs mt-0.5">Drag tasks between cells to reschedule</p>
+                    </div>
                 </div>
                 
-                <div class="flex flex-wrap items-center gap-3">
-                    <div class="flex bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-xs font-bold">
-                        <button onclick="setCalendarView('month')" id="btn-view-month" class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white">Month</button>
-                        <button onclick="setCalendarView('week')" id="btn-view-week" class="px-4 py-1.5 rounded-lg text-slate-400 hover:text-white">Week</button>
-                        <button onclick="setCalendarView('today')" id="btn-view-today" class="px-4 py-1.5 rounded-lg text-slate-400 hover:text-white">Today</button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex bg-zinc-900/90 p-1 rounded-xl border border-zinc-800 text-xs font-bold">
+                        <button onclick="setCalendarView('month')" id="btn-view-month" class="px-4 py-1.5 rounded-lg bg-orange-600 text-white shadow-md">Month</button>
+                        <button onclick="setCalendarView('today')" id="btn-view-today" class="px-4 py-1.5 rounded-lg text-zinc-400 hover:text-white">Day List</button>
                     </div>
-                    <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
-                        <button onclick="navDate(-1)" class="p-2 hover:text-indigo-400 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <button onclick="navDate(0)" class="px-3 py-1 text-xs font-bold hover:text-indigo-400 transition-colors">Today</button>
-                        <button onclick="navDate(1)" class="p-2 hover:text-indigo-400 transition-colors"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    <div class="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-xl border border-zinc-800">
+                        <button onclick="navDate(-1)" class="p-2 hover:text-orange-400 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <button onclick="navDate(0)" class="px-3 py-1 text-xs font-bold hover:text-orange-400 transition-colors">Today</button>
+                        <button onclick="navDate(1)" class="p-2 hover:text-orange-400 transition-colors"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
-                    <button onclick="openTaskModalForDate(selectedDate)" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg active:scale-95 transition-all">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Add Routine
+                    <button onclick="openTaskModalForDate(selectedDate)" class="px-4 py-2 bg-orange-600 hover:bg-orange-500 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 shadow-lg shadow-orange-600/20 active:scale-95 transition-all">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Target
                     </button>
                 </div>
             </div>
 
             <!-- Month Calendar Grid View -->
-            <div id="calendar-month-view" class="glass-card rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
-                <div class="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80 font-mono text-[11px] font-black text-slate-400 uppercase tracking-widest text-center py-3">
+            <div id="calendar-month-view" class="glass-card rounded-3xl overflow-hidden border border-zinc-800/80 shadow-2xl">
+                <div class="grid grid-cols-7 border-b border-zinc-800/80 bg-zinc-950/60 font-mono text-[10px] font-black text-zinc-500 uppercase tracking-widest text-center py-3">
                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
-                <div id="month-grid" class="calendar-grid divide-x divide-y divide-slate-800 bg-slate-950/40"></div>
+                <div id="month-grid" class="calendar-grid divide-x divide-y divide-zinc-800/70 bg-[#0c0c10]"></div>
             </div>
 
-            <!-- Daily Selected Date Tasks View -->
+            <!-- Day List Mode View -->
             <div id="calendar-tasks-view" class="hidden space-y-4">
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
-                        <i data-lucide="calendar" class="w-5 h-5 text-indigo-400"></i>
-                        <h3 class="font-bold text-white text-base">Routines for: <span id="tasks-selected-date" class="text-indigo-400 font-mono">...</span></h3>
+                        <i data-lucide="calendar" class="w-5 h-5 text-orange-400"></i>
+                        <h3 class="font-bold text-white text-base">Targets for: <span id="tasks-selected-date" class="text-orange-400 font-mono">...</span></h3>
                     </div>
-                    <span id="tasks-stats-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">0 Tasks</span>
+                    <span id="tasks-stats-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-zinc-900 text-zinc-300 border border-zinc-800">0 Tasks</span>
                 </div>
                 <div id="daily-task-list" class="space-y-3"></div>
             </div>
 
-            <!-- DAILY NON-NEGOTIABLE CHECKLIST & REWARD SYSTEM -->
-            <div class="glass-card p-5 rounded-3xl border border-indigo-500/20 bg-slate-900/80 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <!-- Left: Checklist Items -->
+            <!-- Daily Non-Negotiable Checklist & Reward Bar -->
+            <div class="glass-card p-5 rounded-3xl border border-orange-500/20 bg-zinc-900/60 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="space-y-2 flex-1">
                     <div class="flex items-center gap-2">
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
                             Daily Quota
                         </span>
-                        <h3 class="text-sm font-bold text-white">Non-Negotiable Targets (Resets Daily at 12 AM)</h3>
+                        <h3 class="text-sm font-bold text-white">Non-Negotiable Targets (Auto-resets at 12 AM)</h3>
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
-                        <!-- Task 1: Revision -->
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-indigo-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-revision" onchange="toggleDailyQuota('revision')" class="w-4 h-4 rounded text-indigo-600 bg-slate-900 border-slate-700 focus:ring-indigo-500">
-                            <span class="text-xs font-semibold text-slate-200">1. Daily Revision</span>
+                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-800 hover:border-orange-500/40 cursor-pointer transition-all select-none">
+                            <input type="checkbox" id="quota-revision" onchange="toggleDailyQuota('revision')" class="w-4 h-4 rounded text-orange-600 bg-zinc-900 border-zinc-700 focus:ring-orange-500">
+                            <span class="text-xs font-semibold text-zinc-200">1. Daily Revision</span>
                         </label>
-
-                        <!-- Task 2: Maths HW -->
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-orange-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-maths" onchange="toggleDailyQuota('maths')" class="w-4 h-4 rounded text-orange-500 bg-slate-900 border-slate-700 focus:ring-orange-500">
-                            <span class="text-xs font-semibold text-slate-200">2. Maths HW</span>
+                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-800 hover:border-orange-500/40 cursor-pointer transition-all select-none">
+                            <input type="checkbox" id="quota-maths" onchange="toggleDailyQuota('maths')" class="w-4 h-4 rounded text-orange-500 bg-zinc-900 border-zinc-700 focus:ring-orange-500">
+                            <span class="text-xs font-semibold text-zinc-200">2. Maths HW</span>
                         </label>
-
-                        <!-- Task 3: Phy HW -->
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-phy" onchange="toggleDailyQuota('phy')" class="w-4 h-4 rounded text-blue-500 bg-slate-900 border-slate-700 focus:ring-blue-500">
-                            <span class="text-xs font-semibold text-slate-200">3. Physics HW</span>
+                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-800 hover:border-blue-500/40 cursor-pointer transition-all select-none">
+                            <input type="checkbox" id="quota-phy" onchange="toggleDailyQuota('phy')" class="w-4 h-4 rounded text-blue-500 bg-zinc-900 border-zinc-700 focus:ring-blue-500">
+                            <span class="text-xs font-semibold text-zinc-200">3. Physics HW</span>
                         </label>
-
-                        <!-- Task 4: Chem 10-Q -->
-                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-emerald-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-chem" onchange="toggleDailyQuota('chem')" class="w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
-                            <span class="text-xs font-semibold text-slate-200">4. Chem 10-Q</span>
+                        <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-800 hover:border-emerald-500/40 cursor-pointer transition-all select-none">
+                            <input type="checkbox" id="quota-chem" onchange="toggleDailyQuota('chem')" class="w-4 h-4 rounded text-emerald-500 bg-zinc-900 border-zinc-700 focus:ring-emerald-500">
+                            <span class="text-xs font-semibold text-zinc-200">4. Chem 10-Q</span>
                         </label>
                     </div>
                 </div>
 
-                <!-- Right: Reward Status Pill -->
-                <div id="quota-reward-box" class="w-full md:w-auto p-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 flex items-center gap-3 transition-all min-w-[210px]">
-                    <div id="reward-icon" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center">
+                <div id="quota-reward-box" class="w-full md:w-auto p-3.5 rounded-2xl border border-zinc-800 bg-zinc-950/80 flex items-center gap-3 transition-all min-w-[210px]">
+                    <div id="reward-icon" class="w-10 h-10 rounded-xl bg-zinc-800 text-zinc-500 flex items-center justify-center">
                         <i data-lucide="lock" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <div id="reward-title" class="text-xs font-bold text-slate-400">1h Entertainment</div>
-                        <div id="reward-status" class="text-[10px] text-slate-500 font-mono">0 / 4 Targets Done</div>
+                        <div id="reward-title" class="text-xs font-bold text-zinc-400">1h Entertainment</div>
+                        <div id="reward-status" class="text-[10px] text-zinc-500 font-mono">0 / 4 Targets Done</div>
                     </div>
                 </div>
             </div>
 
-           <!-- TASK BREAKDOWN GRAPHS: COMBINED + INDIVIDUAL SUBJECTS -->
-            <div class="glass-card p-6 rounded-3xl border border-slate-800/80 shadow-2xl space-y-6 pt-4">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+            <!-- Subject Completion Rings Grid -->
+            <div class="glass-card p-6 rounded-3xl border border-zinc-800/80 shadow-2xl space-y-6 pt-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-zinc-800 pb-4">
                     <div>
                         <h4 class="text-base font-bold text-white flex items-center gap-2">
-                            <i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-400"></i> Subject Task Completion Telemetry
+                            <i data-lucide="pie-chart" class="w-5 h-5 text-orange-400"></i> Task Completion Telemetry
                         </h4>
-                        <p class="text-xs text-slate-400">Real-time status breakdown for overall routines and core subjects</p>
+                        <p class="text-xs text-zinc-400">Real-time status breakdown for overall routines and subjects</p>
                     </div>
                     <div class="flex items-center gap-3 text-xs font-mono">
                         <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Done</span>
                         <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Active</span>
-                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span> Pending</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-zinc-700"></span> Pending</span>
                     </div>
                 </div>
 
-                <!-- 4 Interactive Rings Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- 1. Overall Combined Status -->
-                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                        <span class="text-xs font-black text-indigo-400 uppercase tracking-wider">Overall Combined</span>
+                    <div class="bg-zinc-950/50 border border-zinc-800/80 p-4 rounded-2xl flex flex-col items-center justify-between">
+                        <span class="text-xs font-black text-orange-400 uppercase tracking-wider">Overall Combined</span>
                         <div class="w-32 h-32 relative my-2">
                             <canvas id="chart-task-overall"></canvas>
                         </div>
-                        <div id="stat-text-overall" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                        <div id="stat-text-overall" class="text-[11px] font-mono text-zinc-400 text-center">0 / 0 Done</div>
                     </div>
-
-                    <!-- 2. Physics Status -->
-                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
+                    <div class="bg-zinc-950/50 border border-zinc-800/80 p-4 rounded-2xl flex flex-col items-center justify-between">
                         <span class="text-xs font-black text-blue-400 uppercase tracking-wider">Physics Tasks</span>
                         <div class="w-32 h-32 relative my-2">
                             <canvas id="chart-task-physics"></canvas>
                         </div>
-                        <div id="stat-text-physics" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                        <div id="stat-text-physics" class="text-[11px] font-mono text-zinc-400 text-center">0 / 0 Done</div>
                     </div>
-
-                    <!-- 3. Chemistry Status -->
-                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
+                    <div class="bg-zinc-950/50 border border-zinc-800/80 p-4 rounded-2xl flex flex-col items-center justify-between">
                         <span class="text-xs font-black text-emerald-400 uppercase tracking-wider">Chemistry Tasks</span>
                         <div class="w-32 h-32 relative my-2">
                             <canvas id="chart-task-chemistry"></canvas>
                         </div>
-                        <div id="stat-text-chemistry" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                        <div id="stat-text-chemistry" class="text-[11px] font-mono text-zinc-400 text-center">0 / 0 Done</div>
                     </div>
-
-                    <!-- 4. Maths Status -->
-                    <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                        <span class="text-xs font-black text-orange-400 uppercase tracking-wider">Maths Tasks</span>
+                    <div class="bg-zinc-950/50 border border-zinc-800/80 p-4 rounded-2xl flex flex-col items-center justify-between">
+                        <span class="text-xs font-black text-amber-500 uppercase tracking-wider">Maths Tasks</span>
                         <div class="w-32 h-32 relative my-2">
                             <canvas id="chart-task-maths"></canvas>
                         </div>
-                        <div id="stat-text-maths" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                        <div id="stat-text-maths" class="text-[11px] font-mono text-zinc-400 text-center">0 / 0 Done</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Motivation Embed Banner (Increased Height so nothing is cut) -->
-            <div class="w-full rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900 mt-6">
+            <!-- Motivation Embed Banner -->
+            <div class="w-full rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl bg-zinc-900 mt-6">
                 <iframe src="https://thecbsecore.github.io/jhcnb-JBCFEA" class="w-full h-[540px] border-0" loading="lazy"></iframe>
             </div>
         </div>
 
         <!-- TAB 4: F1 HUB -->
         <div id="view-f1hub" class="hidden w-full">
-            <div class="w-full h-[calc(100vh-140px)] rounded-3xl overflow-hidden border border-slate-800 bg-black shadow-2xl">
+            <div class="w-full h-[calc(100vh-140px)] rounded-3xl overflow-hidden border border-zinc-800 bg-black shadow-2xl">
                 <iframe src="https://thecbsecore.github.io/F1/" class="w-full h-full border-0" loading="lazy"></iframe>
             </div>
         </div>
@@ -520,78 +510,78 @@
         <!-- TAB 5: GOALS GALLERY -->
         <div id="view-goals" class="hidden space-y-12">
             <section>
-                <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <h3 class="text-sm font-black text-orange-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                     <i data-lucide="target" class="w-4 h-4"></i> Long Term Goals
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
+                        <div class="h-36 bg-zinc-900 relative overflow-hidden">
                             <img src="2028.png" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
                         </div>
                         <div class="p-5">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
                             <h4 class="font-bold text-white text-base mt-2">JEE 2028 | IIT CS</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: January 22, 2028</p>
+                            <p class="text-zinc-500 text-xs mt-1">Target: January 22, 2028</p>
                         </div>
                     </div>
                     <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
+                        <div class="h-36 bg-zinc-900 relative overflow-hidden">
                             <img src="bits.png" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
                         </div>
                         <div class="p-5">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
                             <h4 class="font-bold text-white text-base mt-2">BITS 2028 | CS</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: May 9, 2028</p>
+                            <p class="text-zinc-500 text-xs mt-1">Target: May 9, 2028</p>
                         </div>
                     </div>
                     <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
+                        <div class="h-36 bg-zinc-900 relative overflow-hidden">
                             <img src="dev.png" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
                         </div>
                         <div class="p-5">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
                             <h4 class="font-bold text-white text-base mt-2">Professional Developer</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: January 1, 2031</p>
+                            <p class="text-zinc-500 text-xs mt-1">Target: January 1, 2031</p>
                         </div>
                     </div>
                 </div>
             </section>
 
             <section>
-                <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <h3 class="text-sm font-black text-orange-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                     <i data-lucide="zap" class="w-4 h-4"></i> Short Term Goals
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
+                        <div class="h-36 bg-zinc-900 relative overflow-hidden">
                             <img src="back.png" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
                         </div>
                         <div class="p-5">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
                             <h4 class="font-bold text-white text-base mt-2">No Backlogs till Class 11th End</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: December 25, 2026</p>
+                            <p class="text-zinc-500 text-xs mt-1">Target: December 25, 2026</p>
                         </div>
                     </div>
                     <div class="glass-card rounded-2xl overflow-hidden group">
-                        <div class="h-36 bg-slate-900 relative overflow-hidden">
+                        <div class="h-36 bg-zinc-900 relative overflow-hidden">
                             <img src="ln.jpg" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
                         </div>
                         <div class="p-5">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending</span>
                             <h4 class="font-bold text-white text-base mt-2">ALLEN SRG BATCH</h4>
-                            <p class="text-slate-500 text-xs mt-1">Target: December 31, 2026</p>
+                            <p class="text-zinc-500 text-xs mt-1">Target: December 31, 2026</p>
                         </div>
                     </div>
                 </div>
             </section>
 
             <section>
-                <h3 class="text-sm font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <h3 class="text-sm font-black text-orange-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                     <i data-lucide="sparkles" class="w-4 h-4"></i> Inspirations
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     <div class="glass-card p-5 rounded-2xl text-center">
-                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-[#e10600] overflow-hidden bg-slate-900">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-[#e10600] overflow-hidden bg-zinc-900">
                             <img src="ham.jpg" class="w-full h-full object-cover">
                         </div>
                         <h4 class="text-xs font-black text-white">Sir Lewis Hamilton</h4>
@@ -599,30 +589,30 @@
                             <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
                             <span class="text-[9px] px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">GOAT</span>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 7<br>Grand Prix Wins: 105<br>Podium Finishes: 204</p>
+                        <p class="text-[10px] text-zinc-400 mt-2 font-mono leading-relaxed">World Championships: 7<br>Grand Prix Wins: 105<br>Podium Finishes: 204</p>
                     </div>
                     <div class="glass-card p-5 rounded-2xl text-center">
-                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-yellow-500 overflow-hidden bg-slate-900">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-yellow-500 overflow-hidden bg-zinc-900">
                             <img src="sen.jpg" class="w-full h-full object-cover">
                         </div>
                         <h4 class="text-xs font-black text-white">Ayrton Senna</h4>
                         <div class="flex flex-wrap justify-center gap-1.5 mt-2">
                             <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 3<br>Grand Prix Wins: 41<br>Podium Finishes: 80</p>
+                        <p class="text-[10px] text-zinc-400 mt-2 font-mono leading-relaxed">World Championships: 3<br>Grand Prix Wins: 41<br>Podium Finishes: 80</p>
                     </div>
                     <div class="glass-card p-5 rounded-2xl text-center">
-                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-red-500 overflow-hidden bg-slate-900">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-red-500 overflow-hidden bg-zinc-900">
                             <img src="shu.jpg" class="w-full h-full object-cover">
                         </div>
                         <h4 class="text-xs font-black text-white">Michael Schumacher</h4>
                         <div class="flex flex-wrap justify-center gap-1.5 mt-2">
                             <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">World Championships: 7<br>Grand Prix Wins: 91<br>Podium Finishes: 155</p>
+                        <p class="text-[10px] text-zinc-400 mt-2 font-mono leading-relaxed">World Championships: 7<br>Grand Prix Wins: 91<br>Podium Finishes: 155</p>
                     </div>
                     <div class="glass-card p-5 rounded-2xl text-center">
-                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-blue-500 overflow-hidden bg-slate-900">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-blue-500 overflow-hidden bg-zinc-900">
                             <img src="sun.webp" class="w-full h-full object-cover">
                         </div>
                         <h4 class="text-xs font-black text-white">Sundar Pichai</h4>
@@ -630,7 +620,7 @@
                             <span class="text-[9px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">LEGEND</span>
                             <span class="text-[9px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">Google CEO</span>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-2 font-mono leading-relaxed">IIT Kharagpur Alumnus</p>
+                        <p class="text-[10px] text-zinc-400 mt-2 font-mono leading-relaxed">IIT Kharagpur Alumnus</p>
                     </div>
                 </div>
             </section>
@@ -638,20 +628,41 @@
 
     </main>
 
+    <!-- CHAOSPREP DAY TARGETS POPOVER MODAL -->
+    <div id="day-targets-modal" class="fixed inset-0 z-[65] hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#141419] border border-zinc-800 w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 id="popover-date-title" class="text-xl font-black text-white">Saturday 12 Sept</h3>
+                    <p class="text-xs text-zinc-400">Your daily targets & study stints</p>
+                </div>
+                <button onclick="closeDayTargetsModal()" class="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="popover-task-list" class="space-y-2.5 max-h-[360px] overflow-y-auto custom-scrollbar pr-1"></div>
+
+            <button id="popover-add-btn" onclick="openTaskModalFromPopover()" class="w-full py-3 bg-[#1d1d24] hover:bg-orange-600 hover:text-white border border-zinc-700/60 rounded-2xl text-xs font-black text-zinc-300 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Task for this Day
+            </button>
+        </div>
+    </div>
+
     <!-- FLOATING FOCUS TIMER (BOTTOM-LEFT) -->
     <div id="focus-timer-container" class="fixed bottom-6 left-6 z-50 flex flex-col items-start select-none touch-none">
-        <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-slate-900/95 hover:bg-slate-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-slate-700 transition-transform active:scale-95 backdrop-blur-md">
-            <i data-lucide="timer" class="w-5 h-5 text-indigo-400"></i>
+        <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-[#141419]/95 hover:bg-zinc-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-zinc-700 transition-transform active:scale-95 backdrop-blur-md">
+            <i data-lucide="timer" class="w-5 h-5 text-orange-400"></i>
             <span class="font-bold text-sm">Focus Timer</span>
         </button>
 
-        <div id="focus-timer-widget" class="hidden absolute bottom-14 left-0 glass-card bg-slate-900/95 border border-slate-700/80 p-4 rounded-3xl shadow-2xl w-72 backdrop-blur-xl">
-            <div id="timer-drag-handle" class="cursor-move flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-xs text-slate-400 font-semibold">
+        <div id="focus-timer-widget" class="hidden absolute bottom-14 left-0 glass-card bg-[#141419]/95 border border-zinc-700/80 p-4 rounded-3xl shadow-2xl w-72 backdrop-blur-xl">
+            <div id="timer-drag-handle" class="cursor-move flex items-center justify-between pb-2 mb-2 border-b border-zinc-800 text-xs text-zinc-400 font-semibold">
                 <span class="flex items-center gap-1.5 text-white">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> Focus Session
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-orange-400"></i> Focus Session
                 </span>
                 <div class="flex items-center gap-1.5">
-                    <button onclick="togglePiP()" title="Picture-in-Picture" class="p-1 hover:text-indigo-400 text-slate-400 transition-colors">
+                    <button onclick="togglePiP()" title="Picture-in-Picture" class="p-1 hover:text-orange-400 text-zinc-400 transition-colors">
                         <i data-lucide="picture-in-picture-2" class="w-3.5 h-3.5"></i>
                     </button>
                     <button onclick="toggleFocusTimer()" class="p-1 hover:text-red-400 transition-colors">
@@ -662,28 +673,28 @@
 
             <div class="text-center py-2">
                 <div class="flex justify-center items-center gap-1 font-mono text-4xl font-black text-white">
-                    <input type="number" id="timer-input-m" min="0" max="60" value="25" class="w-16 bg-transparent text-right text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
-                    <span class="text-slate-500">:</span>
-                    <input type="number" id="timer-input-s" min="0" max="59" value="00" class="w-16 bg-transparent text-left text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
+                    <input type="number" id="timer-input-m" min="0" max="60" value="25" class="w-16 bg-transparent text-right text-white focus:text-orange-400 focus:outline-none border-b border-transparent focus:border-orange-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
+                    <span class="text-zinc-500">:</span>
+                    <input type="number" id="timer-input-s" min="0" max="59" value="00" class="w-16 bg-transparent text-left text-white focus:text-orange-400 focus:outline-none border-b border-transparent focus:border-orange-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">Tap digits directly to configure</p>
+                <p class="text-[10px] text-zinc-500 mt-1">Tap digits directly to configure</p>
             </div>
 
             <div class="flex justify-center gap-1.5 my-2">
-                <button onclick="setTimerDirect(25, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">25m</button>
-                <button onclick="setTimerDirect(45, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">45m</button>
-                <button onclick="setTimerDirect(60, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">60m</button>
-                <button onclick="setTimerDirect(0, 30)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">30s</button>
+                <button onclick="setTimerDirect(25, 0)" class="text-[10px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-2.5 py-0.5 rounded-md font-mono">25m</button>
+                <button onclick="setTimerDirect(45, 0)" class="text-[10px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-2.5 py-0.5 rounded-md font-mono">45m</button>
+                <button onclick="setTimerDirect(60, 0)" class="text-[10px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-2.5 py-0.5 rounded-md font-mono">60m</button>
+                <button onclick="setTimerDirect(0, 30)" class="text-[10px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-2.5 py-0.5 rounded-md font-mono">30s</button>
             </div>
 
             <div class="flex items-center justify-center gap-2 pt-1">
-                <button id="timer-start-btn" onclick="startTimer()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md">
+                <button id="timer-start-btn" onclick="startTimer()" class="flex-1 py-2 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i> Start
                 </button>
-                <button onclick="pauseTimer()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-all">
+                <button onclick="pauseTimer()" class="py-2 px-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-xl text-xs font-bold transition-all">
                     <i data-lucide="pause" class="w-3.5 h-3.5"></i>
                 </button>
-                <button onclick="resetTimer()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all">
+                <button onclick="resetTimer()" class="py-2 px-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white rounded-xl text-xs font-bold transition-all">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                 </button>
             </div>
@@ -695,113 +706,115 @@
 
     <!-- FLOATING AI MENTOR WIDGET (BOTTOM-RIGHT) -->
     <div id="ai-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        <button onclick="toggleAIChat()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-indigo-400/30 transition-transform active:scale-95">
+        <button onclick="toggleAIChat()" class="bg-gradient-to-r from-orange-600 to-amber-600 hover:opacity-95 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-orange-400/30 transition-transform active:scale-95">
             <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
             <span class="font-bold text-sm">Ask AI Mentor</span>
         </button>
 
-        <div id="ai-chatbox" class="hidden mt-3 w-[360px] sm:w-[410px] h-[520px] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-            <div class="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="bg-indigo-600/30 p-1.5 rounded-lg border border-indigo-500/30">
-                        <i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i>
+        <div id="ai-chatbox" class="hidden mt-3 w-[370px] sm:w-[420px] h-[550px] bg-[#141419] border border-zinc-800 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="px-4 py-3.5 bg-[#0e0e12] border-b border-zinc-800 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="bg-orange-600/20 p-1.5 rounded-lg border border-orange-500/30">
+                        <i data-lucide="bot" class="w-4 h-4 text-orange-400"></i>
                     </div>
                     <div>
                         <div class="text-xs font-bold text-white">Laksh's JEE Coach</div>
-                        <p class="text-[10px] text-slate-400">Allen Schedule (7 AM - 12 PM)</p>
+                        <p class="text-[10px] text-zinc-400">Allen Schedule (7 AM - 12 PM) Contextualized</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button onclick="openApiKeyModal()" class="p-1.5 text-slate-400 hover:text-white"><i data-lucide="key" class="w-4 h-4"></i></button>
-                    <button onclick="toggleAIChat()" class="p-1.5 text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <button onclick="openApiKeyModal()" class="p-1.5 text-zinc-400 hover:text-white"><i data-lucide="key" class="w-4 h-4"></i></button>
+                    <button onclick="toggleAIChat()" class="p-1.5 text-zinc-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
             </div>
+            
             <div id="ai-chat-thread" class="flex-1 p-3.5 overflow-y-auto space-y-3 custom-scrollbar text-xs"></div>
-            <form onsubmit="handleUserSubmit(event)" class="p-2.5 bg-slate-950 border-t border-slate-800 flex gap-1.5">
-                <input type="text" id="ai-user-input" placeholder="Ask question, analysis, routine tweak..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
-                <button type="submit" id="ai-send-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl"><i data-lucide="send" class="w-3.5 h-3.5"></i></button>
+            
+            <form onsubmit="handleUserSubmit(event)" class="p-2.5 bg-[#0e0e12] border-t border-zinc-800 flex gap-1.5">
+                <input type="text" id="ai-user-input" placeholder="Ask question, or say: 'Plan my tasks tomorrow'..." class="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-orange-500">
+                <button type="submit" id="ai-send-btn" class="bg-orange-600 hover:bg-orange-500 text-white p-2 rounded-xl transition-all"><i data-lucide="send" class="w-3.5 h-3.5"></i></button>
             </form>
         </div>
     </div>
 
     <!-- MODAL: ADD / EDIT TEST SCORE -->
-    <div id="test-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden">
-            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+    <div id="test-modal" class="fixed inset-0 z-[60] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#141419] border border-zinc-800 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-zinc-800 flex justify-between items-center">
                 <h3 id="modal-title" class="text-xl font-bold">Add Test Record</h3>
-                <button onclick="closeTestModal()" class="text-slate-400 hover:text-white"><i data-lucide="x"></i></button>
+                <button onclick="closeTestModal()" class="text-zinc-400 hover:text-white"><i data-lucide="x"></i></button>
             </div>
             <form id="test-form" class="p-6 space-y-5">
                 <input type="hidden" id="edit-index" value="-1">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Test Title</label>
-                        <input type="text" id="t-name" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
+                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Test Title</label>
+                        <input type="text" id="t-name" required class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Test Date</label>
-                        <input type="date" id="t-date" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
+                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Test Date</label>
+                        <input type="date" id="t-date" required class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 outline-none">
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-blue-400 uppercase mb-1 text-center">Physics</label>
-                        <input type="number" id="t-p" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center outline-none">
+                        <input type="number" id="t-p" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-center outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-emerald-400 uppercase mb-1 text-center">Chem</label>
-                        <input type="number" id="t-c" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center outline-none">
+                        <input type="number" id="t-c" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-center outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-orange-400 uppercase mb-1 text-center">Math</label>
-                        <input type="number" id="t-m" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center outline-none">
+                        <input type="number" id="t-m" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-center outline-none">
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4 border-t border-slate-800 pt-3">
+                <div class="grid grid-cols-2 gap-4 border-t border-zinc-800 pt-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Max Marks</label>
-                        <input type="number" id="t-max" value="300" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 outline-none">
+                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Max Marks</label>
+                        <input type="number" id="t-max" value="300" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Total Scored (Auto)</label>
-                        <input type="number" id="t-total" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-indigo-400 font-bold outline-none">
+                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Total Scored (Auto)</label>
+                        <input type="number" id="t-total" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-orange-400 font-bold outline-none">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Your Rank</label>
-                        <input type="number" id="t-rank" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 outline-none">
+                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Your Rank</label>
+                        <input type="number" id="t-rank" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Total Students</label>
-                        <input type="number" id="t-students" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 outline-none">
+                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Total Students</label>
+                        <input type="number" id="t-students" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 outline-none">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Analysis / Reflections</label>
-                    <textarea id="t-notes" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none"></textarea>
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Analysis / Reflections</label>
+                    <textarea id="t-notes" rows="2" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-xs outline-none"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all">Save Performance</button>
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl transition-all">Save Performance</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT ROUTINE TASK -->
-    <div id="task-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
-            <h3 class="text-xl font-bold mb-4">Schedule Task / Routine</h3>
+    <!-- MODAL: ADD / EDIT ROUTINE TASK (WITH DIRECT DURATION & TIME CALC) -->
+    <div id="task-modal" class="fixed inset-0 z-[70] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#141419] border border-zinc-800 w-full max-w-sm rounded-3xl p-6">
+            <h3 class="text-xl font-bold mb-4">Schedule Target Routine</h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Date</label>
-                    <input type="date" id="task-date" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Date</label>
+                    <input type="date" id="task-date" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-white outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Task Title</label>
-                    <input type="text" id="task-title" placeholder="e.g. Allen Class, Mole Concept PYQs" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Target Title</label>
+                    <input type="text" id="task-title" placeholder="e.g. Study: Work Done by Constant Forces" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-white outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Subject</label>
-                    <select id="task-subject" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Subject</label>
+                    <select id="task-subject" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-white outline-none">
                         <option value="Physics">Physics</option>
                         <option value="Chemistry">Chemistry</option>
                         <option value="Maths">Maths</option>
@@ -811,17 +824,21 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Start Time</label>
-                        <input type="time" id="task-start" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white outline-none">
+                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Start Time</label>
+                        <input type="time" id="task-start" oninput="calculateModalDuration()" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">End Time</label>
-                        <input type="time" id="task-end" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white outline-none">
+                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">End Time</label>
+                        <input type="time" id="task-end" oninput="calculateModalDuration()" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white outline-none">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Status</label>
-                    <select id="task-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white outline-none">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Target Duration (e.g. 45m, 1h 30m)</label>
+                    <input type="text" id="task-duration" placeholder="Auto-calculated or type: 45m" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-orange-400 font-mono outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Status</label>
+                    <select id="task-status" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-white outline-none">
                         <option value="Not Started">Not Started</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Pending">Pending</option>
@@ -829,37 +846,37 @@
                     </select>
                 </div>
                 <div class="flex gap-2 pt-2">
-                    <button onclick="closeTaskModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
-                    <button onclick="saveTask()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-bold">Lock Task</button>
+                    <button onclick="closeTaskModal()" class="flex-1 bg-zinc-800 text-white py-2 rounded-xl text-xs font-bold">Cancel</button>
+                    <button onclick="saveTask()" class="flex-1 bg-orange-600 hover:bg-orange-500 text-white py-2 rounded-xl text-xs font-bold">Lock In</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- MODAL: NEXT GOAL -->
-    <div id="next-test-modal" class="fixed inset-0 z-[60] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
+    <div id="next-test-modal" class="fixed inset-0 z-[60] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#141419] border border-zinc-800 w-full max-w-sm rounded-3xl p-6">
             <h3 class="text-xl font-bold mb-4">Set Upcoming Milestone</h3>
             <div class="space-y-4">
-                <input type="text" id="nt-name" placeholder="Test Name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
-                <input type="date" id="nt-date" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 outline-none">
+                <input type="text" id="nt-name" placeholder="Test Name" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 outline-none">
+                <input type="date" id="nt-date" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 outline-none">
                 <div class="flex gap-2 pt-2">
-                    <button onclick="closeNextTestModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
-                    <button onclick="saveNextTest()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl font-bold text-xs">Save Milestone</button>
+                    <button onclick="closeNextTestModal()" class="flex-1 bg-zinc-800 text-white py-2 rounded-xl text-xs">Cancel</button>
+                    <button onclick="saveNextTest()" class="flex-1 bg-orange-600 text-white py-2 rounded-xl font-bold text-xs">Save</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- MODAL: API KEY -->
-    <div id="api-key-modal" class="fixed inset-0 z-[70] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6">
+    <div id="api-key-modal" class="fixed inset-0 z-[70] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#141419] border border-zinc-800 w-full max-w-sm rounded-3xl p-6">
             <h3 class="text-lg font-bold mb-2">Gemini API Key</h3>
-            <p class="text-xs text-slate-400 mb-4">Stored locally on your browser.</p>
-            <input type="password" id="custom-api-key" placeholder="Enter Gemini API key" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white mb-4 outline-none">
+            <p class="text-xs text-zinc-400 mb-4">Stored locally on your browser.</p>
+            <input type="password" id="custom-api-key" placeholder="Enter Gemini API key" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-xs text-white mb-4 outline-none">
             <div class="flex gap-2">
-                <button onclick="closeApiKeyModal()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs">Cancel</button>
-                <button onclick="saveApiKey()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-bold">Save Key</button>
+                <button onclick="closeApiKeyModal()" class="flex-1 bg-zinc-800 text-white py-2 rounded-xl text-xs">Cancel</button>
+                <button onclick="saveApiKey()" class="flex-1 bg-orange-600 text-white py-2 rounded-xl text-xs font-bold">Save Key</button>
             </div>
         </div>
     </div>
@@ -877,9 +894,9 @@
 
         let activeChartFilter = 'all';
         let performanceChart = null;
-        let taskDonutChart = null;
         let calendarView = 'month';
         let selectedDate = new Date();
+        let lastActionUndoStack = null;
 
         const saveToStorage = () => {
             localStorage.setItem('jee_tests', JSON.stringify(appState.tests));
@@ -890,7 +907,7 @@
             localStorage.setItem('jee_ai_chats', JSON.stringify(appState.chatHistory));
         };
 
-        // --- Navigation Switcher ---
+        // Navigation
         function switchTab(view) {
             ['analytics', 'planner', 'daily', 'f1hub', 'goals'].forEach(v => {
                 const el = document.getElementById(`view-${v}`);
@@ -898,7 +915,7 @@
                 const btn = document.getElementById(`tab-btn-${v}`);
                 if (btn) {
                     btn.classList.toggle('tab-active', v === view);
-                    btn.classList.toggle('text-slate-400', v !== view);
+                    btn.classList.toggle('text-zinc-400', v !== view);
                 }
             });
 
@@ -909,7 +926,7 @@
                 main.className = "max-w-7xl mx-auto px-4 py-8";
             }
 
-            if (view === 'daily') { renderCalendar(); renderTaskMetrics(); }
+            if (view === 'daily') { renderCalendar(); renderTaskMetrics(); updateDaysRemainingCounter(); }
             if (view === 'analytics') renderChart();
             if (view === 'planner') { renderSyllabus(); updateCountdown(); }
             lucide.createIcons();
@@ -920,51 +937,69 @@
         }
 
         // ==========================================
-        // --- CALENDAR & DAILY PLANNER LOGIC ---
+        // --- CALENDAR & TARGETS LOGIC ---
         // ==========================================
+        function updateDaysRemainingCounter() {
+            const target = new Date("2028-01-22");
+            const diff = Math.max(0, Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24)));
+            const el = document.getElementById('header-days-left');
+            if (el) el.innerText = diff;
+        }
+
         function setCalendarView(mode) {
             calendarView = mode;
-            ['month', 'week', 'today'].forEach(m => {
+            ['month', 'today'].forEach(m => {
                 const btn = document.getElementById(`btn-view-${m}`);
+                if (!btn) return;
                 btn.className = (m === mode) 
-                    ? "px-4 py-1.5 rounded-lg bg-indigo-600 text-white font-bold" 
-                    : "px-4 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold";
+                    ? "px-4 py-1.5 rounded-lg bg-orange-600 text-white font-bold shadow-md" 
+                    : "px-4 py-1.5 rounded-lg text-zinc-400 hover:text-white font-bold";
             });
             renderCalendar();
         }
 
         function navDate(delta) {
-            if (delta === 0) {
-                selectedDate = new Date();
-            } else {
+            if (delta === 0) selectedDate = new Date();
+            else {
                 if (calendarView === 'month') selectedDate.setMonth(selectedDate.getMonth() + delta);
-                else if (calendarView === 'week') selectedDate.setDate(selectedDate.getDate() + (delta * 7));
                 else selectedDate.setDate(selectedDate.getDate() + delta);
             }
             renderCalendar();
         }
 
         function getSubjectStyle(sub) {
-            if (sub === 'Physics') return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-            if (sub === 'Chemistry') return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-            if (sub === 'Maths') return 'bg-orange-500/20 text-orange-300 border-orange-500/30';
-            if (sub === 'Allen') return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-            return 'bg-slate-700/50 text-slate-300 border-slate-600';
+            if (sub === 'Physics') return 'bg-red-500/10 text-red-400 border border-red-500/20';
+            if (sub === 'Chemistry') return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+            if (sub === 'Maths') return 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
+            if (sub === 'Allen') return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
+            return 'bg-zinc-800/80 text-zinc-300 border border-zinc-700/60';
         }
 
-        function getStatusBadge(status) {
-            if (status === 'Completed') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Completed</span>';
-            if (status === 'In Progress') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">In Progress</span>';
-            if (status === 'Pending') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30">Pending</span>';
-            return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">Not Started</span>';
+        function getSubjectTagPill(sub) {
+            if (sub === 'Physics') return 'text-red-400 bg-red-500/10 border-red-500/30';
+            if (sub === 'Chemistry') return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30';
+            if (sub === 'Maths') return 'text-amber-400 bg-amber-500/10 border-amber-500/30';
+            return 'text-zinc-400 bg-zinc-800 border-zinc-700';
         }
 
-        function openTaskModalForDate(targetDate) {
-            const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
-            const dateStr = d.toISOString().split('T')[0];
-            document.getElementById('task-date').value = dateStr;
-            document.getElementById('task-title').value = '';
-            document.getElementById('task-modal').classList.remove('hidden');
+        function calculateTaskDuration(start, end) {
+            if (!start || !end) return '';
+            const [sh, sm] = start.split(':').map(Number);
+            const [eh, em] = end.split(':').map(Number);
+            let diff = (eh * 60 + em) - (sh * 60 + sm);
+            if (diff < 0) diff += 24 * 60;
+            const h = Math.floor(diff / 60);
+            const m = diff % 60;
+            if (h > 0 && m > 0) return `${h}h ${m}m`;
+            if (h > 0) return `${h}h`;
+            return `${m}m`;
+        }
+
+        function calculateModalDuration() {
+            const s = document.getElementById('task-start').value;
+            const e = document.getElementById('task-end').value;
+            const dur = calculateTaskDuration(s, e);
+            if (dur) document.getElementById('task-duration').value = dur;
         }
 
         function renderCalendar() {
@@ -986,7 +1021,7 @@
                 const totalDays = new Date(year, month + 1, 0).getDate();
 
                 for (let i = 0; i < firstDayIndex; i++) {
-                    monthGrid.innerHTML += `<div class="calendar-cell bg-slate-900/20 p-2 border-r border-b border-slate-800/40"></div>`;
+                    monthGrid.innerHTML += `<div class="calendar-cell bg-black/30 p-2 border-r border-b border-zinc-800/40"></div>`;
                 }
 
                 for (let d = 1; d <= totalDays; d++) {
@@ -994,162 +1029,151 @@
                     const isToday = new Date().toISOString().split('T')[0] === dateStr;
                     const dayTasks = appState.scheduledTasks.filter(t => t.date === dateStr);
 
+                    // Compute total planned time for the day
+                    let totalMinutes = 0;
+                    dayTasks.forEach(t => {
+                        if (t.duration && t.duration.includes('m')) {
+                            const parts = t.duration.match(/(\d+)h\s*(\d*)m?|(\d+)m/);
+                            if (parts) {
+                                if (parts[3]) totalMinutes += parseInt(parts[3]);
+                                else {
+                                    totalMinutes += (parseInt(parts[1]) || 0) * 60 + (parseInt(parts[2]) || 0);
+                                }
+                            }
+                        } else if (t.start && t.end) {
+                            const [sh, sm] = t.start.split(':').map(Number);
+                            const [eh, em] = t.end.split(':').map(Number);
+                            let diff = (eh * 60 + em) - (sh * 60 + sm);
+                            if (diff > 0) totalMinutes += diff;
+                        }
+                    });
+                    const durationPill = totalMinutes > 0 ? (totalMinutes >= 60 ? `${Math.floor(totalMinutes/60)}h ${totalMinutes%60 ? totalMinutes%60 + 'm' : ''}` : `${totalMinutes}m`) : '';
+
                     const cell = document.createElement('div');
-                    cell.className = `calendar-cell p-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors border-r border-b border-slate-800/70 flex flex-col justify-between group ${isToday ? 'bg-indigo-950/20' : ''}`;
-                    
+                    cell.className = `calendar-cell p-3 cursor-pointer hover:bg-zinc-900/50 transition-colors border-r border-b border-zinc-800/70 flex flex-col justify-between group relative ${isToday ? 'bg-orange-950/10' : ''}`;
+                    cell.dataset.date = dateStr;
+
+                    // HTML5 Drag & Drop Listeners
+                    cell.ondragover = (e) => { e.preventDefault(); cell.classList.add('drag-over'); };
+                    cell.ondragleave = () => cell.classList.remove('drag-over');
+                    cell.ondrop = (e) => {
+                        e.preventDefault();
+                        cell.classList.remove('drag-over');
+                        const taskId = parseInt(e.dataTransfer.getData('text/plain'));
+                        const task = appState.scheduledTasks.find(t => t.id === taskId);
+                        if (task && task.date !== dateStr) {
+                            task.date = dateStr;
+                            saveToStorage();
+                            renderCalendar();
+                        }
+                    };
+
                     cell.onclick = (e) => {
-                        if (e.target.closest('button')) return;
-                        selectedDate = new Date(year, month, d);
-                        setCalendarView('today');
+                        if (e.target.closest('.add-task-btn') || e.target.closest('.task-item')) return;
+                        openDayTargetsModal(new Date(year, month, d));
                     };
 
                     let taskPills = dayTasks.slice(0, 3).map(t => `
-                        <div class="text-[10px] px-2 py-0.5 rounded border truncate ${getSubjectStyle(t.subject)} ${t.status === 'Completed' ? 'line-through opacity-40' : ''}">
-                            ${t.start ? t.start + ' ' : ''}${t.title}
+                        <div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" class="task-item text-[10px] px-2 py-1 rounded-lg truncate flex items-center justify-between gap-1 shadow-sm ${getSubjectStyle(t.subject)} ${t.status === 'Completed' ? 'line-through opacity-40' : ''}">
+                            <span class="truncate">${t.title}</span>
+                            ${t.duration ? `<span class="text-[9px] opacity-75 font-mono ml-1 flex-shrink-0">${t.duration}</span>` : ''}
                         </div>
                     `).join('');
 
                     if (dayTasks.length > 3) {
-                        taskPills += `<div class="text-[9px] font-bold text-indigo-400 pl-1">+${dayTasks.length - 3} more</div>`;
+                        taskPills += `<div class="text-[9px] font-bold text-orange-400 pl-1">+${dayTasks.length - 3} more targets</div>`;
                     }
 
                     cell.innerHTML = `
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold ${isToday ? 'w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black' : 'text-slate-400'}">${d}</span>
-                            <div class="flex items-center gap-1">
-                                ${dayTasks.length ? `<span class="text-[10px] font-mono text-slate-500 mr-1">${dayTasks.length}</span>` : ''}
-                                <button onclick="event.stopPropagation(); openTaskModalForDate('${dateStr}')" title="Add Routine for this day" class="p-1 text-slate-500 hover:text-indigo-400 hover:bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold ${isToday ? 'w-6 h-6 rounded-full bg-orange-600 text-white flex items-center justify-center font-black shadow-md' : 'text-zinc-400'}">${d}</span>
+                            <div class="flex items-center gap-1.5">
+                                ${durationPill ? `<span class="text-[9px] font-mono font-bold text-orange-400/90 bg-orange-500/10 px-1.5 py-0.5 rounded border border-orange-500/20">${durationPill}</span>` : ''}
+                                <button onclick="event.stopPropagation(); openTaskModalForDate('${dateStr}')" title="Add task" class="add-task-btn p-1 text-zinc-500 hover:text-orange-400 hover:bg-zinc-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="space-y-1 my-1 flex-1">${taskPills}</div>
+                        <div class="space-y-1 my-1.5 flex-1">${taskPills}</div>
+                        <div class="text-[9px] text-zinc-600 font-mono text-right opacity-0 group-hover:opacity-100 transition-opacity">+ ADD TASK</div>
                     `;
                     monthGrid.appendChild(cell);
                 }
             } else {
                 monthView.classList.add('hidden');
                 tasksView.classList.remove('hidden');
-                title.innerText = calendarView === 'today' ? "Today's Routine & Schedule" : "Weekly Overview";
+                title.innerText = "Daily Targets List";
                 renderTaskList();
             }
             renderTaskMetrics();
             lucide.createIcons();
         }
 
-        function renderTaskList() {
-            const list = document.getElementById('daily-task-list');
-            const dateStr = selectedDate.toISOString().split('T')[0];
-            document.getElementById('tasks-selected-date').innerText = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        // Popover modal for specific day (from screenshot)
+        function openDayTargetsModal(dateObj) {
+            selectedDate = dateObj;
+            const dateStr = dateObj.toISOString().split('T')[0];
+            const tasks = appState.scheduledTasks.filter(t => t.date === dateStr);
+            
+            document.getElementById('popover-date-title').innerText = dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+            const list = document.getElementById('popover-task-list');
             list.innerHTML = '';
 
-            const tasks = appState.scheduledTasks.filter(t => t.date === dateStr).sort((a, b) => (a.start || '').localeCompare(b.start || ''));
-            document.getElementById('tasks-stats-badge').innerText = `${tasks.length} Routines Scheduled`;
-
             if (tasks.length === 0) {
-                list.innerHTML = `<div class="glass-card p-12 text-center rounded-3xl border border-dashed border-slate-800 text-slate-500">No tasks or lectures scheduled for this date. Click "Add Routine" to schedule.</div>`;
+                list.innerHTML = `<p class="text-xs text-zinc-500 text-center py-8">No targets logged for this day.</p>`;
             } else {
                 tasks.forEach(t => {
-                    const row = document.createElement('div');
-                    row.className = "glass-card p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group";
-                    row.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <button onclick="cycleTaskStatus(${t.id})" title="Click to cycle status" class="transition-transform active:scale-95">
-                                ${getStatusBadge(t.status)}
-                            </button>
-                            <div>
-                                <h4 class="font-bold text-sm text-white ${t.status === 'Completed' ? 'line-through opacity-50' : ''}">${t.title}</h4>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${getSubjectStyle(t.subject)}">${t.subject}</span>
-                                    <span class="text-xs text-slate-400 font-mono">${t.start || '--:--'} to ${t.end || '--:--'}</span>
+                    const dur = t.duration || calculateTaskDuration(t.start, t.end) || '45m';
+                    const item = document.createElement('div');
+                    item.className = "p-3.5 rounded-2xl bg-zinc-900/90 border border-zinc-800/80 space-y-2 select-none";
+                    item.innerHTML = `
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <button onclick="cycleTaskStatus(${t.id}); openDayTargetsModal(selectedDate)" class="mt-0.5 w-4 h-4 rounded border ${t.status === 'Completed' ? 'bg-orange-500 border-orange-500 text-white' : 'border-zinc-600'} flex items-center justify-center">
+                                    ${t.status === 'Completed' ? '<i data-lucide="check" class="w-3 h-3"></i>' : ''}
+                                </button>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded border ${getSubjectTagPill(t.subject)}">${t.subject}</span>
+                                        <span class="text-[10px] text-zinc-400 font-mono flex items-center gap-1">
+                                            <i data-lucide="clock" class="w-3 h-3 text-zinc-500"></i> ${dur}
+                                        </span>
+                                    </div>
+                                    <h4 class="font-bold text-sm text-white ${t.status === 'Completed' ? 'line-through text-zinc-500' : ''}">${t.title}</h4>
                                 </div>
                             </div>
+                            <button onclick="deleteTask(${t.id}); openDayTargetsModal(selectedDate)" class="text-zinc-600 hover:text-red-400 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                         </div>
-                        <div class="flex items-center gap-2 self-end sm:self-center">
-                            <button onclick="deleteTask(${t.id})" class="p-2 text-slate-600 hover:text-red-400 rounded-lg hover:bg-slate-800/60 transition-colors">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
+                        <div class="text-[10px] text-zinc-500 pl-7 flex items-center gap-1 cursor-pointer hover:text-zinc-300">
+                            <i data-lucide="corner-down-right" class="w-3 h-3"></i> Add subtask...
                         </div>
                     `;
-                    list.appendChild(row);
+                    list.appendChild(item);
                 });
             }
+
+            document.getElementById('day-targets-modal').classList.remove('hidden');
             lucide.createIcons();
         }
 
-       // --- Multi-Subject Task Status Graphs ---
-        let taskCharts = {};
-
-        function buildDoughnut(canvasId, done, inProg, pending) {
-            const ctx = document.getElementById(canvasId);
-            if (!ctx) return;
-
-            if (taskCharts[canvasId]) {
-                taskCharts[canvasId].destroy();
-            }
-
-            const total = done + inProg + pending;
-            const data = total === 0 ? [0, 0, 1] : [done, inProg, pending];
-            const colors = total === 0 
-                ? ['#1e293b', '#1e293b', '#334155'] 
-                : ['#10b981', '#f59e0b', '#475569'];
-
-            taskCharts[canvasId] = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'In Progress', 'Pending/Not Started'],
-                    datasets: [{
-                        data: data,
-                        backgroundColor: colors,
-                        borderWidth: 0,
-                        hoverOffset: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '72%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: total > 0 }
-                    }
-                }
-            });
+        function closeDayTargetsModal() {
+            document.getElementById('day-targets-modal').classList.add('hidden');
         }
 
-        function renderTaskMetrics() {
-            const tasks = appState.scheduledTasks;
+        function openTaskModalFromPopover() {
+            closeDayTargetsModal();
+            openTaskModalForDate(selectedDate);
+        }
 
-            const getCounts = (taskList) => {
-                const done = taskList.filter(t => t.status === 'Completed').length;
-                const inProg = taskList.filter(t => t.status === 'In Progress').length;
-                const pending = taskList.filter(t => t.status !== 'Completed' && t.status !== 'In Progress').length;
-                return { done, inProg, pending, total: taskList.length };
-            };
-
-            // 1. Overall
-            const ov = getCounts(tasks);
-            buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
-            const elOv = document.getElementById('stat-text-overall');
-            if (elOv) elOv.innerText = `${ov.done}/${ov.total} Done (${ov.total ? Math.round((ov.done/ov.total)*100) : 0}%)`;
-
-            // 2. Physics
-            const phy = getCounts(tasks.filter(t => t.subject === 'Physics'));
-            buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
-            const elPhy = document.getElementById('stat-text-physics');
-            if (elPhy) elPhy.innerText = `${phy.done}/${phy.total} Done (${phy.total ? Math.round((phy.done/phy.total)*100) : 0}%)`;
-
-            // 3. Chemistry
-            const chm = getCounts(tasks.filter(t => t.subject === 'Chemistry'));
-            buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
-            const elChm = document.getElementById('stat-text-chemistry');
-            if (elChm) elChm.innerText = `${chm.done}/${chm.total} Done (${chm.total ? Math.round((chm.done/chm.total)*100) : 0}%)`;
-
-            // 4. Maths
-            const mth = getCounts(tasks.filter(t => t.subject === 'Maths'));
-            buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
-            const elMth = document.getElementById('stat-text-maths');
-            if (elMth) elMth.innerText = `${mth.done}/${mth.total} Done (${mth.total ? Math.round((mth.done/mth.total)*100) : 0}%)`;
+        function openTaskModalForDate(targetDate) {
+            const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
+            const dateStr = d.toISOString().split('T')[0];
+            document.getElementById('task-date').value = dateStr;
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-start').value = '';
+            document.getElementById('task-end').value = '';
+            document.getElementById('task-duration').value = '';
+            document.getElementById('task-modal').classList.remove('hidden');
         }
 
         function closeTaskModal() { document.getElementById('task-modal').classList.add('hidden'); }
@@ -1159,15 +1183,17 @@
             const subject = document.getElementById('task-subject').value;
             const start = document.getElementById('task-start').value;
             const end = document.getElementById('task-end').value;
+            let duration = document.getElementById('task-duration').value.trim();
+            if (!duration && start && end) duration = calculateTaskDuration(start, end);
             const status = document.getElementById('task-status').value;
             const dateStr = document.getElementById('task-date').value || selectedDate.toISOString().split('T')[0];
 
-            if (!title) return alert("Please enter a task title.");
+            if (!title) return alert("Please enter a target title.");
 
             appState.scheduledTasks.push({
                 id: Date.now(),
                 date: dateStr,
-                title, subject, start, end, status
+                title, subject, start, end, duration, status
             });
 
             saveToStorage();
@@ -1191,8 +1217,153 @@
             renderCalendar();
         }
 
+        function renderTaskList() {
+            const list = document.getElementById('daily-task-list');
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            document.getElementById('tasks-selected-date').innerText = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            list.innerHTML = '';
+
+            const tasks = appState.scheduledTasks.filter(t => t.date === dateStr).sort((a, b) => (a.start || '').localeCompare(b.start || ''));
+            document.getElementById('tasks-stats-badge').innerText = `${tasks.length} Routines Scheduled`;
+
+            if (tasks.length === 0) {
+                list.innerHTML = `<div class="glass-card p-12 text-center rounded-3xl border border-dashed border-zinc-800 text-zinc-500">No targets scheduled. Click "Add Target" to schedule.</div>`;
+            } else {
+                tasks.forEach(t => {
+                    const row = document.createElement('div');
+                    row.className = "glass-card p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group";
+                    row.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <button onclick="cycleTaskStatus(${t.id})" class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${t.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}">
+                                ${t.status}
+                            </button>
+                            <div>
+                                <h4 class="font-bold text-sm text-white ${t.status === 'Completed' ? 'line-through opacity-50' : ''}">${t.title}</h4>
+                                <div class="flex items-center gap-2 mt-1 text-xs text-zinc-400 font-mono">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${getSubjectTagPill(t.subject)}">${t.subject}</span>
+                                    <span>${t.duration || calculateTaskDuration(t.start, t.end) || '45m'}</span>
+                                    ${t.start ? `<span>(${t.start} - ${t.end})</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="deleteTask(${t.id})" class="p-2 text-zinc-600 hover:text-red-400 rounded-lg hover:bg-zinc-800/60 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                    list.appendChild(row);
+                });
+            }
+            lucide.createIcons();
+        }
+
+        // --- Multi-Subject Status Rings ---
+        let taskCharts = {};
+        function buildDoughnut(canvasId, done, inProg, pending) {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+            if (taskCharts[canvasId]) taskCharts[canvasId].destroy();
+
+            const total = done + inProg + pending;
+            const data = total === 0 ? [0, 0, 1] : [done, inProg, pending];
+            const colors = total === 0 ? ['#18181b', '#18181b', '#27272a'] : ['#10b981', '#f59e0b', '#3f3f46'];
+
+            taskCharts[canvasId] = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Pending'],
+                    datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 3 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '74%',
+                    plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } }
+                }
+            });
+        }
+
+        function renderTaskMetrics() {
+            const tasks = appState.scheduledTasks;
+            const getCounts = (taskList) => {
+                const done = taskList.filter(t => t.status === 'Completed').length;
+                const inProg = taskList.filter(t => t.status === 'In Progress').length;
+                const pending = taskList.filter(t => t.status !== 'Completed' && t.status !== 'In Progress').length;
+                return { done, inProg, pending, total: taskList.length };
+            };
+
+            const ov = getCounts(tasks);
+            buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
+            document.getElementById('stat-text-overall').innerText = `${ov.done}/${ov.total} Done (${ov.total ? Math.round((ov.done/ov.total)*100) : 0}%)`;
+
+            const phy = getCounts(tasks.filter(t => t.subject === 'Physics'));
+            buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
+            document.getElementById('stat-text-physics').innerText = `${phy.done}/${phy.total} Done (${phy.total ? Math.round((phy.done/phy.total)*100) : 0}%)`;
+
+            const chm = getCounts(tasks.filter(t => t.subject === 'Chemistry'));
+            buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
+            document.getElementById('stat-text-chemistry').innerText = `${chm.done}/${chm.total} Done (${chm.total ? Math.round((chm.done/chm.total)*100) : 0}%)`;
+
+            const mth = getCounts(tasks.filter(t => t.subject === 'Maths'));
+            buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
+            document.getElementById('stat-text-maths').innerText = `${mth.done}/${mth.total} Done (${mth.total ? Math.round((mth.done/mth.total)*100) : 0}%)`;
+        }
+
+        // --- Daily Quota (Auto Reset 12 AM) ---
+        const QUOTA_KEY = 'jee_daily_quota';
+        function getStoredQuota() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const stored = JSON.parse(localStorage.getItem(QUOTA_KEY));
+            if (!stored || stored.date !== todayStr) {
+                const fresh = { date: todayStr, revision: false, maths: false, phy: false, chem: false };
+                localStorage.setItem(QUOTA_KEY, JSON.stringify(fresh));
+                return fresh;
+            }
+            return stored;
+        }
+
+        function toggleDailyQuota(taskKey) {
+            const quota = getStoredQuota();
+            const checkbox = document.getElementById(`quota-${taskKey}`);
+            if (checkbox) {
+                quota[taskKey] = checkbox.checked;
+                localStorage.setItem(QUOTA_KEY, JSON.stringify(quota));
+                renderDailyQuotaUI();
+            }
+        }
+
+        function renderDailyQuotaUI() {
+            const quota = getStoredQuota();
+            ['revision', 'maths', 'phy', 'chem'].forEach(key => {
+                const cb = document.getElementById(`quota-${key}`);
+                if (cb) cb.checked = !!quota[key];
+            });
+
+            const count = ['revision', 'maths', 'phy', 'chem'].filter(k => quota[k]).length;
+            const box = document.getElementById('quota-reward-box');
+            const icon = document.getElementById('reward-icon');
+            const title = document.getElementById('reward-title');
+            const status = document.getElementById('reward-status');
+
+            if (count === 4) {
+                box.className = "w-full md:w-auto p-3.5 rounded-2xl border border-amber-500/50 bg-gradient-to-r from-amber-500/20 to-orange-500/20 shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center gap-3 transition-all min-w-[210px] animate-pulse";
+                icon.className = "w-10 h-10 rounded-xl bg-amber-500 text-black font-black flex items-center justify-center shadow-lg";
+                icon.innerHTML = `<i data-lucide="unlock" class="w-5 h-5 text-black"></i>`;
+                title.className = "text-xs font-black text-amber-300";
+                title.innerText = "1h Reward Unlocked! 🎮";
+                status.className = "text-[10px] text-emerald-400 font-bold";
+                status.innerText = "All 4 Done • Enjoy your time";
+            } else {
+                box.className = "w-full md:w-auto p-3.5 rounded-2xl border border-zinc-800 bg-zinc-950/80 flex items-center gap-3 transition-all min-w-[210px]";
+                icon.className = "w-10 h-10 rounded-xl bg-zinc-800 text-zinc-500 flex items-center justify-center";
+                icon.innerHTML = `<i data-lucide="lock" class="w-5 h-5"></i>`;
+                title.className = "text-xs font-bold text-zinc-400";
+                title.innerText = "1h Entertainment Locked";
+                status.className = "text-[10px] text-zinc-500 font-mono";
+                status.innerText = `${count} / 4 Targets Done`;
+            }
+            lucide.createIcons();
+        }
+
         // ==========================================
-        // --- DRAGGABLE FOCUS TIMER & PiP LOGIC ---
+        // --- FOCUS TIMER & PIP LOGIC ---
         // ==========================================
         let timerRemaining = 25 * 60;
         let timerInterval = null;
@@ -1278,20 +1449,20 @@
             const secs = (timerRemaining % 60).toString().padStart(2, '0');
             const liveClock = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
-            ctx.fillStyle = '#020617';
+            ctx.fillStyle = '#0b0b0e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = '#f59e0b';
+            ctx.fillStyle = '#f97316';
             ctx.font = 'bold 15px Inter, sans-serif';
             ctx.textAlign = 'left';
             ctx.fillText('AIM: IIT', 18, 28);
 
-            ctx.fillStyle = '#94a3b8';
+            ctx.fillStyle = '#a1a1aa';
             ctx.font = '600 12px monospace';
             ctx.textAlign = 'right';
             ctx.fillText(liveClock, canvas.width - 18, 28);
 
-            ctx.strokeStyle = '#1e293b';
+            ctx.strokeStyle = '#27272a';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(18, 38);
@@ -1303,7 +1474,7 @@
             ctx.textAlign = 'center';
             ctx.fillText(`${mins}:${secs}`, canvas.width / 2, 95);
 
-            ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
+            ctx.fillStyle = isTimerRunning ? '#10b981' : '#71717a';
             ctx.font = 'bold 11px Inter, sans-serif';
             ctx.fillText(isTimerRunning ? '● FOCUS ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 128);
         }
@@ -1362,373 +1533,7 @@
         })();
 
         // ==========================================
-        // --- PERFORMANCE ANALYTICS & TESTS ---
-        // ==========================================
-        function setChartFilter(type) {
-            activeChartFilter = type;
-            ['all', 'pcm', 'physics', 'chem', 'maths'].forEach(b => {
-                const btn = document.getElementById(`btn-chart-${b}`);
-                if (!btn) return;
-                btn.className = (b === type) 
-                    ? "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm"
-                    : "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
-            });
-            renderChart();
-        }
-
-        function renderChart() {
-            const ctx = document.getElementById('scoreChart');
-            if (!ctx) return;
-
-            const sorted = [...appState.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
-            const labels = sorted.map(t => t.name);
-
-            let datasets = [];
-            if (activeChartFilter === 'all') {
-                datasets = [{
-                    label: 'Total Score',
-                    data: sorted.map(t => Number(t.total || 0)),
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
-                    borderWidth: 3, fill: true, tension: 0.35, pointRadius: 4
-                }];
-            } else if (activeChartFilter === 'pcm') {
-                datasets = [
-                    { label: 'Physics', data: sorted.map(t => Number(t.p || 0)), borderColor: '#3b82f6', tension: 0.35, pointRadius: 4 },
-                    { label: 'Chemistry', data: sorted.map(t => Number(t.c || 0)), borderColor: '#10b981', tension: 0.35, pointRadius: 4 },
-                    { label: 'Maths', data: sorted.map(t => Number(t.m || 0)), borderColor: '#f97316', tension: 0.35, pointRadius: 4 }
-                ];
-            } else if (activeChartFilter === 'physics') {
-                datasets = [{ label: 'Physics Score', data: sorted.map(t => Number(t.p || 0)), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            } else if (activeChartFilter === 'chem') {
-                datasets = [{ label: 'Chemistry Score', data: sorted.map(t => Number(t.c || 0)), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            } else if (activeChartFilter === 'maths') {
-                datasets = [{ label: 'Maths Score', data: sorted.map(t => Number(t.m || 0)), borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            }
-
-            if (performanceChart) performanceChart.destroy();
-            performanceChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: labels.length ? labels : ['No tests yet'], datasets: datasets.length ? datasets : [{ label: 'No Data', data: [0], borderColor: '#334155' }] },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } },
-                        y: { min: 0, max: (activeChartFilter === 'all') ? 300 : 100, grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } }
-                    }
-                }
-            });
-            calculateAnalytics();
-        }
-
-        function calculateAnalytics() {
-            const { tests } = appState;
-            document.getElementById('empty-state').classList.toggle('hidden', tests.length > 0);
-
-            const totalScore = tests.reduce((sum, t) => sum + Number(t.total || 0), 0);
-            const avgScore = tests.length ? (totalScore / tests.length).toFixed(1) : 0;
-            document.getElementById('stat-avg-score').innerText = avgScore;
-            document.getElementById('stat-avg-perc').innerText = `${tests.length ? ((avgScore / 300) * 100).toFixed(1) : 0}% Avg`;
-
-            const recent = tests.slice(-3);
-            const recentAvg = recent.length ? (recent.reduce((sum, t) => sum + Number(t.total || 0), 0) / recent.length).toFixed(1) : 0;
-            document.getElementById('stat-recent-avg').innerText = recentAvg;
-
-            const avgP = tests.length ? (tests.reduce((sum, t) => sum + Number(t.p || 0), 0) / tests.length).toFixed(1) : 0;
-            const avgC = tests.length ? (tests.reduce((sum, t) => sum + Number(t.c || 0), 0) / tests.length).toFixed(1) : 0;
-            const avgM = tests.length ? (tests.reduce((sum, t) => sum + Number(t.m || 0), 0) / tests.length).toFixed(1) : 0;
-            document.getElementById('avg-p').innerText = avgP;
-            document.getElementById('avg-c').innerText = avgC;
-            document.getElementById('avg-m').innerText = avgM;
-            document.getElementById('bar-p').style.width = `${avgP}%`;
-            document.getElementById('bar-c').style.width = `${avgC}%`;
-            document.getElementById('bar-m').style.width = `${avgM}%`;
-
-            const percentiles = tests.map(t => (t.rank && t.students) ? ((t.students - t.rank) / t.students * 100) : 0);
-            document.getElementById('stat-best-percentile').innerText = `${Math.max(...percentiles, 0).toFixed(1)}%`;
-
-            renderTestTable();
-        }
-
-        function renderTestTable() {
-            const tbody = document.getElementById('test-table-body');
-            document.getElementById('test-count').innerText = `${appState.tests.length} Tests Recorded`;
-            tbody.innerHTML = '';
-
-            [...appState.tests].reverse().forEach((test, originalIndex) => {
-                const actualIdx = appState.tests.length - 1 - originalIndex;
-                const perc = (test.students && test.rank) ? ((test.students - test.rank) / test.students * 100).toFixed(1) : 'N/A';
-                const row = document.createElement('tr');
-                row.className = "hover:bg-slate-800/30 transition-colors group";
-                row.innerHTML = `
-                    <td class="px-6 py-4">
-                        <div class="font-bold text-white">${test.name}</div>
-                        <div class="text-xs text-slate-500">${test.date}</div>
-                        ${test.notes ? `<div class="text-xs text-slate-400 italic mt-1 bg-slate-900/40 p-1.5 rounded border border-slate-800">${test.notes}</div>` : ''}
-                    </td>
-                    <td class="px-6 py-4 text-center font-mono text-xs">
-                        <span class="text-blue-400">${test.p}</span> | <span class="text-emerald-400">${test.c}</span> | <span class="text-orange-400">${test.m}</span>
-                    </td>
-                    <td class="px-6 py-4 text-center font-bold text-indigo-400 text-base">
-                        ${test.total} <span class="text-xs text-slate-500 font-normal">/ ${test.max}</span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 text-xs font-bold border border-indigo-500/20 inline-block">
-                            ${perc}${perc !== 'N/A' ? '%' : ''}
-                        </span>
-                        ${(test.rank && test.students) ? `<div class="text-[11px] text-slate-400 font-mono mt-1">Rank <span class="text-white font-bold">${test.rank}</span> / ${test.students}</div>` : ''}
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="editTest(${actualIdx})" class="p-1 hover:text-indigo-400"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                            <button onclick="deleteTest(${actualIdx})" class="p-1 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            lucide.createIcons();
-        }
-
-        const pIn = document.getElementById('t-p'), cIn = document.getElementById('t-c'), mIn = document.getElementById('t-m'), totalIn = document.getElementById('t-total');
-        [pIn, cIn, mIn].forEach(el => {
-            el.addEventListener('input', () => {
-                totalIn.value = Number(pIn.value || 0) + Number(cIn.value || 0) + Number(mIn.value || 0);
-            });
-        });
-
-        document.getElementById('test-form').onsubmit = (e) => {
-            e.preventDefault();
-            const editIdx = parseInt(document.getElementById('edit-index').value);
-            const data = {
-                name: document.getElementById('t-name').value,
-                date: document.getElementById('t-date').value,
-                p: pIn.value, c: cIn.value, m: mIn.value, total: totalIn.value,
-                max: document.getElementById('t-max').value,
-                rank: document.getElementById('t-rank').value,
-                students: document.getElementById('t-students').value,
-                notes: document.getElementById('t-notes').value
-            };
-            if (editIdx > -1) appState.tests[editIdx] = data;
-            else appState.tests.push(data);
-            saveToStorage();
-            calculateAnalytics();
-            renderChart();
-            closeTestModal();
-        };
-
-        function openTestModal(idx = -1) {
-            document.getElementById('test-modal').classList.remove('hidden');
-            document.getElementById('edit-index').value = idx;
-            document.getElementById('modal-title').innerText = idx > -1 ? 'Edit Test' : 'Add New Test';
-            if (idx > -1) {
-                const t = appState.tests[idx];
-                document.getElementById('t-name').value = t.name;
-                document.getElementById('t-date').value = t.date;
-                pIn.value = t.p; cIn.value = t.c; mIn.value = t.m; totalIn.value = t.total;
-                document.getElementById('t-max').value = t.max;
-                document.getElementById('t-rank').value = t.rank;
-                document.getElementById('t-students').value = t.students;
-                document.getElementById('t-notes').value = t.notes || '';
-            } else {
-                document.getElementById('test-form').reset();
-                document.getElementById('t-max').value = 300;
-            }
-        }
-        function closeTestModal() { document.getElementById('test-modal').classList.add('hidden'); }
-        function deleteTest(idx) {
-            if (confirm('Delete this test score?')) {
-                appState.tests.splice(idx, 1);
-                saveToStorage();
-                renderChart();
-            }
-        }
-        function editTest(idx) { openTestModal(idx); }
-
-        // --- Syllabus Logic ---
-        function addTopic() {
-            const name = document.getElementById('topic-name').value.trim();
-            const subject = document.getElementById('topic-subject').value;
-            const note = document.getElementById('topic-note').value.trim();
-            if (!name) return alert('Enter topic name');
-            appState.syllabus.push({ id: Date.now(), subject, name, note, completed: false });
-            document.getElementById('topic-name').value = '';
-            document.getElementById('topic-note').value = '';
-            saveToStorage();
-            renderSyllabus();
-        }
-
-        function toggleTopic(id) {
-            const t = appState.syllabus.find(x => x.id === id);
-            if (t) { t.completed = !t.completed; saveToStorage(); renderSyllabus(); }
-        }
-
-        function deleteTopic(id) {
-            appState.syllabus = appState.syllabus.filter(x => x.id !== id);
-            saveToStorage();
-            renderSyllabus();
-        }
-
-        function archiveSyllabus() {
-            if (confirm('Clear all completed topics?')) {
-                appState.syllabus = appState.syllabus.filter(t => !t.completed);
-                saveToStorage();
-                renderSyllabus();
-            }
-        }
-
-        function renderSyllabus() {
-            const list = document.getElementById('syllabus-list');
-            list.innerHTML = '';
-            ['Physics', 'Chemistry', 'Maths', 'General'].forEach(sub => {
-                const subTopics = appState.syllabus.filter(t => t.subject === sub);
-                if (!subTopics.length) return;
-                const sec = document.createElement('div');
-                sec.className = "mb-6";
-                sec.innerHTML = `<h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">${sub}</h4><div class="space-y-2"></div>`;
-                const container = sec.querySelector('div');
-                subTopics.forEach(t => {
-                    const row = document.createElement('div');
-                    row.className = `flex items-center gap-3 p-4 rounded-xl border ${t.completed ? 'bg-slate-900/30 border-slate-800' : 'glass-card border-slate-700/50'}`;
-                    row.innerHTML = `
-                        <button onclick="toggleTopic(${t.id})" class="w-6 h-6 rounded-md border-2 flex items-center justify-center ${t.completed ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-slate-600'}">
-                            ${t.completed ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
-                        </button>
-                        <div class="flex-1 ${t.completed ? 'line-through text-slate-500' : 'text-white'} font-bold text-sm">
-                            ${t.name} <span class="text-xs font-normal text-slate-400 ml-2">${t.note || ''}</span>
-                        </div>
-                        <button onclick="deleteTopic(${t.id})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    `;
-                    container.appendChild(row);
-                });
-                list.appendChild(sec);
-            });
-
-            const total = appState.syllabus.length;
-            const done = appState.syllabus.filter(t => t.completed).length;
-            const perc = total ? Math.round((done / total) * 100) : 0;
-            document.getElementById('progress-text').innerText = `${done}/${total} Topics`;
-            document.getElementById('progress-percent').innerText = `${perc}%`;
-            document.getElementById('overall-progress-bar').style.width = `${perc}%`;
-            lucide.createIcons();
-        }
-
-        function updateCountdown() {
-            document.getElementById('display-next-name').innerText = appState.nextTest.name || 'Set Your Next Goal';
-            if (!appState.nextTest.date) {
-                document.getElementById('display-next-date').innerText = 'No date configured';
-                document.getElementById('countdown-days').innerText = '00';
-                return;
-            }
-            const diff = Math.ceil((new Date(appState.nextTest.date) - new Date()) / (1000 * 60 * 60 * 24));
-            document.getElementById('display-next-date').innerText = new Date(appState.nextTest.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('countdown-days').innerText = diff > 0 ? String(diff).padStart(2, '0') : '00';
-        }
-
-        function openNextTestModal() { document.getElementById('next-test-modal').classList.remove('hidden'); }
-        function closeNextTestModal() { document.getElementById('next-test-modal').classList.add('hidden'); }
-        function saveNextTest() {
-            appState.nextTest.name = document.getElementById('nt-name').value;
-            appState.nextTest.date = document.getElementById('nt-date').value;
-            saveToStorage();
-            updateCountdown();
-            closeNextTestModal();
-        }
-
-        function toggleAudio(audioId, btnId) {
-            const audio = document.getElementById(audioId);
-            const btn = document.getElementById(btnId);
-            ['audio-lh-1', 'audio-lh-2'].forEach(id => {
-                if (id !== audioId) {
-                    const otherAudio = document.getElementById(id);
-                    if (otherAudio) { otherAudio.pause(); otherAudio.currentTime = 0; }
-                    const otherBtn = document.getElementById(id === 'audio-lh-1' ? 'btn-lh-1' : 'btn-lh-2');
-                    if (otherBtn) otherBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>`;
-                }
-            });
-
-            if (audio.paused) {
-                audio.play();
-                btn.innerHTML = `<i data-lucide="pause" class="w-4 h-4 fill-white"></i>`;
-            } else {
-                audio.pause();
-                btn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>`;
-            }
-            lucide.createIcons();
-            audio.onended = () => { btn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>`; lucide.createIcons(); };
-        }
-
-        // ==========================================
-        // --- DAILY QUOTA & REWARD LOGIC (12 AM AUTO RESET) ---
-        // ==========================================
-        const QUOTA_KEY = 'jee_daily_quota';
-
-        function getStoredQuota() {
-            const todayStr = new Date().toISOString().split('T')[0];
-            const stored = JSON.parse(localStorage.getItem(QUOTA_KEY));
-
-            // Auto-reset if stored date is not today (passes 12:00 AM midnight)
-            if (!stored || stored.date !== todayStr) {
-                const fresh = {
-                    date: todayStr,
-                    revision: false,
-                    maths: false,
-                    phy: false,
-                    chem: false
-                };
-                localStorage.setItem(QUOTA_KEY, JSON.stringify(fresh));
-                return fresh;
-            }
-            return stored;
-        }
-
-        function toggleDailyQuota(taskKey) {
-            const quota = getStoredQuota();
-            const checkbox = document.getElementById(`quota-${taskKey}`);
-            if (checkbox) {
-                quota[taskKey] = checkbox.checked;
-                localStorage.setItem(QUOTA_KEY, JSON.stringify(quota));
-                renderDailyQuotaUI();
-            }
-        }
-
-        function renderDailyQuotaUI() {
-            const quota = getStoredQuota();
-            ['revision', 'maths', 'phy', 'chem'].forEach(key => {
-                const cb = document.getElementById(`quota-${key}`);
-                if (cb) cb.checked = !!quota[key];
-            });
-
-            const completedCount = ['revision', 'maths', 'phy', 'chem'].filter(k => quota[k]).length;
-            const rewardBox = document.getElementById('quota-reward-box');
-            const rewardIcon = document.getElementById('reward-icon');
-            const rewardTitle = document.getElementById('reward-title');
-            const rewardStatus = document.getElementById('reward-status');
-
-            if (completedCount === 4) {
-                // UNLOCKED STATE
-                rewardBox.className = "w-full md:w-auto p-3.5 rounded-2xl border border-amber-500/50 bg-gradient-to-r from-amber-500/20 to-emerald-500/20 shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center gap-3 transition-all min-w-[210px] animate-pulse";
-                rewardIcon.className = "w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shadow-lg";
-                rewardIcon.innerHTML = `<i data-lucide="unlock" class="w-5 h-5 text-slate-950"></i>`;
-                rewardTitle.className = "text-xs font-black text-amber-300";
-                rewardTitle.innerText = "1h Reward Unlocked! 🎮";
-                rewardStatus.className = "text-[10px] text-emerald-400 font-bold";
-                rewardStatus.innerText = "All 4 Done • Enjoy your time";
-            } else {
-                // LOCKED STATE
-                rewardBox.className = "w-full md:w-auto p-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 flex items-center gap-3 transition-all min-w-[210px]";
-                rewardIcon.className = "w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center";
-                rewardIcon.innerHTML = `<i data-lucide="lock" class="w-5 h-5"></i>`;
-                rewardTitle.className = "text-xs font-bold text-slate-400";
-                rewardTitle.innerText = "1h Entertainment Locked";
-                rewardStatus.className = "text-[10px] text-slate-500 font-mono";
-                rewardStatus.innerText = `${completedCount} / 4 Targets Done`;
-            }
-            lucide.createIcons();
-        }
-
-        // ==========================================
-        // --- AI COACH (STRUCTURED & CALIBRATED) ---
+        // --- AUTONOMOUS AI & PROMPT ACTIONS ---
         // ==========================================
         function toggleAIChat() {
             document.getElementById('ai-chatbox').classList.toggle('hidden');
@@ -1745,18 +1550,18 @@
         function formatMarkdown(text) {
             if (!text) return '';
             let parsed = text
-                .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-indigo-400 mt-2 mb-1">$1</h4>')
+                .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-orange-400 mt-2 mb-1">$1</h4>')
                 .replace(/^## (.*$)/gim, '<h3 class="text-base font-bold text-white mt-3 mb-1.5">$1</h3>')
                 .replace(/^# (.*$)/gim, '<h2 class="text-lg font-black text-white mt-3 mb-2">$1</h2>');
 
             parsed = parsed
                 .replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="text-white font-semibold"><em>$1</em></strong>')
                 .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
-                .replace(/\*(.*?)\*/g, '<span class="text-indigo-200 font-medium">$1</span>');
+                .replace(/\*(.*?)\*/g, '<span class="text-orange-200 font-medium">$1</span>');
 
             parsed = parsed
-                .replace(/^\s*[\*\-]\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1.5 my-1"><span class="text-indigo-400">•</span><span class="flex-1 text-slate-300">$1</span></div>')
-                .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1.5 my-1"><span class="text-indigo-400 font-bold text-[11px]">$1.</span><span class="flex-1 text-slate-300">$2</span></div>');
+                .replace(/^\s*[\*\-]\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1.5 my-1"><span class="text-orange-400">•</span><span class="flex-1 text-zinc-300">$1</span></div>')
+                .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1.5 my-1"><span class="text-orange-400 font-bold text-[11px]">$1.</span><span class="flex-1 text-zinc-300">$2</span></div>');
 
             parsed = parsed.replace(/\n/g, '<br>');
             return parsed;
@@ -1766,21 +1571,123 @@
             const thread = document.getElementById('ai-chat-thread');
             thread.innerHTML = '';
             if (!appState.chatHistory.length) {
-                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>, daily routines, syllabus progress, and test history. What are we optimizing today?</div>`;
+                thread.innerHTML = `<div class="p-3.5 bg-zinc-900/60 rounded-2xl border border-zinc-800 text-zinc-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full context of your <strong>Allen schedule (7 AM - 12 PM)</strong>, syllabus progress, and daily calendar. What are we planning today?</div>`;
             } else {
-                appState.chatHistory.forEach(m => {
+                appState.chatHistory.forEach((m, idx) => {
                     const bubble = document.createElement('div');
                     bubble.className = m.role === 'user' ? 'flex justify-end' : 'flex justify-start';
-                    bubble.innerHTML = `
-                        <div class="p-3 rounded-2xl max-w-[88%] break-words ${m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-tl-none leading-relaxed'}">
-                            ${m.role === 'user' ? m.content : formatMarkdown(m.content)}
-                        </div>
-                    `;
+                    
+                    if (m.actionData) {
+                        bubble.innerHTML = renderAIActionCard(m.actionData, idx);
+                    } else {
+                        bubble.innerHTML = `
+                            <div class="p-3 rounded-2xl max-w-[88%] break-words ${m.role === 'user' ? 'bg-orange-600 text-white rounded-tr-none' : 'bg-zinc-900/90 text-zinc-200 border border-zinc-800 rounded-tl-none leading-relaxed'}">
+                                ${m.role === 'user' ? m.content : formatMarkdown(m.content)}
+                            </div>
+                        `;
+                    }
                     thread.appendChild(bubble);
                 });
             }
             thread.scrollTop = thread.scrollHeight;
             lucide.createIcons();
+        }
+
+        function renderAIActionCard(act, idx) {
+            const isDone = act.executed;
+            return `
+                <div class="p-4 rounded-2xl max-w-[92%] bg-[#121217] border border-orange-500/30 text-white space-y-3 shadow-xl">
+                    <div class="flex items-center gap-2 text-xs font-bold text-orange-400 uppercase tracking-wider">
+                        <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+                        ${act.type === 'tasks' ? `PROPOSED ${act.items.length} TARGETS TO CALENDAR` : `PROPOSED ${act.items.length} CHAPTERS TO SYLLABUS`}
+                    </div>
+                    <div class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar">
+                        ${act.items.map(item => `
+                            <div class="p-2 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs flex justify-between items-center gap-2">
+                                <span class="font-semibold text-zinc-200 truncate">${item.title || item.name}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-mono ${getSubjectTagPill(item.subject)}">${item.subject}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex items-center gap-2 pt-1">
+                        ${isDone ? `
+                            <button disabled class="flex-1 py-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Added
+                            </button>
+                            <button onclick="undoAIAction(${idx})" class="px-3 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-bold flex items-center gap-1">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Undo
+                            </button>
+                        ` : `
+                            <button onclick="executeAIAction(${idx})" class="flex-1 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-1.5">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to ${act.type === 'tasks' ? 'Calendar' : 'Syllabus'}
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        function executeAIAction(idx) {
+            const m = appState.chatHistory[idx];
+            if (!m || !m.actionData) return;
+            const act = m.actionData;
+
+            if (act.type === 'tasks') {
+                const addedIds = [];
+                act.items.forEach(it => {
+                    const id = Date.now() + Math.floor(Math.random() * 1000);
+                    addedIds.push(id);
+                    appState.scheduledTasks.push({
+                        id,
+                        date: it.date || new Date().toISOString().split('T')[0],
+                        title: it.title,
+                        subject: it.subject || 'General',
+                        duration: it.duration || '45m',
+                        status: 'Not Started'
+                    });
+                });
+                lastActionUndoStack = { type: 'tasks', ids: addedIds };
+            } else if (act.type === 'syllabus') {
+                const addedIds = [];
+                act.items.forEach(it => {
+                    const id = Date.now() + Math.floor(Math.random() * 1000);
+                    addedIds.push(id);
+                    appState.syllabus.push({
+                        id,
+                        subject: it.subject || 'Physics',
+                        name: it.name,
+                        note: it.note || 'Added by AI',
+                        completed: false
+                    });
+                });
+                lastActionUndoStack = { type: 'syllabus', ids: addedIds };
+            }
+
+            act.executed = true;
+            saveToStorage();
+            renderChat();
+            renderCalendar();
+            renderSyllabus();
+        }
+
+        function undoAIAction(idx) {
+            const m = appState.chatHistory[idx];
+            if (!m || !m.actionData) return;
+            const act = m.actionData;
+
+            if (lastActionUndoStack) {
+                if (lastActionUndoStack.type === 'tasks') {
+                    appState.scheduledTasks = appState.scheduledTasks.filter(t => !lastActionUndoStack.ids.includes(t.id));
+                } else if (lastActionUndoStack.type === 'syllabus') {
+                    appState.syllabus = appState.syllabus.filter(s => !lastActionUndoStack.ids.includes(s.id));
+                }
+            }
+
+            act.executed = false;
+            saveToStorage();
+            renderChat();
+            renderCalendar();
+            renderSyllabus();
         }
 
         async function handleUserSubmit(e) {
@@ -1797,7 +1704,7 @@
             const loadingBubble = document.createElement('div');
             loadingBubble.className = "flex justify-start";
             loadingBubble.id = "ai-loading-bubble";
-            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking...</div>`;
+            loadingBubble.innerHTML = `<div class="bg-zinc-900 border border-zinc-800 rounded-2xl rounded-tl-none px-3.5 py-2 text-zinc-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-orange-400"></i> Working...</div>`;
             thread.appendChild(loadingBubble);
             thread.scrollTop = thread.scrollHeight;
             lucide.createIcons();
@@ -1805,118 +1712,19 @@
             try {
                 const response = await callGeminiAPI(prompt);
                 document.getElementById('ai-loading-bubble')?.remove();
-                appState.chatHistory.push({ role: 'assistant', content: response });
-                saveToStorage();
-                renderChat();
-            } catch (err) {
-                document.getElementById('ai-loading-bubble')?.remove();
-                alert("AI Error: " + err.message);
-            }
-        }
 
-        async function callGeminiAPI(userQuery) {
-            if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
-            
-            // Real system time & date straight from browser
-            const now = new Date();
-            const currentRealTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
-            const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                // Check if response contains an action payload
+                let parsedAction = null;
+                const jsonMatch = response.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+                let cleanResponse = response;
 
-            const recentTests = JSON.stringify(appState.tests.slice(-3));
-            const activeSchedule = JSON.stringify(appState.scheduledTasks.filter(t => t.date === now.toISOString().split('T')[0]));
-            const pendingSyllabus = appState.syllabus.filter(s => !s.completed).map(s => s.name).slice(0, 8).join(', ');
-
-            const systemPrompt = `
-You are Laksh's grounded, candid, and disciplined JEE Mentor.
-Goal: IIT Bombay CSE 2028 (AIR < 60).
-Schedule: Allen Coaching daily 7:00 AM - 12:00 PM. Afternoons & evenings are for self-study and problem-solving.
-
-Live System Reference:
-- Local Time: ${currentRealTime} (IST / India)
-- Today's Date: ${currentRealDate}
-
-Student Context:
-- Recent Tests: ${recentTests}
-- Today's Scheduled Routines: ${activeSchedule}
-- Incomplete Syllabus Chapters: ${pendingSyllabus}
-
-RULES:
-1. You have live Google Search enabled. If Laksh asks about current events, live weather, sports/F1 updates, or questions requiring external facts, retrieve the answer accurately.
-2. For casual greetings ("hi", "hello", "sup"), reply in 1-2 friendly sentences. Do not start lecturing unprompted.
-3. Be direct, authentic, and answer exactly what is asked.
-            `.trim();
-
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
-            
-            const res = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [
-                        { role: "user", parts: [{ text: `${systemPrompt}\n\nLaksh says: "${userQuery}"` }] }
-                    ],
-                    // Enable live Google Search grounding
-                    tools: [
-                        { google_search: {} }
-                    ],
-                    generationConfig: { 
-                        temperature: 0.2, 
-                        maxOutputTokens: 2000 
-                    }
-                })
-            });
-
-            if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                throw new Error(errData?.error?.message || `API error ${res.status}`);
-            }
-
-            const data = await res.json();
-            return data.candidates[0].content.parts[0].text;
-        }
-
-        // --- Backup & Restore (Full JSON with all tabs + chats) ---
-        function exportBackup() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-            const dl = document.createElement('a');
-            dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", `jee_ace_complete_backup_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(dl);
-            dl.click();
-            dl.remove();
-        }
-
-        function importBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    appState = { ...appState, ...parsed };
-                    saveToStorage();
-                    location.reload();
-                } catch (err) { alert('Invalid backup file format'); }
-            };
-            reader.readAsText(file);
-        }
-
-        // Initialize Everything
-        window.onload = () => {
-            renderChart();
-            renderSyllabus();
-            updateCountdown();
-            renderCalendar();
-            renderPipCanvas();
-            renderChat();
-            renderDailyQuotaUI();
-            lucide.createIcons();
-
-            setInterval(() => {
-                renderDailyQuotaUI();
-                if (document.pictureInPictureElement) renderPipCanvas();
-            }, 1000);
-        };
-    </script>
-</body>
-</html>
+                if (jsonMatch) {
+                    try {
+                        const parsed = JSON.parse(jsonMatch[1]);
+                        if (parsed.action && (parsed.action === 'add_tasks' || parsed.action === 'add_syllabus')) {
+                            parsedAction = {
+                                type: parsed.action === 'add_tasks' ? 'tasks' : 'syllabus',
+                                items: parsed.items || [],
+                                executed: false
+                            };
+                            cleanResponse = response.replace(/```json[\s\S]*?
