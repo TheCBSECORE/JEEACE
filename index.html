@@ -855,7 +855,7 @@
             tests: JSON.parse(localStorage.getItem('jee_tests')) || [],
             syllabus: JSON.parse(localStorage.getItem('jee_syllabus')) || [],
             scheduledTasks: JSON.parse(localStorage.getItem('jee_tasks')) || [],
-            nextTest: JSON.parse(localStorage.getItem('jee_next_test')) || { name: 'Mains | Minor Test - 8', date: '2026-09-13' },
+            nextTest: JSON.parse(localStorage.getItem('jee_next_test')) || { name: 'M & A | Minor Test - 9', date: '2026-09-27' },
             apiKey: localStorage.getItem('jee_api_key') || '',
             chatHistory: JSON.parse(localStorage.getItem('jee_ai_chats')) || []
         };
@@ -933,7 +933,7 @@
         }
 
         // ==========================================
-        // --- CALENDAR & DAILY PLANNER WITH DRAG & DROP ---
+        // --- CALENDAR & DAILY PLANNER ---
         // ==========================================
         function setCalendarView(mode) {
             calendarView = mode;
@@ -1535,7 +1535,7 @@
                         <span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 text-xs font-bold border border-indigo-500/20 inline-block">
                             ${perc}${perc !== 'N/A' ? '%' : ''}
                         </span>
-                        ${(test.rank && test.students) ? `<div class="text-[11px] text-slate-400 font-mono mt-1">Rank <span class="text-white font-bold">${test.rank}</span> / ${test.students}</div>` : ''}
+                        ${(test.rank && test.students) ? `<div class="text-[11px] text-slate-400 font-mono mt-1">Rank <span class="text-white font-bold">${test.rank}</span> /${test.students}</div>` : ''}
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1778,7 +1778,7 @@
         }
 
         // ==========================================
-        // --- AI COACH & AUTOMATION (BULK & TEST VISIBILITY) ---
+        // --- AI COACH & BULLETPROOF ACTION PARSER ---
         // ==========================================
         function toggleAIChat() {
             document.getElementById('ai-chatbox').classList.toggle('hidden');
@@ -1862,7 +1862,7 @@
                     subject: task.subject || 'General',
                     start: task.start || '',
                     end: task.end || '',
-                    duration: task.duration || 45,
+                    duration: task.duration || 60,
                     status: 'Not Started'
                 });
             });
@@ -1901,6 +1901,33 @@
             }
         }
 
+        // Bulletproof Fallback Intent Detector: Guarantees action card appears when planning
+        function detectLocalIntent(userQuery, aiResponse) {
+            const q = userQuery.toLowerCase();
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            if (q.includes('plan') || q.includes('schedule') || q.includes('routine') || q.includes('study plan') || q.includes('tasks')) {
+                return {
+                    date: todayStr,
+                    items: [
+                        { title: 'Physics: Module & PYQ Practice', subject: 'Physics', duration: 90 },
+                        { title: 'Chemistry: NCERT & Reaction Practice', subject: 'Chemistry', duration: 90 },
+                        { title: 'Maths: Problem Solving & Conic Sections', subject: 'Maths', duration: 90 }
+                    ]
+                };
+            }
+            if (q.includes('syllabus') || q.includes('topic') || q.includes('chapter') || q.includes('add')) {
+                return {
+                    date: todayStr,
+                    items: [
+                        { title: 'Conic Sections & Circles', subject: 'Maths', note: `For ${appState.nextTest.name}` },
+                        { title: 'Work, Power & Energy', subject: 'Physics', note: `For ${appState.nextTest.name}` }
+                    ]
+                };
+            }
+            return null;
+        }
+
         function renderChat() {
             const thread = document.getElementById('ai-chat-thread');
             thread.innerHTML = '';
@@ -1923,15 +1950,15 @@
                                     <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${getSubjectStyle(it.subject)}">${it.subject}</span>
                                     <span class="text-white font-medium truncate">${it.title}</span>
                                 </div>
-                                <span class="text-slate-400 font-mono text-[10px] shrink-0">${it.duration ? it.duration + 'm' : (it.start || 'Task')}</span>
+                                <span class="text-slate-400 font-mono text-[10px] shrink-0">${it.duration ? it.duration + 'm' : 'Task'}</span>
                             </div>
                         `).join('');
 
                         actionBoxHtml = `
                             <div id="action-box-${batchId}" class="mt-3 p-3 rounded-2xl bg-slate-950/90 border border-indigo-500/40 space-y-2">
                                 <div class="flex items-center justify-between text-[11px] font-bold text-indigo-300">
-                                    <span class="flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5"></i> Multiple Items Detected (${m.actionData.items.length})</span>
-                                    <span class="font-mono text-slate-500">Target: ${appState.nextTest.name}</span>
+                                    <span class="flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5"></i> Suggested Items (${m.actionData.items.length})</span>
+                                    <span class="font-mono text-slate-500">Milestone: ${appState.nextTest.name}</span>
                                 </div>
                                 <div class="space-y-1.5 max-h-36 overflow-y-auto custom-scrollbar">${actionItems}</div>
                                 <div class="grid grid-cols-2 gap-2 pt-1">
@@ -1988,6 +2015,11 @@
                     try { actionData = JSON.parse(jsonMatch[1]); } catch (e) {}
                 }
 
+                // Bulletproof fallback: if LLM skipped JSON but user asked for a plan/tasks, generate action items automatically
+                if (!actionData) {
+                    actionData = detectLocalIntent(prompt, response);
+                }
+
                 appState.chatHistory.push({ role: 'assistant', content: response, actionData });
                 saveToStorage();
                 renderChat();
@@ -2005,7 +2037,6 @@
             const currentRealTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-            // Complete serialization so AI can see every single test score, rank, and subject breakdown
             const testHistorySummary = JSON.stringify(appState.tests);
             const syllabusList = JSON.stringify(appState.syllabus.map(s => `${s.subject}: ${s.name} (${s.completed ? 'Done' : 'Pending'})`));
             const activeSchedule = JSON.stringify(appState.scheduledTasks.map(t => `${t.date}: ${t.title} [${t.subject}, ${t.duration || 45}m]`));
@@ -2025,20 +2056,15 @@ COMPLETE DATA VISIBILITY:
 IMPORTANT INSTRUCTIONS:
 1. You have complete visibility over Laksh's test history (including Minor Test 8, Minor Test 7, etc., with their respective P/C/M marks, totals, ranks, and percentiles). Reference these stats directly when asked about tests.
 2. For casual chat, answer normally in 1-2 friendly sentences without a JSON block.
-3. BULK ADDITION: When Laksh asks to add multiple tasks to his daily planner or multiple chapters to his test syllabus, you MUST list them out and APPEND a JSON action block at the very end wrapped in \`\`\`json ... \`\`\` containing an array of items:
+3. BULK ADDITION: When Laksh asks to make a study plan, schedule tasks, or add chapters, provide your text advice and ALWAYS APPEND a JSON action block at the very end wrapped in \`\`\`json ... \`\`\` containing an array of items:
 \`\`\`json
 {
   "date": "${todayStr}",
   "items": [
     {
-      "title": "Chapter or Task 1",
+      "title": "Task or Chapter Name",
       "subject": "Physics", 
-      "duration": 60
-    },
-    {
-      "title": "Chapter or Task 2",
-      "subject": "Chemistry",
-      "duration": 45
+      "duration": 90
     }
   ]
 }
