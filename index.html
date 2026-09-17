@@ -30,6 +30,18 @@
         .calendar-cell.drag-over { background: rgba(99, 102, 241, 0.15) !important; border: 2px dashed #6366f1 !important; }
         .draggable-pill { cursor: grab; user-select: none; }
         .draggable-pill:active { cursor: grabbing; opacity: 0.5; }
+
+        /* Fire Animation for Syllabus Checkbox */
+        @keyframes fireBurst {
+            0% { transform: scale(0.5) translateY(0); opacity: 1; }
+            100% { transform: scale(1.4) translateY(-25px); opacity: 0; }
+        }
+        .fire-particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 14px;
+            animation: fireBurst 0.6s ease-out forwards;
+        }
         @media (max-width: 768px) { .calendar-cell { min-height: 90px; } }
     </style>
 </head>
@@ -699,7 +711,7 @@
             </div>
             <div id="ai-chat-thread" class="flex-1 p-3.5 overflow-y-auto space-y-3 custom-scrollbar text-xs"></div>
             <form onsubmit="handleUserSubmit(event)" class="p-2.5 bg-slate-950 border-t border-slate-800 flex gap-1.5">
-                <input type="text" id="ai-user-input" placeholder="Ask questions, add syllabus, or schedule routines..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                <input type="text" id="ai-user-input" placeholder="Ask study questions, strategy, or guidance..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
                 <button type="submit" id="ai-send-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl"><i data-lucide="send" class="w-3.5 h-3.5"></i></button>
             </form>
         </div>
@@ -849,6 +861,9 @@
         </div>
     </div>
 
+    <!-- AUDIO ELEMENT FOR SPECIAL.MP3 -->
+    <audio id="special-audio" src="special.mp3" preload="auto"></audio>
+
     <script>
         // --- Core Application State ---
         let appState = {
@@ -864,7 +879,6 @@
         let performanceChart = null;
         let calendarView = 'month';
         let selectedDate = new Date();
-        let lastActionBatch = null;
 
         const saveToStorage = () => {
             localStorage.setItem('jee_tests', JSON.stringify(appState.tests));
@@ -1535,7 +1549,7 @@
                         <span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 text-xs font-bold border border-indigo-500/20 inline-block">
                             ${perc}${perc !== 'N/A' ? '%' : ''}
                         </span>
-                        ${(test.rank && test.students) ? `<div class="text-[11px] text-slate-400 font-mono mt-1">Rank <span class="text-white font-bold">${test.rank}</span> /${test.students}</div>` : ''}
+                        ${(test.rank && test.students) ? `<div class="text-[11px] text-slate-400 font-mono mt-1">Rank <span class="text-white font-bold">${test.rank}</span> / ${test.students}</div>` : ''}
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1604,7 +1618,69 @@
         }
         function editTest(idx) { openTestModal(idx); }
 
-        // --- Syllabus Logic ---
+        // --- Syllabus Logic with Fire Animation & special.mp3 Loop x2 ---
+        let activeSpecialAudio = null;
+        let audioPlayCount = 0;
+
+        function triggerFireEffect(checkboxElement) {
+            const rect = checkboxElement.getBoundingClientRect();
+            const container = document.body;
+
+            for (let i = 0; i < 6; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'fire-particle';
+                particle.innerText = '🔥';
+                
+                const offsetX = (Math.random() - 0.5) * 35;
+                const offsetY = (Math.random() - 0.5) * 35;
+                particle.style.left = `${rect.left + window.scrollX + 12 + offsetX}px`;
+                particle.style.top = `${rect.top + window.scrollY + 12 + offsetY}px`;
+                
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+
+        function toggleTopic(id, checkboxEl) {
+            const t = appState.syllabus.find(x => x.id === id);
+            if (!t) return;
+
+            t.completed = !t.completed;
+            saveToStorage();
+            renderSyllabus();
+
+            const audio = document.getElementById('special-audio');
+            if (t.completed) {
+                // Trigger Fire Animation around the checkbox element if available
+                if (checkboxEl) triggerFireEffect(checkboxEl);
+
+                // Play special.mp3 in loop exactly 2 times
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    audioPlayCount = 0;
+                    
+                    audio.onended = () => {
+                        audioPlayCount++;
+                        if (audioPlayCount < 2) {
+                            audio.currentTime = 0;
+                            audio.play().catch(e => {});
+                        } else {
+                            audio.pause();
+                        }
+                    };
+                    audio.play().catch(e => {});
+                    activeSpecialAudio = audio;
+                }
+            } else {
+                // Unticked -> Stop audio
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            }
+        }
+
         function addTopic() {
             const name = document.getElementById('topic-name').value.trim();
             const subject = document.getElementById('topic-subject').value;
@@ -1615,11 +1691,6 @@
             document.getElementById('topic-note').value = '';
             saveToStorage();
             renderSyllabus();
-        }
-
-        function toggleTopic(id) {
-            const t = appState.syllabus.find(x => x.id === id);
-            if (t) { t.completed = !t.completed; saveToStorage(); renderSyllabus(); }
         }
 
         function deleteTopic(id) {
@@ -1648,9 +1719,9 @@
                 const container = sec.querySelector('div');
                 subTopics.forEach(t => {
                     const row = document.createElement('div');
-                    row.className = `flex items-center gap-3 p-4 rounded-xl border ${t.completed ? 'bg-slate-900/30 border-slate-800' : 'glass-card border-slate-700/50'}`;
+                    row.className = `flex items-center gap-3 p-4 rounded-xl border relative ${t.completed ? 'bg-slate-900/30 border-slate-800' : 'glass-card border-slate-700/50'}`;
                     row.innerHTML = `
-                        <button onclick="toggleTopic(${t.id})" class="w-6 h-6 rounded-md border-2 flex items-center justify-center ${t.completed ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-slate-600'}">
+                        <button onclick="toggleTopic(${t.id}, this)" class="relative w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${t.completed ? 'bg-indigo-500 border-indigo-500 text-white shadow-[0_0_12px_rgba(99,102,241,0.6)]' : 'border-slate-600 hover:border-indigo-400'}">
                             ${t.completed ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
                         </button>
                         <div class="flex-1 ${t.completed ? 'line-through text-slate-500' : 'text-white'} font-bold text-sm">
@@ -1778,7 +1849,7 @@
         }
 
         // ==========================================
-        // --- AI COACH & BULLETPROOF ACTION PARSER ---
+        // --- AI COACH (PURE STUDY GUIDANCE, NO CLUTTER) ---
         // ==========================================
         function toggleAIChat() {
             document.getElementById('ai-chatbox').classList.toggle('hidden');
@@ -1795,7 +1866,6 @@
         function formatMarkdown(text) {
             if (!text) return '';
             let parsed = text
-                .replace(/```json[\s\S]*?```/g, '')
                 .replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-indigo-400 mt-2 mb-1">$1</h4>')
                 .replace(/^## (.*$)/gim, '<h3 class="text-base font-bold text-white mt-3 mb-1.5">$1</h3>')
                 .replace(/^# (.*$)/gim, '<h2 class="text-lg font-black text-white mt-3 mb-2">$1</h2>')
@@ -1808,175 +1878,18 @@
             return parsed;
         }
 
-        function addBatchToSyllabus(batchId) {
-            if (!window.aiActionBatches || !window.aiActionBatches[batchId]) return;
-            const batch = window.aiActionBatches[batchId];
-
-            lastActionBatch = {
-                type: 'syllabus',
-                items: JSON.parse(JSON.stringify(batch.items))
-            };
-
-            batch.items.forEach(item => {
-                appState.syllabus.push({
-                    id: Date.now() + Math.random(),
-                    subject: item.subject || 'General',
-                    name: item.title,
-                    note: item.note || `For ${appState.nextTest.name || 'Upcoming Test'}`,
-                    completed: false
-                });
-            });
-
-            saveToStorage();
-            renderSyllabus();
-
-            const box = document.getElementById(`action-box-${batchId}`);
-            if (box) {
-                box.innerHTML = `
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-indigo-950/50 border border-indigo-500/40">
-                        <div class="flex items-center gap-2 text-indigo-300 text-xs font-bold">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400"></i> Added to Test Syllabus (${appState.nextTest.name})!
-                        </div>
-                        <button onclick="undoAIAction('${batchId}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono border border-slate-700">Undo</button>
-                    </div>
-                `;
-                lucide.createIcons();
-            }
-        }
-
-        function addBatchToPlanner(batchId) {
-            if (!window.aiActionBatches || !window.aiActionBatches[batchId]) return;
-            const batch = window.aiActionBatches[batchId];
-            const targetDate = batch.date || new Date().toISOString().split('T')[0];
-
-            lastActionBatch = {
-                type: 'schedule',
-                items: JSON.parse(JSON.stringify(batch.items))
-            };
-
-            batch.items.forEach(task => {
-                appState.scheduledTasks.push({
-                    id: Date.now() + Math.random(),
-                    date: task.date || targetDate,
-                    title: task.title,
-                    subject: task.subject || 'General',
-                    start: task.start || '',
-                    end: task.end || '',
-                    duration: task.duration || 60,
-                    status: 'Not Started'
-                });
-            });
-
-            saveToStorage();
-            renderCalendar();
-
-            const box = document.getElementById(`action-box-${batchId}`);
-            if (box) {
-                box.innerHTML = `
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-emerald-950/50 border border-emerald-500/40">
-                        <div class="flex items-center gap-2 text-emerald-300 text-xs font-bold">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Added Tasks to Daily Planner!
-                        </div>
-                        <button onclick="undoAIAction('${batchId}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono border border-slate-700">Undo</button>
-                    </div>
-                `;
-                lucide.createIcons();
-            }
-        }
-
-        function undoAIAction(batchId) {
-            if (!lastActionBatch) return;
-            const titles = lastActionBatch.items.map(i => i.title);
-            if (lastActionBatch.type === 'schedule') {
-                appState.scheduledTasks = appState.scheduledTasks.filter(t => !titles.includes(t.title));
-                renderCalendar();
-            } else if (lastActionBatch.type === 'syllabus') {
-                appState.syllabus = appState.syllabus.filter(s => !titles.includes(s.name));
-                renderSyllabus();
-            }
-            saveToStorage();
-            const box = document.getElementById(`action-box-${batchId}`);
-            if (box) {
-                box.innerHTML = `<div class="p-2.5 text-[11px] text-slate-400 italic bg-slate-900/60 rounded-xl border border-slate-800">Action reverted.</div>`;
-            }
-        }
-
-        // Bulletproof Fallback Intent Detector: Guarantees action card appears when planning
-        function detectLocalIntent(userQuery, aiResponse) {
-            const q = userQuery.toLowerCase();
-            const todayStr = new Date().toISOString().split('T')[0];
-
-            if (q.includes('plan') || q.includes('schedule') || q.includes('routine') || q.includes('study plan') || q.includes('tasks')) {
-                return {
-                    date: todayStr,
-                    items: [
-                        { title: 'Physics: Module & PYQ Practice', subject: 'Physics', duration: 90 },
-                        { title: 'Chemistry: NCERT & Reaction Practice', subject: 'Chemistry', duration: 90 },
-                        { title: 'Maths: Problem Solving & Conic Sections', subject: 'Maths', duration: 90 }
-                    ]
-                };
-            }
-            if (q.includes('syllabus') || q.includes('topic') || q.includes('chapter') || q.includes('add')) {
-                return {
-                    date: todayStr,
-                    items: [
-                        { title: 'Conic Sections & Circles', subject: 'Maths', note: `For ${appState.nextTest.name}` },
-                        { title: 'Work, Power & Energy', subject: 'Physics', note: `For ${appState.nextTest.name}` }
-                    ]
-                };
-            }
-            return null;
-        }
-
         function renderChat() {
             const thread = document.getElementById('ai-chat-thread');
             thread.innerHTML = '';
-            if (!window.aiActionBatches) window.aiActionBatches = {};
-
             if (!appState.chatHistory.length) {
-                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full visibility of your test scores, test history, syllabus, and calendar. Tell me what tasks or syllabus items to add!</div>`;
+                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full visibility of your test scores, test history, syllabus, and calendar. Ask me any study doubts, test strategies, or preparation tips!</div>`;
             } else {
-                appState.chatHistory.forEach((m, idx) => {
+                appState.chatHistory.forEach(m => {
                     const bubble = document.createElement('div');
                     bubble.className = m.role === 'user' ? 'flex justify-end' : 'flex justify-start';
-
-                    let actionBoxHtml = '';
-                    if (m.actionData && m.actionData.items && m.actionData.items.length) {
-                        const batchId = `b_${idx}`;
-                        window.aiActionBatches[batchId] = m.actionData;
-                        const actionItems = m.actionData.items.map(it => `
-                            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px]">
-                                <div class="flex items-center gap-2 truncate">
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${getSubjectStyle(it.subject)}">${it.subject}</span>
-                                    <span class="text-white font-medium truncate">${it.title}</span>
-                                </div>
-                                <span class="text-slate-400 font-mono text-[10px] shrink-0">${it.duration ? it.duration + 'm' : 'Task'}</span>
-                            </div>
-                        `).join('');
-
-                        actionBoxHtml = `
-                            <div id="action-box-${batchId}" class="mt-3 p-3 rounded-2xl bg-slate-950/90 border border-indigo-500/40 space-y-2">
-                                <div class="flex items-center justify-between text-[11px] font-bold text-indigo-300">
-                                    <span class="flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5"></i> Suggested Items (${m.actionData.items.length})</span>
-                                    <span class="font-mono text-slate-500">Milestone: ${appState.nextTest.name}</span>
-                                </div>
-                                <div class="space-y-1.5 max-h-36 overflow-y-auto custom-scrollbar">${actionItems}</div>
-                                <div class="grid grid-cols-2 gap-2 pt-1">
-                                    <button onclick="addBatchToSyllabus('${batchId}')" class="py-2 px-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all">
-                                        <i data-lucide="book-open" class="w-3 h-3"></i> Add to Syllabus
-                                    </button>
-                                    <button onclick="addBatchToPlanner('${batchId}')" class="py-2 px-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all">
-                                        <i data-lucide="calendar" class="w-3 h-3"></i> Add to Planner
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    }
-
                     bubble.innerHTML = `
                         <div class="p-3 rounded-2xl max-w-[90%] break-words ${m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-tl-none leading-relaxed'}">
                             ${m.role === 'user' ? m.content : formatMarkdown(m.content)}
-                            ${actionBoxHtml}
                         </div>
                     `;
                     thread.appendChild(bubble);
@@ -2000,7 +1913,7 @@
             const loadingBubble = document.createElement('div');
             loadingBubble.className = "flex justify-start";
             loadingBubble.id = "ai-loading-bubble";
-            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Analyzing scores & planning...</div>`;
+            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking & analyzing...</div>`;
             thread.appendChild(loadingBubble);
             thread.scrollTop = thread.scrollHeight;
             lucide.createIcons();
@@ -2009,18 +1922,7 @@
                 const response = await callGeminiAPI(prompt);
                 document.getElementById('ai-loading-bubble')?.remove();
 
-                let actionData = null;
-                const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
-                if (jsonMatch) {
-                    try { actionData = JSON.parse(jsonMatch[1]); } catch (e) {}
-                }
-
-                // Bulletproof fallback: if LLM skipped JSON but user asked for a plan/tasks, generate action items automatically
-                if (!actionData) {
-                    actionData = detectLocalIntent(prompt, response);
-                }
-
-                appState.chatHistory.push({ role: 'assistant', content: response, actionData });
+                appState.chatHistory.push({ role: 'assistant', content: response });
                 saveToStorage();
                 renderChat();
             } catch (err) {
@@ -2039,7 +1941,6 @@
 
             const testHistorySummary = JSON.stringify(appState.tests);
             const syllabusList = JSON.stringify(appState.syllabus.map(s => `${s.subject}: ${s.name} (${s.completed ? 'Done' : 'Pending'})`));
-            const activeSchedule = JSON.stringify(appState.scheduledTasks.map(t => `${t.date}: ${t.title} [${t.subject}, ${t.duration || 45}m]`));
 
             const systemPrompt = `
 You are Laksh's grounded, candid, and disciplined JEE Mentor.
@@ -2051,24 +1952,11 @@ Active Next Test Milestone: ${appState.nextTest.name} on ${appState.nextTest.dat
 COMPLETE DATA VISIBILITY:
 - All Recorded Test Scores & History: ${testHistorySummary}
 - Current Syllabus Topics: ${syllabusList}
-- Scheduled Tasks / Daily Planner: ${activeSchedule}
 
-IMPORTANT INSTRUCTIONS:
-1. You have complete visibility over Laksh's test history (including Minor Test 8, Minor Test 7, etc., with their respective P/C/M marks, totals, ranks, and percentiles). Reference these stats directly when asked about tests.
-2. For casual chat, answer normally in 1-2 friendly sentences without a JSON block.
-3. BULK ADDITION: When Laksh asks to make a study plan, schedule tasks, or add chapters, provide your text advice and ALWAYS APPEND a JSON action block at the very end wrapped in \`\`\`json ... \`\`\` containing an array of items:
-\`\`\`json
-{
-  "date": "${todayStr}",
-  "items": [
-    {
-      "title": "Task or Chapter Name",
-      "subject": "Physics", 
-      "duration": 90
-    }
-  ]
-}
-\`\`\`
+INSTRUCTIONS:
+- Give clear, high-impact, direct study guidance, mentorship, or answers to his questions.
+- Reference his actual test scores and syllabus progress directly when giving feedback.
+- Do not output any JSON action blocks; provide purely natural, insightful study responses.
             `.trim();
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
