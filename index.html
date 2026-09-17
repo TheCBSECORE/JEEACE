@@ -32,15 +32,24 @@
         .draggable-pill:active { cursor: grabbing; opacity: 0.5; }
 
         /* Fire Animation for Syllabus Checkbox */
-        @keyframes fireBurst {
-            0% { transform: scale(0.5) translateY(0); opacity: 1; }
-            100% { transform: scale(1.4) translateY(-25px); opacity: 0; }
+        /* Subtle Micro-Fire Animation around Checkbox */
+        @keyframes microFire {
+            0% { 
+                transform: translate(0, 0) scale(0.6); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) scale(1.1); 
+                opacity: 0; 
+            }
         }
         .fire-particle {
-            position: absolute;
+            position: fixed;
             pointer-events: none;
-            font-size: 14px;
-            animation: fireBurst 0.6s ease-out forwards;
+            font-size: 11px;
+            line-height: 1;
+            z-index: 9999;
+            animation: microFire 0.55s ease-out forwards;
         }
         @media (max-width: 768px) { .calendar-cell { min-height: 90px; } }
     </style>
@@ -1622,61 +1631,79 @@
         let activeSpecialAudio = null;
         let audioPlayCount = 0;
 
-        function triggerFireEffect(checkboxElement) {
-            const rect = checkboxElement.getBoundingClientRect();
-            const container = document.body;
+        function triggerFireEffect(rect) {
+            if (!rect) return;
+            // Center of the 24x24px checkbox
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
 
-            for (let i = 0; i < 6; i++) {
+            // 6 directional bursts around the box boundary
+            const angles = [0, 60, 120, 180, 240, 300];
+            angles.forEach(deg => {
                 const particle = document.createElement('div');
                 particle.className = 'fire-particle';
                 particle.innerText = '🔥';
-                
-                const offsetX = (Math.random() - 0.5) * 35;
-                const offsetY = (Math.random() - 0.5) * 35;
-                particle.style.left = `${rect.left + window.scrollX + 12 + offsetX}px`;
-                particle.style.top = `${rect.top + window.scrollY + 12 + offsetY}px`;
-                
-                container.appendChild(particle);
-                setTimeout(() => particle.remove(), 600);
-            }
+
+                const rad = (deg * Math.PI) / 180;
+                // Burst distance tailored to the 24px box size
+                const distance = 16 + Math.random() * 8;
+                const tx = Math.cos(rad) * distance;
+                const ty = Math.sin(rad) * distance - 6; // slight upward drift
+
+                particle.style.left = `${cx - 5}px`;
+                particle.style.top = `${cy - 5}px`;
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 550);
+            });
         }
 
-        function toggleTopic(id, checkboxEl) {
+        function toggleTopic(id, btnEl) {
             const t = appState.syllabus.find(x => x.id === id);
             if (!t) return;
 
+            // 1. Capture screen coordinates BEFORE re-rendering the DOM
+            let btnRect = null;
+            if (btnEl) {
+                btnRect = btnEl.getBoundingClientRect();
+            }
+
+            // 2. Toggle completion state
             t.completed = !t.completed;
             saveToStorage();
             renderSyllabus();
 
             const audio = document.getElementById('special-audio');
-            if (t.completed) {
-                // Trigger Fire Animation around the checkbox element if available
-                if (checkboxEl) triggerFireEffect(checkboxEl);
 
-                // Play special.mp3 in loop exactly 2 times
+            if (t.completed) {
+                // 3. Trigger micro-fire animation
+                if (btnRect) triggerFireEffect(btnRect);
+
+                // 4. Play special.mp3 loop x2
                 if (audio) {
                     audio.pause();
                     audio.currentTime = 0;
                     audioPlayCount = 0;
-                    
+
                     audio.onended = () => {
                         audioPlayCount++;
                         if (audioPlayCount < 2) {
                             audio.currentTime = 0;
-                            audio.play().catch(e => {});
+                            audio.play().catch(() => {});
                         } else {
                             audio.pause();
                         }
                     };
-                    audio.play().catch(e => {});
-                    activeSpecialAudio = audio;
+                    audio.play().catch(() => {});
                 }
             } else {
-                // Unticked -> Stop audio
+                // Unticked -> Immediately silence audio
                 if (audio) {
                     audio.pause();
                     audio.currentTime = 0;
+                    audioPlayCount = 0;
                 }
             }
         }
