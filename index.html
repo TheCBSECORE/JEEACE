@@ -1940,13 +1940,13 @@
             const loadingBubble = document.createElement('div');
             loadingBubble.className = "flex justify-start";
             loadingBubble.id = "ai-loading-bubble";
-            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking & planning...</div>`;
+            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking & analyzing...</div>`;
             thread.appendChild(loadingBubble);
             thread.scrollTop = thread.scrollHeight;
             lucide.createIcons();
 
             try {
-                const response = await callGeminiAPI();
+                const response = await callGeminiAPI(prompt);
                 document.getElementById('ai-loading-bubble')?.remove();
 
                 appState.chatHistory.push({ role: 'assistant', content: response });
@@ -1958,7 +1958,7 @@
             }
         }
 
-        async function callGeminiAPI() {
+        async function callGeminiAPI(userQuery) {
             if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
             
             const now = new Date();
@@ -1969,29 +1969,23 @@
             const testHistorySummary = JSON.stringify(appState.tests);
             const syllabusList = JSON.stringify(appState.syllabus.map(s => `${s.subject}: ${s.name} (${s.completed ? 'Done' : 'Pending'})`));
 
-            const systemInstructionText = `
+            const systemPrompt = `
 You are Laksh's grounded, candid, and disciplined JEE Mentor.
 Goal: IIT Bombay CSE 2028 (AIR < 60).
 Schedule: Allen Coaching daily 7:00 AM - 12:00 PM.
 Current Real Time: ${currentRealTime} | Today: ${currentRealDate} (${todayStr})
 Active Next Test Milestone: ${appState.nextTest.name} on ${appState.nextTest.date}
 
-DATA CONTEXT:
-- Recorded Tests & History: ${testHistorySummary}
-- Syllabus: ${syllabusList}
+COMPLETE DATA VISIBILITY:
+- All Recorded Test Scores & History: ${testHistorySummary}
+- Current Syllabus Topics: ${syllabusList}
 
-CRITICAL RULES:
-1. Be concise, punchy, and direct. Deliver clear, structured daily schedules immediately when requested.
-2. DO NOT waste output tokens on long introductory lectures or repeatedly listing out previous test scores. Mention them in 1 sentence if needed, then jump straight into the schedule.
-3. Keep each day's plan clear with specific slots (Post-Allen afternoon & evening).
-4. Never end mid-sentence. Always conclude the output cleanly.
+INSTRUCTIONS:
+- Give clear, concise, actionable study schedules, strategies, and answers.
+- Always finish your thought completely. Do not trail off mid-sentence.
+- Never output citation tags like.
+- Reference his actual scores and tests naturally.
             `.trim();
-
-            // Send full conversation history so context is preserved across turns
-            const contents = appState.chatHistory.map(m => ({
-                role: m.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: m.content }]
-            }));
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
             
@@ -1999,12 +1993,11 @@ CRITICAL RULES:
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    system_instruction: {
-                        parts: [{ text: systemInstructionText }]
-                    },
-                    contents: contents,
+                    contents: [
+                        { role: "user", parts: [{ text: `${systemPrompt}\n\nLaksh says: "${userQuery}"` }] }
+                    ],
                     generationConfig: { 
-                        temperature: 0.3, 
+                        temperature: 0.4, 
                         maxOutputTokens: 4096 
                     }
                 })
@@ -2018,7 +2011,6 @@ CRITICAL RULES:
             const data = await res.json();
             return data.candidates[0].content.parts[0].text;
         }
-
         // --- Backup & Restore ---
         function exportBackup() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
