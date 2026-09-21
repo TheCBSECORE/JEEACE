@@ -1981,9 +1981,10 @@ COMPLETE DATA VISIBILITY:
 - Current Syllabus Topics: ${syllabusList}
 
 INSTRUCTIONS:
-- Give clear, high-impact, direct study guidance, mentorship, or answers to his questions.
-- Reference his actual test scores and syllabus progress directly when giving feedback.
-- Do not output any JSON action blocks; provide purely natural, insightful study responses.
+- Give clear, concise, actionable study schedules, strategies, and answers.
+- Always finish your thought completely. Do not trail off mid-sentence.
+- Never output citation tags like.
+- Reference his actual scores and tests naturally.
             `.trim();
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
@@ -1995,8 +1996,10 @@ INSTRUCTIONS:
                     contents: [
                         { role: "user", parts: [{ text: `${systemPrompt}\n\nLaksh says: "${userQuery}"` }] }
                     ],
-                    tools: [{ google_search: {} }],
-                    generationConfig: { temperature: 0.2, maxOutputTokens: 2000 }
+                    generationConfig: { 
+                        temperature: 0.4, 
+                        maxOutputTokens: 4096 
+                    }
                 })
             });
 
