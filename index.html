@@ -1940,13 +1940,13 @@
             const loadingBubble = document.createElement('div');
             loadingBubble.className = "flex justify-start";
             loadingBubble.id = "ai-loading-bubble";
-            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking & analyzing...</div>`;
+            loadingBubble.innerHTML = `<div class="bg-slate-800 border border-slate-700/60 rounded-2xl rounded-tl-none px-3.5 py-2 text-slate-400 flex items-center gap-2"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-indigo-400"></i> Thinking & planning...</div>`;
             thread.appendChild(loadingBubble);
             thread.scrollTop = thread.scrollHeight;
             lucide.createIcons();
 
             try {
-                const response = await callGeminiAPI(prompt);
+                const response = await callGeminiAPI();
                 document.getElementById('ai-loading-bubble')?.remove();
 
                 appState.chatHistory.push({ role: 'assistant', content: response });
@@ -1958,58 +1958,89 @@
             }
         }
 
-        async function callGeminiAPI(userQuery) {
+        async function callGeminiAPI() {
             if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
-            
+
             const now = new Date();
             const todayStr = now.toISOString().split('T')[0];
             const currentRealTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-            const testHistorySummary = JSON.stringify(appState.tests);
-            const syllabusList = JSON.stringify(appState.syllabus.map(s => `${s.subject}: ${s.name} (${s.completed ? 'Done' : 'Pending'})`));
+            const testHistorySummary = JSON.stringify(appState.tests || []);
+            const syllabusList = JSON.stringify((appState.syllabus || []).map(s => `${s.subject}: ${s.name} (${s.completed ? 'Done' : 'Pending'})`));
 
-            const systemPrompt = `
-You are Laksh's grounded, candid, and disciplined JEE Mentor.
+            const systemContext = `You are Laksh's grounded, candid, and disciplined JEE Mentor.
 Goal: IIT Bombay CSE 2028 (AIR < 60).
-Schedule: Allen Coaching daily 7:00 AM - 12:00 PM.
-Current Real Time: ${currentRealTime} | Today: ${currentRealDate} (${todayStr})
-Active Next Test Milestone: ${appState.nextTest.name} on ${appState.nextTest.date}
+Daily Routine: Allen Coaching from 7:00 AM to 12:00 PM.
+Current Real Time: ${currentRealTime} | Date: ${currentRealDate} (${todayStr})
+Active Target Test: ${appState.nextTest?.name || 'Upcoming Test'} on ${appState.nextTest?.date || 'Configured Date'}
 
-COMPLETE DATA VISIBILITY:
-- All Recorded Test Scores & History: ${testHistorySummary}
-- Current Syllabus Topics: ${syllabusList}
+RELEVANT DATA:
+- Test Scores & History: ${testHistorySummary}
+- Syllabus: ${syllabusList}
 
-INSTRUCTIONS:
-- Give clear, concise, actionable study schedules, strategies, and answers.
-- Always finish your thought completely. Do not trail off mid-sentence.
-- Never output citation tags like.
-- Reference his actual scores and tests naturally.
-            `.trim();
+RULES:
+- Be concise, direct, and actionable.
+- Provide practical study schedules and strategies directly without unnecessary preamble.
+- Never output broken citation markers or trail off mid-sentence.`;
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
-            
+            // Filter history to ensure alternating user/model sequence and no empty messages
+            let formattedContents = [];
+            let lastRole = null;
+
+            (appState.chatHistory || []).forEach(m => {
+                const role = m.role === 'assistant' ? 'model' : 'user';
+                const text = (m.content || '').trim();
+                if (!text) return;
+
+                // Ensure the list starts with a user prompt
+                if (formattedContents.length === 0 && role !== 'user') return;
+
+                // Prevent consecutive identical roles
+                if (role !== lastRole) {
+                    formattedContents.push({ role, parts: [{ text }] });
+                    lastRole = role;
+                } else {
+                    // Append text to previous turn if roles repeated
+                    formattedContents[formattedContents.length - 1].parts[0].text += `\n${text}`;
+                }
+            });
+
+            // If empty, supply a fallback turn
+            if (formattedContents.length === 0) {
+                formattedContents.push({ role: 'user', parts: [{ text: "Hello coach, review my status." }] });
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(appState.apiKey.trim())}`;
+
             const res = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [
-                        { role: "user", parts: [{ text: `${systemPrompt}\n\nLaksh says: "${userQuery}"` }] }
-                    ],
-                    generationConfig: { 
-                        temperature: 0.4, 
-                        maxOutputTokens: 4096 
+                    system_instruction: {
+                        parts: [{ text: systemContext }]
+                    },
+                    contents: formattedContents,
+                    generationConfig: {
+                        temperature: 0.4,
+                        maxOutputTokens: 2500
                     }
                 })
             });
 
+            const data = await res.json().catch(() => null);
+
             if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                throw new Error(errData?.error?.message || `API error ${res.status}`);
+                const errMsg = data?.error?.message || `HTTP ${res.status} error`;
+                throw new Error(errMsg);
             }
 
-            const data = await res.json();
-            return data.candidates[0].content.parts[0].text;
+            const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!reply) {
+                throw new Error("Empty response returned by the model. Try re-sending.");
+            }
+
+            return reply;
         }
         // --- Backup & Restore ---
         function exportBackup() {
