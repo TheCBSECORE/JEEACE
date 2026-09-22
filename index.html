@@ -31,17 +31,9 @@
         .draggable-pill { cursor: grab; user-select: none; }
         .draggable-pill:active { cursor: grabbing; opacity: 0.5; }
 
-        /* Fire Animation for Syllabus Checkbox */
-        /* Subtle Micro-Fire Animation around Checkbox */
         @keyframes microFire {
-            0% { 
-                transform: translate(0, 0) scale(0.6); 
-                opacity: 1; 
-            }
-            100% { 
-                transform: translate(var(--tx), var(--ty)) scale(1.1); 
-                opacity: 0; 
-            }
+            0% { transform: translate(0, 0) scale(0.6); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.1); opacity: 0; }
         }
         .fire-particle {
             position: fixed;
@@ -132,12 +124,8 @@
                             </span>
                             <span class="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 text-[11px] font-mono rounded-md">AIR &lt; 60 Goal</span>
                         </div>
-                        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                            Powai is Calling, Laksh.
-                        </h2>
-                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Every single module question solved today and every mark pulled in Allen tests brings you closer to the CSE department. Stay consistent.
-                        </p>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Powai is Calling, Laksh.</h2>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">Every single module question solved today and every mark pulled in Allen tests brings you closer to the CSE department. Stay consistent.</p>
                     </div>
                 </div>
             </div>
@@ -381,7 +369,7 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         <h2 class="text-2xl font-black text-white" id="current-view-title">Schedule Calendar</h2>
                     </div>
-                    <p class="text-slate-400 text-xs" id="current-view-subtitle">Drag & drop tasks across days to reschedule • Click '+' to add</p>
+                    <p class="text-slate-400 text-xs" id="current-view-subtitle">Drag & drop tasks across days to reschedule • Click play to launch pomodoro</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3">
@@ -411,14 +399,17 @@
 
             <!-- Daily Selected Date Tasks View -->
             <div id="calendar-tasks-view" class="hidden space-y-4">
-                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                <div class="glass-card p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="calendar" class="w-5 h-5 text-indigo-400"></i>
                         <h3 class="font-bold text-white text-base">Routines for: <span id="tasks-selected-date" class="text-indigo-400 font-mono">...</span></h3>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <span id="tasks-stats-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">0 Tasks</span>
                         <span id="tasks-duration-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-600/20 text-indigo-300 border border-indigo-500/30">0h 0m Total</span>
+                        <button onclick="openDaySummaryModal()" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 border border-indigo-500/40 flex items-center gap-1.5 transition-all active:scale-95 shadow-sm">
+                            <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i> Day Summary
+                        </button>
                     </div>
                 </div>
                 <div id="daily-task-list" class="space-y-3"></div>
@@ -640,20 +631,23 @@
 
     </main>
 
-    <!-- FLOATING FOCUS TIMER (BOTTOM-LEFT) -->
+    <!-- FLOATING LIVE FOCUS POMODORO (BOTTOM-LEFT) -->
     <div id="focus-timer-container" class="fixed bottom-6 left-6 z-50 flex flex-col items-start select-none touch-none">
         <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-slate-900/95 hover:bg-slate-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-slate-700 transition-transform active:scale-95 backdrop-blur-md">
             <i data-lucide="timer" class="w-5 h-5 text-indigo-400"></i>
-            <span class="font-bold text-sm">Focus Timer</span>
+            <span class="font-bold text-sm" id="timer-toggle-label">Focus Pomodoro</span>
+            <span id="timer-status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
         </button>
 
-        <div id="focus-timer-widget" class="hidden absolute bottom-14 left-0 glass-card bg-slate-900/95 border border-slate-700/80 p-4 rounded-3xl shadow-2xl w-72 backdrop-blur-xl">
+        <div id="focus-timer-widget" class="hidden absolute bottom-14 left-0 glass-card bg-slate-900/95 border border-slate-700/80 p-4 rounded-3xl shadow-2xl w-80 backdrop-blur-xl">
             <div id="timer-drag-handle" class="cursor-move flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-xs text-slate-400 font-semibold">
-                <span class="flex items-center gap-1.5 text-white">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> Focus Session
-                </span>
-                <div class="flex items-center gap-1.5">
-                    <button onclick="togglePiP()" title="Picture-in-Picture" class="p-1 hover:text-indigo-400 text-slate-400 transition-colors">
+                <div class="flex items-center gap-1.5 text-white truncate max-w-[170px]">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i>
+                    <span id="active-task-label" class="truncate">Focus Session</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span id="live-ist-badge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300 mr-1">--:--:--</span>
+                    <button onclick="togglePiP()" title="Toggle Picture-in-Picture" class="p-1 hover:text-indigo-400 text-slate-400 transition-colors">
                         <i data-lucide="picture-in-picture-2" class="w-3.5 h-3.5"></i>
                     </button>
                     <button onclick="toggleFocusTimer()" class="p-1 hover:text-red-400 transition-colors">
@@ -662,36 +656,88 @@
                 </div>
             </div>
 
+            <!-- Subject Badge if bound to routine -->
+            <div id="pomo-subject-container" class="hidden flex items-center justify-between px-1 mb-2">
+                <span id="pomo-subject-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-blue-500/20 text-blue-300 border-blue-500/30">Physics</span>
+                <span id="pomo-mode-badge" class="text-[10px] font-mono text-emerald-400 font-bold">COUNTDOWN</span>
+            </div>
+
+            <!-- Timer / Stopwatch Display -->
             <div class="text-center py-2">
                 <div class="flex justify-center items-center gap-1 font-mono text-4xl font-black text-white">
-                    <input type="number" id="timer-input-m" min="0" max="60" value="25" class="w-16 bg-transparent text-right text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
+                    <input type="number" id="timer-input-m" min="0" max="180" value="25" class="w-16 bg-transparent text-right text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
                     <span class="text-slate-500">:</span>
                     <input type="number" id="timer-input-s" min="0" max="59" value="00" class="w-16 bg-transparent text-left text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">Tap digits directly to configure</p>
+                <p id="timer-hint-text" class="text-[10px] text-slate-500 mt-1">Tap digits directly to configure</p>
             </div>
 
-            <div class="flex justify-center gap-1.5 my-2">
-                <button onclick="setTimerDirect(25, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">25m</button>
-                <button onclick="setTimerDirect(45, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">45m</button>
-                <button onclick="setTimerDirect(60, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">60m</button>
-                <button onclick="setTimerDirect(0, 30)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">30s</button>
+            <!-- Preset Buttons -->
+            <div id="pomo-presets-row" class="flex justify-center gap-1.5 my-2">
+                <button onclick="setTimerDirect(25, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-md font-mono">25m</button>
+                <button onclick="setTimerDirect(45, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-md font-mono">45m</button>
+                <button onclick="setTimerDirect(60, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-md font-mono">60m</button>
+                <button onclick="setTimerDirect(90, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded-md font-mono">90m</button>
             </div>
 
+            <!-- Action Controls -->
             <div class="flex items-center justify-center gap-2 pt-1">
                 <button id="timer-start-btn" onclick="startTimer()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i> Start
                 </button>
-                <button onclick="pauseTimer()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-all">
+                <button id="timer-pause-btn" onclick="pauseTimer()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-all">
                     <i data-lucide="pause" class="w-3.5 h-3.5"></i>
                 </button>
-                <button onclick="resetTimer()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all">
+                <button id="timer-reset-btn" onclick="resetTimer()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all" title="Reset">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                </button>
+                <button id="timer-save-overtime-btn" onclick="finishOvertime()" class="hidden flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md">
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i> Save & Complete
                 </button>
             </div>
 
-            <canvas id="pip-canvas" width="300" height="150" class="hidden"></canvas>
+            <canvas id="pip-canvas" width="320" height="160" class="hidden"></canvas>
             <video id="pip-video" autoplay muted class="hidden"></video>
+        </div>
+    </div>
+
+    <!-- MODAL: TASK TIME ENDED QUESTION -->
+    <div id="task-completed-modal" class="fixed inset-0 z-[80] hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center space-y-4">
+            <div class="w-12 h-12 rounded-full bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center mx-auto">
+                <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-white">Time's Up!</h3>
+                <p id="modal-task-completed-title" class="text-xs text-indigo-300 font-semibold mt-1">Did you complete this task?</p>
+            </div>
+            <p class="text-xs text-slate-400">Select "No" to continue tracking overtime with a live stopwatch until you finish.</p>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="handleTaskCompletedResponse(false)" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 text-xs font-bold transition-all">
+                    No, Track Overtime
+                </button>
+                <button onclick="handleTaskCompletedResponse(true)" class="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-lg">
+                    Yes, Completed!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DAY SUMMARY & TIME SPENT ON SUBJECTS -->
+    <div id="day-summary-modal" class="fixed inset-0 z-[70] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-400"></i>
+                    <h3 class="font-bold text-white text-base">Study Summary: <span id="summary-date-label" class="text-indigo-400 font-mono text-sm">...</span></h3>
+                </div>
+                <button onclick="closeDaySummaryModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div id="summary-content" class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar"></div>
+            <div class="pt-4 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400 font-mono mt-4">
+                <span>Total Dedicated Time:</span>
+                <span id="summary-total-time" class="font-bold text-white text-sm">0h 0m</span>
+            </div>
         </div>
     </div>
 
@@ -898,7 +944,6 @@
             localStorage.setItem('jee_ai_chats', JSON.stringify(appState.chatHistory));
         };
 
-        // --- Time Calculations ---
         function calculateDurationMinutes(start, end) {
             if (!start || !end) return 0;
             const [sh, sm] = start.split(':').map(Number);
@@ -926,7 +971,6 @@
             }
         }
 
-        // --- Navigation Switcher ---
         function switchTab(view) {
             ['analytics', 'planner', 'daily', 'f1hub', 'goals'].forEach(v => {
                 const el = document.getElementById(`view-${v}`);
@@ -1132,6 +1176,7 @@
             } else {
                 tasks.forEach(t => {
                     const dur = t.duration ? formatDuration(t.duration) : (t.start && t.end ? formatDuration(calculateDurationMinutes(t.start, t.end)) : '');
+                    const isCompleted = t.status === 'Completed';
                     const row = document.createElement('div');
                     row.className = "glass-card p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group";
                     row.innerHTML = `
@@ -1141,7 +1186,7 @@
                             </button>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h4 class="font-bold text-sm text-white ${t.status === 'Completed' ? 'line-through opacity-50' : ''}">${t.title}</h4>
+                                    <h4 class="font-bold text-sm text-white ${isCompleted ? 'line-through opacity-50' : ''}">${t.title}</h4>
                                     ${dur ? `<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-indigo-300 border border-slate-700 flex items-center gap-1"><i data-lucide="clock" class="w-2.5 h-2.5"></i> ${dur}</span>` : ''}
                                 </div>
                                 <div class="flex items-center gap-2 mt-1">
@@ -1151,6 +1196,10 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2 self-end sm:self-center">
+                            <button onclick="startTaskPomodoro(${t.id})" title="Start Pomodoro with this Task" class="p-2 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl border border-emerald-500/30 transition-all active:scale-95 flex items-center gap-1 text-xs font-bold shadow-md">
+                                <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                                <span class="hidden sm:inline">Focus</span>
+                            </button>
                             <button onclick="deleteTask(${t.id})" class="p-2 text-slate-600 hover:text-red-400 rounded-lg hover:bg-slate-800/60 transition-colors">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
@@ -1274,25 +1323,87 @@
         }
 
         // ==========================================
-        // --- DRAGGABLE FOCUS TIMER & PiP ---
+        // --- DAY SUMMARY MODAL ---
+        // ==========================================
+        function openDaySummaryModal() {
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            document.getElementById('summary-date-label').innerText = selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            const modal = document.getElementById('day-summary-modal');
+            const content = document.getElementById('summary-content');
+            modal.classList.remove('hidden');
+
+            const dayTasks = appState.scheduledTasks.filter(t => t.date === dateStr);
+            const subjectMap = { Physics: 0, Chemistry: 0, Maths: 0, Allen: 0, General: 0 };
+            let total = 0;
+
+            dayTasks.forEach(t => {
+                let mins = Number(t.duration) || 0;
+                if (!mins && t.start && t.end) mins = calculateDurationMinutes(t.start, t.end);
+                const sub = subjectMap[t.subject] !== undefined ? t.subject : 'General';
+                subjectMap[sub] += mins;
+                total += mins;
+            });
+
+            document.getElementById('summary-total-time').innerText = formatDuration(total) || '0m';
+
+            if (total === 0) {
+                content.innerHTML = `<div class="p-6 text-center text-slate-500 text-xs">No study duration logged for this day yet.</div>`;
+                return;
+            }
+
+            content.innerHTML = Object.keys(subjectMap).map(sub => {
+                const mins = subjectMap[sub];
+                if (mins === 0) return '';
+                const perc = Math.round((mins / total) * 100);
+                return `
+                    <div class="bg-slate-950/60 p-3 rounded-2xl border border-slate-800 space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-white flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full ${sub === 'Physics' ? 'bg-blue-500' : sub === 'Chemistry' ? 'bg-emerald-500' : sub === 'Maths' ? 'bg-orange-500' : sub === 'Allen' ? 'bg-purple-500' : 'bg-slate-500'}"></span>
+                                ${sub}
+                            </span>
+                            <span class="font-mono text-indigo-300 font-bold">${formatDuration(mins)} (${perc}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full ${sub === 'Physics' ? 'bg-blue-500' : sub === 'Chemistry' ? 'bg-emerald-500' : sub === 'Maths' ? 'bg-orange-500' : sub === 'Allen' ? 'bg-purple-500' : 'bg-slate-500'}" style="width: ${perc}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function closeDaySummaryModal() {
+            document.getElementById('day-summary-modal').classList.add('hidden');
+        }
+
+        // ==========================================
+        // --- DRAGGABLE LIVE FOCUS POMODORO & PiP ---
         // ==========================================
         let timerRemaining = 25 * 60;
         let timerInterval = null;
         let isTimerRunning = false;
+        let isOvertimeMode = false;
+        let overtimeElapsed = 0;
+        let activeBoundTaskId = null;
+
+        function getLiveISTString() {
+            return new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
 
         function getDirectConfiguredSeconds() {
             const m = parseInt(document.getElementById('timer-input-m').value) || 0;
             const s = parseInt(document.getElementById('timer-input-s').value) || 0;
-            return Math.max(1, Math.min(3600, (m * 60) + s));
+            return Math.max(1, Math.min(10800, (m * 60) + s));
         }
 
         function onDirectTimeChange() {
-            if (isTimerRunning) return;
+            if (isTimerRunning || isOvertimeMode) return;
             timerRemaining = getDirectConfiguredSeconds();
             renderPipCanvas();
         }
 
         function setTimerDirect(mins, secs) {
+            if (isOvertimeMode) resetTimer();
             pauseTimer();
             document.getElementById('timer-input-m').value = mins.toString().padStart(2, '0');
             document.getElementById('timer-input-s').value = secs.toString().padStart(2, '0');
@@ -1301,8 +1412,9 @@
         }
 
         function updateTimerFields() {
-            const mins = Math.floor(timerRemaining / 60);
-            const secs = timerRemaining % 60;
+            const secsToFormat = isOvertimeMode ? overtimeElapsed : timerRemaining;
+            const mins = Math.floor(secsToFormat / 60);
+            const secs = secsToFormat % 60;
             document.getElementById('timer-input-m').value = mins.toString().padStart(2, '0');
             document.getElementById('timer-input-s').value = secs.toString().padStart(2, '0');
             renderPipCanvas();
@@ -1310,21 +1422,28 @@
 
         function startTimer() {
             if (isTimerRunning) return;
-            if (timerRemaining <= 0) timerRemaining = getDirectConfiguredSeconds();
+            if (!isOvertimeMode && timerRemaining <= 0) timerRemaining = getDirectConfiguredSeconds();
             isTimerRunning = true;
-            document.getElementById('timer-start-btn').classList.add('bg-emerald-600');
-            document.getElementById('timer-start-btn').innerHTML = `<i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse"></i> Focus`;
+
+            const startBtn = document.getElementById('timer-start-btn');
+            startBtn.classList.add('bg-emerald-600');
+            startBtn.innerHTML = `<i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse"></i> Running`;
+            document.getElementById('timer-status-dot').className = isOvertimeMode ? "w-2 h-2 rounded-full bg-amber-400 animate-ping" : "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
             lucide.createIcons();
 
             timerInterval = setInterval(() => {
-                if (timerRemaining > 0) {
-                    timerRemaining--;
-                    updateTimerFields();
+                if (!isOvertimeMode) {
+                    if (timerRemaining > 0) {
+                        timerRemaining--;
+                        updateTimerFields();
+                    } else {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        onCountdownEnded();
+                    }
                 } else {
-                    clearInterval(timerInterval);
-                    isTimerRunning = false;
-                    alert("⏰ Focus Session Finished! Great work Laksh.");
-                    resetTimer();
+                    overtimeElapsed++;
+                    updateTimerFields();
                 }
             }, 1000);
         }
@@ -1332,8 +1451,10 @@
         function pauseTimer() {
             clearInterval(timerInterval);
             isTimerRunning = false;
-            document.getElementById('timer-start-btn').classList.remove('bg-emerald-600');
-            document.getElementById('timer-start-btn').innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume`;
+            const startBtn = document.getElementById('timer-start-btn');
+            startBtn.classList.remove('bg-emerald-600');
+            startBtn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume`;
+            document.getElementById('timer-status-dot').className = "w-2 h-2 rounded-full bg-amber-400";
             lucide.createIcons();
             renderPipCanvas();
         }
@@ -1341,72 +1462,187 @@
         function resetTimer() {
             clearInterval(timerInterval);
             isTimerRunning = false;
-            timerRemaining = getDirectConfiguredSeconds();
-            document.getElementById('timer-start-btn').classList.remove('bg-emerald-600');
+            isOvertimeMode = false;
+            overtimeElapsed = 0;
+            activeBoundTaskId = null;
+
+            // Reset UI state
+            document.getElementById('pomo-subject-container').classList.add('hidden');
+            document.getElementById('pomo-presets-row').classList.remove('hidden');
+            document.getElementById('timer-save-overtime-btn').classList.add('hidden');
+            document.getElementById('timer-start-btn').classList.remove('hidden', 'bg-emerald-600');
             document.getElementById('timer-start-btn').innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Start`;
+            document.getElementById('timer-pause-btn').classList.remove('hidden');
+            document.getElementById('active-task-label').innerText = "Focus Session";
+            document.getElementById('timer-status-dot').className = "w-2 h-2 rounded-full bg-slate-500";
+            document.getElementById('timer-hint-text').innerText = "Tap digits directly to configure";
+            document.getElementById('timer-hint-text').className = "text-[10px] text-slate-500 mt-1";
+
+            timerRemaining = 25 * 60;
             updateTimerFields();
             lucide.createIcons();
         }
 
         function toggleFocusTimer() {
-            document.getElementById('focus-timer-widget').classList.toggle('hidden');
+            const w = document.getElementById('focus-timer-widget');
+            w.classList.toggle('hidden');
+            if (!w.classList.contains('hidden')) renderPipCanvas();
+        }
+
+        function startTaskPomodoro(taskId) {
+            const task = appState.scheduledTasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            resetTimer();
+            activeBoundTaskId = taskId;
+
+            // Calculate duration
+            let mins = Number(task.duration) || 0;
+            if (!mins && task.start && task.end) mins = calculateDurationMinutes(task.start, task.end);
+            if (mins <= 0) mins = 45;
+
+            // Bind UI
+            document.getElementById('active-task-label').innerText = task.title;
+            const subBadge = document.getElementById('pomo-subject-badge');
+            subBadge.innerText = task.subject || 'Routine';
+            subBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold border ${getSubjectStyle(task.subject)}`;
+            document.getElementById('pomo-subject-container').classList.remove('hidden');
+            document.getElementById('pomo-mode-badge').innerText = "COUNTDOWN";
+            document.getElementById('pomo-mode-badge').className = "text-[10px] font-mono text-emerald-400 font-bold";
+
+            // Open widget and start
+            document.getElementById('focus-timer-widget').classList.remove('hidden');
+            setTimerDirect(mins, 0);
+            startTimer();
+
+            // Also launch Picture-in-Picture directly if possible
+            togglePiP(true);
+        }
+
+        function onCountdownEnded() {
+            document.getElementById('timer-status-dot').className = "w-2 h-2 rounded-full bg-amber-400";
+            const task = activeBoundTaskId ? appState.scheduledTasks.find(t => t.id === activeBoundTaskId) : null;
+            document.getElementById('modal-task-completed-title').innerText = task ? `Did you complete "${task.title}"?` : "Did you complete this focus session?";
+            document.getElementById('task-completed-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function handleTaskCompletedResponse(isCompleted) {
+            document.getElementById('task-completed-modal').classList.add('hidden');
+
+            if (isCompleted) {
+                if (activeBoundTaskId) {
+                    const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
+                    if (task) {
+                        task.status = 'Completed';
+                        saveToStorage();
+                        renderCalendar();
+                    }
+                }
+                alert("🎉 Great job Laksh! Task marked as completed.");
+                resetTimer();
+            } else {
+                // Switch to Extended Overtime Stopwatch Mode
+                isOvertimeMode = true;
+                overtimeElapsed = 0;
+                document.getElementById('pomo-presets-row').classList.add('hidden');
+                document.getElementById('pomo-mode-badge').innerText = "OVERTIME STOPWATCH";
+                document.getElementById('pomo-mode-badge').className = "text-[10px] font-mono text-amber-400 font-bold animate-pulse";
+                document.getElementById('timer-save-overtime-btn').classList.remove('hidden');
+                document.getElementById('timer-hint-text').innerText = "Tracking overtime. Click 'Save & Complete' when done.";
+                document.getElementById('timer-hint-text').className = "text-[10px] text-amber-400 font-bold mt-1";
+
+                updateTimerFields();
+                startTimer();
+            }
+        }
+
+        function finishOvertime() {
+            pauseTimer();
+            const extraMins = Math.ceil(overtimeElapsed / 60);
+
+            if (activeBoundTaskId) {
+                const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
+                if (task) {
+                    const origMins = Number(task.duration) || 0;
+                    task.duration = origMins + extraMins;
+                    task.status = 'Completed';
+                    saveToStorage();
+                    renderCalendar();
+                }
+            }
+
+            alert(`✅ Session saved! Total duration recorded with +${extraMins} mins overtime.`);
+            resetTimer();
         }
 
         function renderPipCanvas() {
             const canvas = document.getElementById('pip-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            const mins = Math.floor(timerRemaining / 60).toString().padStart(2, '0');
-            const secs = (timerRemaining % 60).toString().padStart(2, '0');
-            const liveClock = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            const istTime = getLiveISTString();
+
+            const secsToFormat = isOvertimeMode ? overtimeElapsed : timerRemaining;
+            const mins = Math.floor(secsToFormat / 60).toString().padStart(2, '0');
+            const secs = (secsToFormat % 60).toString().padStart(2, '0');
 
             ctx.fillStyle = '#020617';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#f59e0b';
-            ctx.font = 'bold 15px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('AIM: IIT', 18, 28);
 
+            // Header line
+            ctx.fillStyle = isOvertimeMode ? '#f59e0b' : '#6366f1';
+            ctx.font = 'bold 13px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            const taskText = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Task') : 'AIM: IIT BOMBAY';
+            ctx.fillText(taskText.slice(0, 20), 16, 26);
+
+            // Live IST Clock
             ctx.fillStyle = '#94a3b8';
-            ctx.font = '600 12px monospace';
+            ctx.font = '600 11px monospace';
             ctx.textAlign = 'right';
-            ctx.fillText(liveClock, canvas.width - 18, 28);
+            ctx.fillText(`IST ${istTime}`, canvas.width - 16, 26);
 
             ctx.strokeStyle = '#1e293b';
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(18, 38);
-            ctx.lineTo(canvas.width - 18, 38);
+            ctx.moveTo(16, 36);
+            ctx.lineTo(canvas.width - 16, 36);
             ctx.stroke();
 
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 50px monospace';
+            // Time Digits
+            ctx.fillStyle = isOvertimeMode ? '#fbbf24' : '#ffffff';
+            ctx.font = 'bold 54px monospace';
             ctx.textAlign = 'center';
-            ctx.fillText(`${mins}:${secs}`, canvas.width / 2, 95);
+            ctx.fillText(`${mins}:${secs}`, canvas.width / 2, 98);
 
-            ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
+            // Subtitle state
             ctx.font = 'bold 11px Inter, sans-serif';
-            ctx.fillText(isTimerRunning ? '● FOCUS ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 128);
+            if (isOvertimeMode) {
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillText('⏳ OVERTIME STOPWATCH RUNNING', canvas.width / 2, 134);
+            } else {
+                ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
+                ctx.fillText(isTimerRunning ? '● FOCUS SESSION ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 134);
+            }
         }
 
-        async function togglePiP() {
+        async function togglePiP(forceOpen = false) {
             const canvas = document.getElementById('pip-canvas');
             const video = document.getElementById('pip-video');
             renderPipCanvas();
 
             try {
-                if (document.pictureInPictureElement) {
+                if (document.pictureInPictureElement && !forceOpen) {
                     await document.exitPictureInPicture();
-                } else {
+                } else if (!document.pictureInPictureElement) {
                     if (!video.srcObject) {
-                        video.srcObject = canvas.captureStream(10);
+                        video.srcObject = canvas.captureStream(15);
                         await video.play();
                     }
                     await video.requestPictureInPicture();
                 }
             } catch (err) {
-                alert("PiP error: " + err.message);
+                // Ignore if PiP requires explicit user gesture in specific browsers
             }
         }
 
@@ -1627,28 +1863,24 @@
         }
         function editTest(idx) { openTestModal(idx); }
 
-        // --- Syllabus Logic with Fire Animation & special.mp3 Loop x2 ---
-        let activeSpecialAudio = null;
+        // --- Syllabus Logic with Micro-Fire & special.mp3 Loop x2 ---
         let audioPlayCount = 0;
 
         function triggerFireEffect(rect) {
             if (!rect) return;
-            // Center of the 24x24px checkbox
             const cx = rect.left + rect.width / 2;
             const cy = rect.top + rect.height / 2;
-
-            // 6 directional bursts around the box boundary
             const angles = [0, 60, 120, 180, 240, 300];
+
             angles.forEach(deg => {
                 const particle = document.createElement('div');
                 particle.className = 'fire-particle';
                 particle.innerText = '🔥';
 
                 const rad = (deg * Math.PI) / 180;
-                // Burst distance tailored to the 24px box size
                 const distance = 16 + Math.random() * 8;
                 const tx = Math.cos(rad) * distance;
-                const ty = Math.sin(rad) * distance - 6; // slight upward drift
+                const ty = Math.sin(rad) * distance - 6;
 
                 particle.style.left = `${cx - 5}px`;
                 particle.style.top = `${cy - 5}px`;
@@ -1664,29 +1896,21 @@
             const t = appState.syllabus.find(x => x.id === id);
             if (!t) return;
 
-            // 1. Capture screen coordinates BEFORE re-rendering the DOM
             let btnRect = null;
-            if (btnEl) {
-                btnRect = btnEl.getBoundingClientRect();
-            }
+            if (btnEl) btnRect = btnEl.getBoundingClientRect();
 
-            // 2. Toggle completion state
             t.completed = !t.completed;
             saveToStorage();
             renderSyllabus();
 
             const audio = document.getElementById('special-audio');
-
             if (t.completed) {
-                // 3. Trigger micro-fire animation
                 if (btnRect) triggerFireEffect(btnRect);
 
-                // 4. Play special.mp3 loop x2
                 if (audio) {
                     audio.pause();
                     audio.currentTime = 0;
                     audioPlayCount = 0;
-
                     audio.onended = () => {
                         audioPlayCount++;
                         if (audioPlayCount < 2) {
@@ -1699,7 +1923,6 @@
                     audio.play().catch(() => {});
                 }
             } else {
-                // Unticked -> Immediately silence audio
                 if (audio) {
                     audio.pause();
                     audio.currentTime = 0;
@@ -1876,7 +2099,7 @@
         }
 
         // ==========================================
-        // --- AI COACH (PURE STUDY GUIDANCE, NO CLUTTER) ---
+        // --- AI COACH (CONCISE, DIRECT GUIDANCE) ---
         // ==========================================
         function toggleAIChat() {
             document.getElementById('ai-chatbox').classList.toggle('hidden');
@@ -1909,7 +2132,7 @@
             const thread = document.getElementById('ai-chat-thread');
             thread.innerHTML = '';
             if (!appState.chatHistory.length) {
-                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full visibility of your test scores, test history, syllabus, and calendar. Ask me any study doubts, test strategies, or preparation tips!</div>`;
+                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full visibility of your test scores, test history, syllabus, and calendar. Ask me any study doubts, test strategies, or 5-day schedules!</div>`;
             } else {
                 appState.chatHistory.forEach(m => {
                     const bubble = document.createElement('div');
@@ -1973,18 +2196,19 @@
 Goal: IIT Bombay CSE 2028 (AIR < 60).
 Daily Routine: Allen Coaching from 7:00 AM to 12:00 PM.
 Current Real Time: ${currentRealTime} | Date: ${currentRealDate} (${todayStr})
-Active Target Test: ${appState.nextTest?.name || 'Upcoming Test'} on ${appState.nextTest?.date || 'Configured Date'}
+Active Target Milestone: ${appState.nextTest?.name || 'Upcoming Test'} on ${appState.nextTest?.date || 'Configured Date'}
 
-RELEVANT DATA:
-- Test Scores & History: ${testHistorySummary}
-- Syllabus: ${syllabusList}
+RELEVANT DATA CONTEXT:
+- Past Test Scores & History: ${testHistorySummary}
+- Current Syllabus Topics: ${syllabusList}
 
 RULES:
-- Be concise, direct, and actionable.
-- Provide practical study schedules and strategies directly without unnecessary preamble.
-- Never output broken citation markers or trail off mid-sentence.`;
+- Be punchy, direct, and actionable. Jump straight into the advice or schedule requested without long winded introductory lecture or repeated stats dumping.
+- When generating schedules, format them cleanly day by day with realistic time blocks post-Allen.
+- NEVER cut off mid sentence. Always complete your advice fully.
+- Never output citation placeholders or JSON action blocks.`;
 
-            // Filter history to ensure alternating user/model sequence and no empty messages
+            // Sanitize conversation history
             let formattedContents = [];
             let lastRole = null;
 
@@ -1992,23 +2216,18 @@ RULES:
                 const role = m.role === 'assistant' ? 'model' : 'user';
                 const text = (m.content || '').trim();
                 if (!text) return;
-
-                // Ensure the list starts with a user prompt
                 if (formattedContents.length === 0 && role !== 'user') return;
 
-                // Prevent consecutive identical roles
                 if (role !== lastRole) {
                     formattedContents.push({ role, parts: [{ text }] });
                     lastRole = role;
                 } else {
-                    // Append text to previous turn if roles repeated
                     formattedContents[formattedContents.length - 1].parts[0].text += `\n${text}`;
                 }
             });
 
-            // If empty, supply a fallback turn
             if (formattedContents.length === 0) {
-                formattedContents.push({ role: 'user', parts: [{ text: "Hello coach, review my status." }] });
+                formattedContents.push({ role: 'user', parts: [{ text: "Hello coach, give me my strategy." }] });
             }
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(appState.apiKey.trim())}`;
@@ -2023,7 +2242,7 @@ RULES:
                     contents: formattedContents,
                     generationConfig: {
                         temperature: 0.4,
-                        maxOutputTokens: 2500
+                        maxOutputTokens: 4096
                     }
                 })
             });
@@ -2042,6 +2261,7 @@ RULES:
 
             return reply;
         }
+
         // --- Backup & Restore ---
         function exportBackup() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
@@ -2079,9 +2299,12 @@ RULES:
             renderDailyQuotaUI();
             lucide.createIcons();
 
+            // 1-second interval for real-time live clocks and PiP updates
             setInterval(() => {
                 renderDailyQuotaUI();
-                if (document.pictureInPictureElement) renderPipCanvas();
+                const istEl = document.getElementById('live-ist-badge');
+                if (istEl) istEl.innerText = getLiveISTString();
+                renderPipCanvas();
             }, 1000);
         };
     </script>
