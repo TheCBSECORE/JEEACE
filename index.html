@@ -435,7 +435,7 @@
                             <span class="text-xs font-semibold text-slate-200">2. Maths HW</span>
                         </label>
                         <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 cursor-pointer transition-all select-none">
-                            <input type="checkbox" id="quota-phy" onchange="toggleDailyQuota('phy')" class="w-4 h-4 rounded text-blue-500 bg-slate-900 border-slate-700 focus:ring-blue-500">
+                            <input type="checkbox" id="quota-phy" onchange="toggleDailyQuota('phy')" class="w-4 h-4 rounded text-blue-500 bg-slate-950 border-slate-700 focus:ring-blue-500">
                             <span class="text-xs font-semibold text-slate-200">3. Physics HW</span>
                         </label>
                         <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-emerald-500/40 cursor-pointer transition-all select-none">
@@ -920,6 +920,14 @@
     <audio id="special-audio" src="special.mp3" preload="auto"></audio>
 
     <script>
+        // --- Date Helper: Eliminates UTC midnight drift for Indian Standard Time (IST) ---
+        function formatLocalDate(d) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         // --- Core Application State ---
         let appState = {
             tests: JSON.parse(localStorage.getItem('jee_tests')) || [],
@@ -932,7 +940,7 @@
 
         let activeChartFilter = 'all';
         let performanceChart = null;
-        let calendarView = 'month';
+        let calendarView = 'today';
         let selectedDate = new Date();
 
         const saveToStorage = () => {
@@ -1041,7 +1049,7 @@
 
         function openTaskModalForDate(targetDate) {
             const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
-            const dateStr = d.toISOString().split('T')[0];
+            const dateStr = formatLocalDate(d);
             document.getElementById('task-date').value = dateStr;
             document.getElementById('task-title').value = '';
             document.getElementById('task-start').value = '';
@@ -1100,8 +1108,9 @@
                 }
 
                 for (let d = 1; d <= totalDays; d++) {
-                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                    const isToday = new Date().toISOString().split('T')[0] === dateStr;
+                    const thisDate = new Date(year, month, d);
+                    const dateStr = formatLocalDate(thisDate);
+                    const isToday = formatLocalDate(new Date()) === dateStr;
                     const dayTasks = appState.scheduledTasks.filter(t => t.date === dateStr);
 
                     const cell = document.createElement('div');
@@ -1157,7 +1166,7 @@
 
         function renderTaskList() {
             const list = document.getElementById('daily-task-list');
-            const dateStr = selectedDate.toISOString().split('T')[0];
+            const dateStr = formatLocalDate(selectedDate);
             document.getElementById('tasks-selected-date').innerText = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             list.innerHTML = '';
 
@@ -1291,7 +1300,7 @@
             let duration = parseInt(document.getElementById('task-duration').value) || 0;
             if (!duration && start && end) duration = calculateDurationMinutes(start, end);
             const status = document.getElementById('task-status').value;
-            const dateStr = document.getElementById('task-date').value || selectedDate.toISOString().split('T')[0];
+            const dateStr = document.getElementById('task-date').value || formatLocalDate(selectedDate);
 
             if (!title) return alert("Please enter a task title.");
 
@@ -1326,7 +1335,7 @@
         // --- DAY SUMMARY MODAL ---
         // ==========================================
         function openDaySummaryModal() {
-            const dateStr = selectedDate.toISOString().split('T')[0];
+            const dateStr = formatLocalDate(selectedDate);
             document.getElementById('summary-date-label').innerText = selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
             const modal = document.getElementById('day-summary-modal');
             const content = document.getElementById('summary-content');
@@ -1377,7 +1386,7 @@
         }
 
         // ==========================================
-        // --- DRAGGABLE LIVE FOCUS POMODORO & PiP ---
+        // --- DRAGGABLE LIVE FOCUS POMODORO & TRUE INTERACTIVE PiP ---
         // ==========================================
         let timerRemaining = 25 * 60;
         let timerInterval = null;
@@ -1385,6 +1394,7 @@
         let isOvertimeMode = false;
         let overtimeElapsed = 0;
         let activeBoundTaskId = null;
+        let pipWindowInstance = null;
 
         function getLiveISTString() {
             return new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -1399,7 +1409,7 @@
         function onDirectTimeChange() {
             if (isTimerRunning || isOvertimeMode) return;
             timerRemaining = getDirectConfiguredSeconds();
-            renderPipCanvas();
+            updateAllTimerDisplays();
         }
 
         function setTimerDirect(mins, secs) {
@@ -1408,15 +1418,34 @@
             document.getElementById('timer-input-m').value = mins.toString().padStart(2, '0');
             document.getElementById('timer-input-s').value = secs.toString().padStart(2, '0');
             timerRemaining = (mins * 60) + secs;
-            renderPipCanvas();
+            updateAllTimerDisplays();
         }
 
-        function updateTimerFields() {
+        function updateAllTimerDisplays() {
             const secsToFormat = isOvertimeMode ? overtimeElapsed : timerRemaining;
-            const mins = Math.floor(secsToFormat / 60);
-            const secs = secsToFormat % 60;
-            document.getElementById('timer-input-m').value = mins.toString().padStart(2, '0');
-            document.getElementById('timer-input-s').value = secs.toString().padStart(2, '0');
+            const mins = Math.floor(secsToFormat / 60).toString().padStart(2, '0');
+            const secs = (secsToFormat % 60).toString().padStart(2, '0');
+
+            document.getElementById('timer-input-m').value = mins;
+            document.getElementById('timer-input-s').value = secs;
+
+            // Update PiP Window HTML if active
+            if (pipWindowInstance && !pipWindowInstance.closed) {
+                const timeEl = pipWindowInstance.document.getElementById('pip-time');
+                if (timeEl) timeEl.innerText = `${mins}:${secs}`;
+                const istEl = pipWindowInstance.document.getElementById('pip-ist');
+                if (istEl) istEl.innerText = `IST ${getLiveISTString()}`;
+                const statusEl = pipWindowInstance.document.getElementById('pip-status');
+                if (statusEl) {
+                    statusEl.innerText = isOvertimeMode ? "OVERTIME STOPWATCH" : (isTimerRunning ? "FOCUS RUNNING" : "PAUSED");
+                    statusEl.className = isOvertimeMode ? "font-bold text-amber-400" : (isTimerRunning ? "font-bold text-emerald-400" : "font-bold text-slate-400");
+                }
+                const startBtn = pipWindowInstance.document.getElementById('pip-btn-start');
+                if (startBtn) {
+                    startBtn.innerText = isTimerRunning ? "Pause" : "Start";
+                }
+            }
+
             renderPipCanvas();
         }
 
@@ -1435,7 +1464,7 @@
                 if (!isOvertimeMode) {
                     if (timerRemaining > 0) {
                         timerRemaining--;
-                        updateTimerFields();
+                        updateAllTimerDisplays();
                     } else {
                         clearInterval(timerInterval);
                         isTimerRunning = false;
@@ -1443,9 +1472,10 @@
                     }
                 } else {
                     overtimeElapsed++;
-                    updateTimerFields();
+                    updateAllTimerDisplays();
                 }
             }, 1000);
+            updateAllTimerDisplays();
         }
 
         function pauseTimer() {
@@ -1456,7 +1486,7 @@
             startBtn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume`;
             document.getElementById('timer-status-dot').className = "w-2 h-2 rounded-full bg-amber-400";
             lucide.createIcons();
-            renderPipCanvas();
+            updateAllTimerDisplays();
         }
 
         function resetTimer() {
@@ -1466,7 +1496,6 @@
             overtimeElapsed = 0;
             activeBoundTaskId = null;
 
-            // Reset UI state
             document.getElementById('pomo-subject-container').classList.add('hidden');
             document.getElementById('pomo-presets-row').classList.remove('hidden');
             document.getElementById('timer-save-overtime-btn').classList.add('hidden');
@@ -1479,14 +1508,14 @@
             document.getElementById('timer-hint-text').className = "text-[10px] text-slate-500 mt-1";
 
             timerRemaining = 25 * 60;
-            updateTimerFields();
+            updateAllTimerDisplays();
             lucide.createIcons();
         }
 
         function toggleFocusTimer() {
             const w = document.getElementById('focus-timer-widget');
             w.classList.toggle('hidden');
-            if (!w.classList.contains('hidden')) renderPipCanvas();
+            if (!w.classList.contains('hidden')) updateAllTimerDisplays();
         }
 
         function startTaskPomodoro(taskId) {
@@ -1496,12 +1525,10 @@
             resetTimer();
             activeBoundTaskId = taskId;
 
-            // Calculate duration
             let mins = Number(task.duration) || 0;
             if (!mins && task.start && task.end) mins = calculateDurationMinutes(task.start, task.end);
             if (mins <= 0) mins = 45;
 
-            // Bind UI
             document.getElementById('active-task-label').innerText = task.title;
             const subBadge = document.getElementById('pomo-subject-badge');
             subBadge.innerText = task.subject || 'Routine';
@@ -1510,12 +1537,10 @@
             document.getElementById('pomo-mode-badge').innerText = "COUNTDOWN";
             document.getElementById('pomo-mode-badge').className = "text-[10px] font-mono text-emerald-400 font-bold";
 
-            // Open widget and start
             document.getElementById('focus-timer-widget').classList.remove('hidden');
             setTimerDirect(mins, 0);
             startTimer();
 
-            // Also launch Picture-in-Picture directly if possible
             togglePiP(true);
         }
 
@@ -1542,7 +1567,6 @@
                 alert("🎉 Great job Laksh! Task marked as completed.");
                 resetTimer();
             } else {
-                // Switch to Extended Overtime Stopwatch Mode
                 isOvertimeMode = true;
                 overtimeElapsed = 0;
                 document.getElementById('pomo-presets-row').classList.add('hidden');
@@ -1552,7 +1576,7 @@
                 document.getElementById('timer-hint-text').innerText = "Tracking overtime. Click 'Save & Complete' when done.";
                 document.getElementById('timer-hint-text').className = "text-[10px] text-amber-400 font-bold mt-1";
 
-                updateTimerFields();
+                updateAllTimerDisplays();
                 startTimer();
             }
         }
@@ -1576,6 +1600,102 @@
             resetTimer();
         }
 
+        // --- Picture-in-Picture with Interactive Window or Canvas Fallback ---
+        async function togglePiP(forceOpen = false) {
+            // Check for True Interactive Document Picture-in-Picture API
+            if ('documentPictureInPicture' in window) {
+                if (pipWindowInstance && !pipWindowInstance.closed) {
+                    if (!forceOpen) {
+                        pipWindowInstance.close();
+                        pipWindowInstance = null;
+                    }
+                    return;
+                }
+
+                try {
+                    pipWindowInstance = await window.documentPictureInPicture.requestWindow({
+                        width: 320,
+                        height: 200
+                    });
+
+                    // Inject Tailwind styles into PiP window
+                    [...document.styleSheets].forEach(styleSheet => {
+                        try {
+                            const cssRules = [...styleSheet.cssRules].map(rule => rule.cssText).join('');
+                            const style = pipWindowInstance.document.createElement('style');
+                            style.textContent = cssRules;
+                            pipWindowInstance.document.head.appendChild(style);
+                        } catch (e) {
+                            const link = pipWindowInstance.document.createElement('link');
+                            link.rel = 'stylesheet';
+                            link.type = styleSheet.type;
+                            link.media = styleSheet.media;
+                            link.href = styleSheet.href;
+                            pipWindowInstance.document.head.appendChild(link);
+                        }
+                    });
+
+                    const taskLabel = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Task') : 'Focus Session';
+
+                    pipWindowInstance.document.body.className = "bg-slate-950 text-slate-200 flex flex-col justify-between p-3 select-none h-screen";
+                    pipWindowInstance.document.body.innerHTML = `
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 text-xs">
+                            <span class="text-amber-400 font-bold uppercase tracking-wider text-[11px]">AIM: IIT BOMBAY</span>
+                            <span id="pip-ist" class="font-mono text-slate-400 text-[10px]">IST ${getLiveISTString()}</span>
+                        </div>
+                        <div class="text-center my-auto">
+                            <div class="text-[11px] text-indigo-300 font-semibold truncate px-2 mb-1">${taskLabel}</div>
+                            <div id="pip-time" class="font-mono text-4xl font-black text-white tracking-tight">00:00</div>
+                            <div id="pip-status" class="text-[10px] font-bold text-slate-400 mt-1 uppercase">ACTIVE</div>
+                        </div>
+                        <div class="flex gap-2 pt-1 border-t border-slate-800">
+                            <button id="pip-btn-start" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs transition-colors">
+                                ${isTimerRunning ? 'Pause' : 'Start'}
+                            </button>
+                            <button id="pip-btn-reset" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition-colors">
+                                Reset
+                            </button>
+                        </div>
+                    `;
+
+                    pipWindowInstance.document.getElementById('pip-btn-start').onclick = () => {
+                        if (isTimerRunning) pauseTimer();
+                        else startTimer();
+                    };
+                    pipWindowInstance.document.getElementById('pip-btn-reset').onclick = () => resetTimer();
+
+                    pipWindowInstance.addEventListener('pagehide', () => { pipWindowInstance = null; });
+                    updateAllTimerDisplays();
+                    return;
+                } catch (err) {
+                    // Fall back to Canvas PiP video
+                }
+            }
+
+            // Fallback: Standard Canvas Video Stream PiP
+            const canvas = document.getElementById('pip-canvas');
+            const video = document.getElementById('pip-video');
+            renderPipCanvas();
+
+            try {
+                if (document.pictureInPictureElement && !forceOpen) {
+                    await document.exitPictureInPicture();
+                } else if (!document.pictureInPictureElement) {
+                    if (!video.srcObject) {
+                        video.srcObject = canvas.captureStream(15);
+                        await video.play();
+                    }
+                    await video.requestPictureInPicture();
+
+                    // Wire physical/media session controls to start and pause
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.setActionHandler('play', () => startTimer());
+                        navigator.mediaSession.setActionHandler('pause', () => pauseTimer());
+                    }
+                }
+            } catch (err) {}
+        }
+
         function renderPipCanvas() {
             const canvas = document.getElementById('pip-canvas');
             if (!canvas) return;
@@ -1589,12 +1709,11 @@
             ctx.fillStyle = '#020617';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Header line
-            ctx.fillStyle = isOvertimeMode ? '#f59e0b' : '#6366f1';
-            ctx.font = 'bold 13px Inter, sans-serif';
+            // Header line with AIM: IIT restored
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = 'bold 12px Inter, sans-serif';
             ctx.textAlign = 'left';
-            const taskText = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Task') : 'AIM: IIT BOMBAY';
-            ctx.fillText(taskText.slice(0, 20), 16, 26);
+            ctx.fillText('AIM: IIT BOMBAY', 16, 26);
 
             // Live IST Clock
             ctx.fillStyle = '#94a3b8';
@@ -1609,75 +1728,29 @@
             ctx.lineTo(canvas.width - 16, 36);
             ctx.stroke();
 
-            // Time Digits
-            ctx.fillStyle = isOvertimeMode ? '#fbbf24' : '#ffffff';
-            ctx.font = 'bold 54px monospace';
+            // Task Name
+            ctx.fillStyle = '#818cf8';
+            ctx.font = '600 12px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(`${mins}:${secs}`, canvas.width / 2, 98);
+            const taskText = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Focus Task') : 'Focus Routine';
+            ctx.fillText(taskText.slice(0, 28), canvas.width / 2, 58);
+
+            // Digits
+            ctx.fillStyle = isOvertimeMode ? '#fbbf24' : '#ffffff';
+            ctx.font = 'bold 48px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${mins}:${secs}`, canvas.width / 2, 108);
 
             // Subtitle state
             ctx.font = 'bold 11px Inter, sans-serif';
             if (isOvertimeMode) {
                 ctx.fillStyle = '#f59e0b';
-                ctx.fillText('⏳ OVERTIME STOPWATCH RUNNING', canvas.width / 2, 134);
+                ctx.fillText('⏳ OVERTIME RUNNING', canvas.width / 2, 138);
             } else {
                 ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
-                ctx.fillText(isTimerRunning ? '● FOCUS SESSION ACTIVE' : '❚❚ PAUSED', canvas.width / 2, 134);
+                ctx.fillText(isTimerRunning ? '● RUNNING' : '❚❚ PAUSED', canvas.width / 2, 138);
             }
         }
-
-        async function togglePiP(forceOpen = false) {
-            const canvas = document.getElementById('pip-canvas');
-            const video = document.getElementById('pip-video');
-            renderPipCanvas();
-
-            try {
-                if (document.pictureInPictureElement && !forceOpen) {
-                    await document.exitPictureInPicture();
-                } else if (!document.pictureInPictureElement) {
-                    if (!video.srcObject) {
-                        video.srcObject = canvas.captureStream(15);
-                        await video.play();
-                    }
-                    await video.requestPictureInPicture();
-                }
-            } catch (err) {
-                // Ignore if PiP requires explicit user gesture in specific browsers
-            }
-        }
-
-        (function makeDraggable() {
-            const el = document.getElementById('focus-timer-widget');
-            const handle = document.getElementById('timer-drag-handle');
-            if (!handle || !el) return;
-            let isDragging = false, startX, startY, origX, origY;
-
-            handle.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startX = e.clientX;
-                startY = e.clientY;
-                const rect = el.getBoundingClientRect();
-                origX = rect.left;
-                origY = rect.top;
-                el.style.position = 'fixed';
-                el.style.bottom = 'auto';
-                el.style.left = `${origX}px`;
-                el.style.top = `${origY}px`;
-
-                const onMove = (ev) => {
-                    if (!isDragging) return;
-                    el.style.left = `${origX + (ev.clientX - startX)}px`;
-                    el.style.top = `${origY + (ev.clientY - startY)}px`;
-                };
-                const onUp = () => {
-                    isDragging = false;
-                    document.removeEventListener('mousemove', onMove);
-                    document.removeEventListener('mouseup', onUp);
-                };
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onUp);
-            });
-        })();
 
         // ==========================================
         // --- PERFORMANCE ANALYTICS & TESTS ---
@@ -1863,9 +1936,7 @@
         }
         function editTest(idx) { openTestModal(idx); }
 
-        // --- Syllabus Logic with Micro-Fire & special.mp3 Loop x2 ---
-        let audioPlayCount = 0;
-
+        // --- Syllabus Logic ---
         function triggerFireEffect(rect) {
             if (!rect) return;
             const cx = rect.left + rect.width / 2;
@@ -1892,6 +1963,7 @@
             });
         }
 
+        let audioPlayCount = 0;
         function toggleTopic(id, btnEl) {
             const t = appState.syllabus.find(x => x.id === id);
             if (!t) return;
@@ -2044,7 +2116,7 @@
         const QUOTA_KEY = 'jee_daily_quota';
 
         function getStoredQuota() {
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = formatLocalDate(new Date());
             const stored = JSON.parse(localStorage.getItem(QUOTA_KEY));
 
             if (!stored || stored.date !== todayStr) {
@@ -2099,7 +2171,7 @@
         }
 
         // ==========================================
-        // --- AI COACH (CONCISE, DIRECT GUIDANCE) ---
+        // --- AI COACH (FULL COMPLETION FIX) ---
         // ==========================================
         function toggleAIChat() {
             document.getElementById('ai-chatbox').classList.toggle('hidden');
@@ -2132,7 +2204,7 @@
             const thread = document.getElementById('ai-chat-thread');
             thread.innerHTML = '';
             if (!appState.chatHistory.length) {
-                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full visibility of your test scores, test history, syllabus, and calendar. Ask me any study doubts, test strategies, or 5-day schedules!</div>`;
+                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed">Hey Laksh! I'm your dedicated JEE Mentor. I have full visibility of your test scores, test history, syllabus, and calendar. Ask me any study doubts, test strategies, or schedules!</div>`;
             } else {
                 appState.chatHistory.forEach(m => {
                     const bubble = document.createElement('div');
@@ -2185,8 +2257,8 @@
             if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
 
             const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
-            const currentRealTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+            const todayStr = formatLocalDate(now);
+            const currentRealTime = getLiveISTString();
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
             const testHistorySummary = JSON.stringify(appState.tests || []);
@@ -2205,10 +2277,9 @@ RELEVANT DATA CONTEXT:
 RULES:
 - Be punchy, direct, and actionable. Jump straight into the advice or schedule requested without long winded introductory lecture or repeated stats dumping.
 - When generating schedules, format them cleanly day by day with realistic time blocks post-Allen.
-- NEVER cut off mid sentence. Always complete your advice fully.
+- NEVER cut off mid-sentence. Always finish your thoughts completely.
 - Never output citation placeholders or JSON action blocks.`;
 
-            // Sanitize conversation history
             let formattedContents = [];
             let lastRole = null;
 
@@ -2267,7 +2338,7 @@ RULES:
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
             const dl = document.createElement('a');
             dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", `jee_ace_complete_backup_${new Date().toISOString().split('T')[0]}.json`);
+            dl.setAttribute("download", `jee_ace_complete_backup_${formatLocalDate(new Date())}.json`);
             document.body.appendChild(dl);
             dl.click();
             dl.remove();
@@ -2294,17 +2365,16 @@ RULES:
             renderSyllabus();
             updateCountdown();
             renderCalendar();
-            renderPipCanvas();
+            updateAllTimerDisplays();
             renderChat();
             renderDailyQuotaUI();
             lucide.createIcons();
 
-            // 1-second interval for real-time live clocks and PiP updates
             setInterval(() => {
                 renderDailyQuotaUI();
                 const istEl = document.getElementById('live-ist-badge');
                 if (istEl) istEl.innerText = getLiveISTString();
-                renderPipCanvas();
+                updateAllTimerDisplays();
             }, 1000);
         };
     </script>
