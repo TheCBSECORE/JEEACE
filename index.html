@@ -1228,40 +1228,40 @@
             { id: 5, type: 'short', title: 'ALLEN SRG BATCH', targetDate: 'December 31, 2026', image: 'ln.jpg', align: 'object-center', completed: false }
         ];
 
-        // Default pre-sorted Class 11th chapters mapping to your folder categories
+        // Default comprehensive Class 11th chapters mapping with specific PCM categories/modules
         const default11thSyllabus = [
-            // Physics -> Mechanics I
+            // Physics Categories
             { id: 101, subject: 'Physics', module: 'Mechanics I', chapter: 'Units and Dimension', status: 'To Do' },
             { id: 102, subject: 'Physics', module: 'Mechanics I', chapter: 'Kinematics', status: 'To Do' },
             { id: 103, subject: 'Physics', module: 'Mechanics I', chapter: 'NLM, Friction', status: 'To Do' },
             { id: 104, subject: 'Physics', module: 'Mechanics I', chapter: 'Circular Motion', status: 'To Do' },
             { id: 105, subject: 'Physics', module: 'Mechanics I', chapter: 'WPE', status: 'To Do' },
-            // Physics -> Mechanics II & Waves
             { id: 106, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Centre of Mass - Momentum and Collision', status: 'To Do' },
             { id: 107, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Rotational Dynamics', status: 'To Do' },
             { id: 108, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Fluid Mechanics', status: 'To Do' },
             { id: 109, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Elasticity, thermal expansion', status: 'To Do' },
-            // Physics -> Thermodynamics
             { id: 110, subject: 'Physics', module: 'Thermodynamics', chapter: 'Calorimetry and Heat Transfer', status: 'To Do' },
             { id: 111, subject: 'Physics', module: 'Thermodynamics', chapter: 'KTG & Thermodynamics', status: 'To Do' },
 
-            // Maths -> Algebra
-            { id: 201, subject: 'Mathematics', module: 'Algebra', chapter: 'Set Theory and Number System', status: 'To Do' },
-            { id: 202, subject: 'Mathematics', module: 'Algebra', chapter: 'Fundamentals of Algebra', status: 'To Do' },
-            { id: 203, subject: 'Mathematics', module: 'Algebra', chapter: 'Logarithm', status: 'To Do' },
-            { id: 204, subject: 'Mathematics', module: 'Algebra', chapter: 'Quadratic Equation', status: 'To Do' },
-            { id: 205, subject: 'Mathematics', module: 'Algebra', chapter: 'Sequence and Series', status: 'To Do' },
-            { id: 206, subject: 'Mathematics', module: 'Algebra', chapter: 'Determinant', status: 'To Do' },
-            { id: 207, subject: 'Mathematics', module: 'Algebra', chapter: 'Binomial Theorem', status: 'To Do' },
-            { id: 208, subject: 'Mathematics', module: 'Algebra', chapter: 'Permutation and Combination', status: 'To Do' },
-            // Maths -> Trigonometry & Stats
-            { id: 209, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'trigonometric rtaios and identitites', status: 'To Do' },
-            { id: 210, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: '-/- Equations', status: 'To Do' },
-            { id: 211, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Soln of Triangle', status: 'To Do' },
-            // Maths -> Coordinate & Vectors
-            { id: 212, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Line and Linear inequality', status: 'To Do' },
-            { id: 213, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Circle', status: 'To Do' },
-            { id: 214, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Section : Parabola Elipse Hyperbola', status: 'To Do' }
+            // Chemistry Categories (Physical, Inorganic, Organic)
+            { id: 301, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Mole Concept', status: 'To Do' },
+            { id: 302, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Atomic Structure', status: 'To Do' },
+            { id: 303, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Chemical Bonding', status: 'To Do' },
+            { id: 304, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'Periodic Table', status: 'To Do' },
+            { id: 305, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'p-Block Elements', status: 'To Do' },
+            { id: 306, subject: 'Chemistry', module: 'Organic Chem', chapter: 'General Organic Chemistry (GOC)', status: 'To Do' },
+            { id: 307, subject: 'Chemistry', module: 'Organic Chem', chapter: 'Hydrocarbons', status: 'To Do' },
+
+            // Mathematics Categories (Algebra, Calculus, Coordinate & Vectors, Trigonometry & Stats)
+            { id: 201, subject: 'Mathematics', module: 'Algebra', chapter: 'Quadratic Equations', status: 'To Do' },
+            { id: 202, subject: 'Mathematics', module: 'Algebra', chapter: 'Sequence and Series', status: 'To Do' },
+            { id: 203, subject: 'Mathematics', module: 'Algebra', chapter: 'Binomial Theorem', status: 'To Do' },
+            { id: 204, subject: 'Mathematics', module: 'Algebra', chapter: 'Permutation and Combination', status: 'To Do' },
+            { id: 205, subject: 'Mathematics', module: 'Calculus', chapter: 'Functions & Graphs', status: 'To Do' },
+            { id: 206, subject: 'Mathematics', module: 'Calculus', chapter: 'Limits, Continuity & Differentiability', status: 'To Do' },
+            { id: 207, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Line and Circle', status: 'To Do' },
+            { id: 208, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Sections (Parabola, Ellipse, Hyperbola)', status: 'To Do' },
+            { id: 209, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Ratios and Identities', status: 'To Do' }
         ];
 
         let appState = {
@@ -1350,7 +1350,7 @@
 
             subjects.forEach(sub => {
                 const subCard = document.createElement('div');
-                subCard.className = "glass-card p-6 rounded-3xl flex flex-col justify-between border border-slate-800 space-y-6";
+                subCard.className = "glass-card p-6 rounded-3xl flex flex-col justify-between border border-slate-800 space-y-6 shadow-xl";
 
                 const subItems = list.filter(x => x.subject === sub);
                 const subDone = subItems.filter(x => x.status === 'Done' || x.status === 'Mastered').length;
@@ -1452,22 +1452,6 @@
 
             if (!isDone) {
                 if (btnEl) triggerFireEffect(btnEl.getBoundingClientRect());
-                const audio = document.getElementById('special-audio');
-                if (audio) {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    audioPlayCount = 0;
-                    audio.onended = () => {
-                        audioPlayCount++;
-                        if (audioPlayCount < 2) {
-                            audio.currentTime = 0;
-                            audio.play().catch(() => {});
-                        } else {
-                            audio.pause();
-                        }
-                    };
-                    audio.play().catch(() => {});
-                }
             }
             saveToStorage();
             renderPrepSyllabusTree();
@@ -3005,61 +2989,55 @@ RULES:
         }
 
         function switchTab(tab) {
-    const tabs = ['analytics', 'planner', 'daily', 'f1hub', 'goals', 'fullprep'];
+            const tabs = ['analytics', 'planner', 'daily', 'f1hub', 'goals', 'fullprep'];
 
-    // Hide all views
-    tabs.forEach(name => {
-        const view = document.getElementById(`view-${name}`);
-        if (view) {
-            view.classList.add('hidden');
+            tabs.forEach(name => {
+                const view = document.getElementById(`view-${name}`);
+                if (view) {
+                    view.classList.add('hidden');
+                }
+            });
+
+            const selectedView = document.getElementById(`view-${tab}`);
+            if (selectedView) {
+                selectedView.classList.remove('hidden');
+            }
+
+            tabs.forEach(name => {
+                const btn = document.getElementById(`nav-btn-${name}`);
+                if (!btn) return;
+
+                btn.classList.remove('sidebar-btn-active');
+
+                if (name === tab) {
+                    btn.classList.add('sidebar-btn-active');
+                }
+            });
+
+            if (tab === 'planner') {
+                renderSyllabus();
+            }
+
+            if (tab === 'daily') {
+                renderCalendar();
+                renderDailyQuotaUI();
+            }
+
+            if (tab === 'goals') {
+                renderGoals();
+            }
+
+            if (tab === 'fullprep') {
+                renderPrepSyllabusTree();
+            }
+
+            lucide.createIcons();
+
+            document.getElementById('main-container')?.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
-    });
-
-    // Show selected view
-    const selectedView = document.getElementById(`view-${tab}`);
-    if (selectedView) {
-        selectedView.classList.remove('hidden');
-    }
-
-    // Update sidebar active state
-    tabs.forEach(name => {
-        const btn = document.getElementById(`nav-btn-${name}`);
-        if (!btn) return;
-
-        btn.classList.remove('sidebar-btn-active');
-
-        if (name === tab) {
-            btn.classList.add('sidebar-btn-active');
-        }
-    });
-
-    // Re-render things that need refreshing when their tab opens
-    if (tab === 'planner') {
-        renderSyllabus();
-    }
-
-    if (tab === 'daily') {
-        renderCalendar();
-        renderDailyQuotaUI();
-    }
-
-    if (tab === 'goals') {
-        renderGoals();
-    }
-
-    if (tab === 'fullprep') {
-        renderPrepSyllabusTree();
-    }
-
-    // Recreate Lucide icons
-    lucide.createIcons();
-
-    // Scroll to top
-    document.getElementById('main-container')?.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
 
         window.onload = () => {
             calculateDaysRemainingMetrics();
