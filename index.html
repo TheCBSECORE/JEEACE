@@ -773,12 +773,12 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Unit / Module</label>
-                    <input type="text" id="prep-modal-module" placeholder="e.g. Mechanics I, GOC" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                    <label class="block text-slate-400 font-bold uppercase mb-1">Unit / Module Folder</label>
+                    <input type="text" id="prep-modal-module" placeholder="e.g. Mechanics I, Algebra" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
                 </div>
                 <div>
                     <label class="block text-slate-400 font-bold uppercase mb-1">Chapter Name</label>
-                    <input type="text" id="prep-modal-chapter" placeholder="e.g. Kinematics 2D" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                    <input type="text" id="prep-modal-chapter" placeholder="e.g. Kinematics" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
                 </div>
             </div>
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
@@ -1210,87 +1210,6 @@
         </div>
     </div>
 
-    <!-- MODALS FOR WHOLE PREP TRACKER -->
-    <div id="modal-add-prep-chapter" class="fixed inset-0 z-[80] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 select-none">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-2 text-white font-bold">
-                    <i data-lucide="folder-plus" class="w-4 h-4 text-orange-500"></i>
-                    <span>Add Custom Chapter</span>
-                </div>
-                <button onclick="closeAddPrepChapterModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
-            </div>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Subject</label>
-                    <select id="prep-modal-subject" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Mathematics">Mathematics</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Unit / Module</label>
-                    <input type="text" id="prep-modal-module" placeholder="e.g. Mechanics I, GOC" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
-                </div>
-                <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Chapter Name</label>
-                    <input type="text" id="prep-modal-chapter" placeholder="e.g. Kinematics 2D" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
-                </div>
-            </div>
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
-                <button onclick="closeAddPrepChapterModal()" class="px-4 py-2 text-slate-400 hover:text-white font-semibold">Cancel</button>
-                <button onclick="savePrepChapter()" class="px-5 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-xl font-bold transition-all">Add Chapter</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-add-prep-resource" class="fixed inset-0 z-[80] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 select-none">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-2 text-white font-bold">
-                    <i data-lucide="link" class="w-4 h-4 text-purple-400"></i>
-                    <span>Add Resource</span>
-                </div>
-                <button onclick="closeAddPrepResourceModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
-            </div>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Scope / Level</label>
-                    <select id="prep-resource-scope" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
-                        <option value="Global (All Subjects)">Global (All Subjects)</option>
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Mathematics">Mathematics</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Resource Title</label>
-                    <input type="text" id="prep-resource-title" placeholder="e.g. HC Verma Solved Examples" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
-                </div>
-                <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Type</label>
-                    <select id="prep-resource-type" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
-                        <option value="Reference Book / PDF">Reference Book / PDF</option>
-                        <option value="Video Lecture">Video Lecture</option>
-                        <option value="Notes">Notes</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">URL (Optional)</label>
-                    <input type="text" id="prep-resource-url" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
-                </div>
-            </div>
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
-                <button onclick="closeAddPrepResourceModal()" class="px-4 py-2 text-slate-400 hover:text-white font-semibold">Cancel</button>
-                <button onclick="savePrepResource()" class="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold transition-all">Save Resource</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- AUDIO ELEMENT FOR SPECIAL.MP3 -->
-    <audio id="special-audio" src="special.mp3" preload="auto"></audio>
-
     <script>
         const JEE_2028_DATE = new Date('2028-01-22T00:00:00');
 
@@ -1309,9 +1228,45 @@
             { id: 5, type: 'short', title: 'ALLEN SRG BATCH', targetDate: 'December 31, 2026', image: 'ln.jpg', align: 'object-center', completed: false }
         ];
 
+        // Default pre-sorted Class 11th chapters mapping to your folder categories
+        const default11thSyllabus = [
+            // Physics -> Mechanics I
+            { id: 101, subject: 'Physics', module: 'Mechanics I', chapter: 'Units and Dimension', status: 'To Do' },
+            { id: 102, subject: 'Physics', module: 'Mechanics I', chapter: 'Kinematics', status: 'To Do' },
+            { id: 103, subject: 'Physics', module: 'Mechanics I', chapter: 'NLM and Friction', status: 'To Do' },
+            { id: 104, subject: 'Physics', module: 'Mechanics I', chapter: 'Circular Motion', status: 'To Do' },
+            { id: 105, subject: 'Physics', module: 'Mechanics I', chapter: 'Work, Power and Energy (WPE)', status: 'To Do' },
+            // Physics -> Mechanics II & Waves
+            { id: 106, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Centre of Mass - Momentum and Collision', status: 'To Do' },
+            { id: 107, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Rotational Dynamics', status: 'To Do' },
+            { id: 108, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Fluid Mechanics', status: 'To Do' },
+            { id: 109, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Elasticity and Thermal Expansion', status: 'To Do' },
+            // Physics -> Thermodynamics
+            { id: 110, subject: 'Physics', module: 'Thermodynamics', chapter: 'Calorimetry and Heat Transfer', status: 'To Do' },
+            { id: 111, subject: 'Physics', module: 'Thermodynamics', chapter: 'KTG & Thermodynamics', status: 'To Do' },
+
+            // Maths -> Algebra
+            { id: 201, subject: 'Mathematics', module: 'Algebra', chapter: 'Set Theory and Number System', status: 'To Do' },
+            { id: 202, subject: 'Mathematics', module: 'Algebra', chapter: 'Fundamentals of Algebra', status: 'To Do' },
+            { id: 203, subject: 'Mathematics', module: 'Algebra', chapter: 'Logarithm', status: 'To Do' },
+            { id: 204, subject: 'Mathematics', module: 'Algebra', chapter: 'Quadratic Equation', status: 'To Do' },
+            { id: 205, subject: 'Mathematics', module: 'Algebra', chapter: 'Sequence and Series', status: 'To Do' },
+            { id: 206, subject: 'Mathematics', module: 'Algebra', chapter: 'Determinant', status: 'To Do' },
+            { id: 207, subject: 'Mathematics', module: 'Algebra', chapter: 'Binomial Theorem', status: 'To Do' },
+            { id: 208, subject: 'Mathematics', module: 'Algebra', chapter: 'Permutation and Combination', status: 'To Do' },
+            // Maths -> Trigonometry & Stats
+            { id: 209, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Ratios and Identities', status: 'To Do' },
+            { id: 210, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Equations', status: 'To Do' },
+            { id: 211, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Solution of Triangles', status: 'To Do' },
+            // Maths -> Coordinate & Vectors
+            { id: 212, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Line and Linear Inequality', status: 'To Do' },
+            { id: 213, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Circle', status: 'To Do' },
+            { id: 214, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Sections (Parabola, Ellipse, Hyperbola)', status: 'To Do' }
+        ];
+
         let appState = {
             currentClass: '11',
-            prepSyllabus: JSON.parse(localStorage.getItem('jee_prep_syllabus')) || { "11": [], "12": [] },
+            prepSyllabus: JSON.parse(localStorage.getItem('jee_prep_syllabus')) || { "11": default11thSyllabus, "12": [] },
             prepResources: JSON.parse(localStorage.getItem('jee_prep_resources')) || [],
             tests: JSON.parse(localStorage.getItem('jee_tests')) || [],
             syllabus: JSON.parse(localStorage.getItem('jee_syllabus')) || [],
@@ -1542,7 +1497,7 @@
             appState.prepSyllabus[appState.currentClass].push({
                 id: Date.now(),
                 subject,
-                module: moduleName,
+                module: moduleName || 'General',
                 chapter,
                 status: 'To Do'
             });
@@ -1771,26 +1726,6 @@
 
         function closeRealityCheckModal() {
             document.getElementById('reality-check-modal').classList.add('hidden');
-        }
-
-        function switchTab(view) {
-            ['analytics', 'planner', 'daily', 'f1hub', 'goals', 'fullprep'].forEach(v => {
-                const el = document.getElementById(`view-${v}`);
-                if (el) el.classList.toggle('hidden', v !== view);
-                const btn = document.getElementById(`nav-btn-${v}`);
-                if (btn) {
-                    btn.className = (v === view) 
-                        ? "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all sidebar-btn-active" 
-                        : "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 transition-all";
-                }
-            });
-
-            if (view === 'daily') { renderCalendar(); renderTaskMetrics(); }
-            if (view === 'analytics') renderChart();
-            if (view === 'planner') { renderSyllabus(); updateCountdown(); }
-            if (view === 'fullprep') renderPrepSyllabusTree();
-            if (view === 'goals') renderGoals();
-            lucide.createIcons();
         }
 
         function setCalendarView(mode) {
@@ -2952,7 +2887,7 @@
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
             const testHistorySummary = JSON.stringify(appState.tests || []);
-            const syllabusList = JSON.stringify((appState.syllabus || []).map(s => `${s.subject}: ${s.name} (${s.completed ? 'Done' : 'Pending'})`));
+            const syllabusList = JSON.stringify((appState.prepSyllabus["11"] || []).map(s => `${s.subject} [${s.module}]: ${s.chapter} (${s.status})`));
 
             const systemContext = `You are Laksh's grounded, candid, and disciplined JEE Mentor.
 Goal: IIT Bombay CSE 2028 (AIR < 60).
@@ -2962,7 +2897,7 @@ Active Target Milestone: ${appState.nextTest?.name || 'Upcoming Test'} on ${appS
 
 RELEVANT DATA CONTEXT:
 - Past Test Scores & History: ${testHistorySummary}
-- Current Syllabus Topics: ${syllabusList}
+- Prep Syllabus 11th Topics: ${syllabusList}
 
 RULES:
 - Be punchy, direct, and actionable. Jump straight into the advice or schedule requested without long winded introductory lecture or repeated stats dumping.
