@@ -27,24 +27,26 @@
             border-left: 3px solid #6366f1;
         }
 
-        /* Collapsed Rail Slide-Out Pill Hover */
+        /* Collapsed Sidebar Rail Hover Slide-Out Animation */
         .sidebar-rail .rail-btn {
             position: relative;
         }
-        .sidebar-rail .rail-btn .rail-label {
+        .sidebar-rail .rail-label {
+            display: none;
             position: absolute;
             left: 100%;
             top: 50%;
-            transform: translateY(-50%) translateX(8px);
+            transform: translateY(-50%) translateX(6px);
             opacity: 0;
             pointer-events: none;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             white-space: nowrap;
-            z-index: 70;
+            z-index: 9999;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .sidebar-rail .rail-btn:hover .rail-label {
+            display: block;
             opacity: 1;
-            transform: translateY(-50%) translateX(14px);
+            transform: translateY(-50%) translateX(12px);
             pointer-events: auto;
         }
 
@@ -74,27 +76,29 @@
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col md:flex-row pb-28 md:pb-0 overflow-x-hidden">
 
-    <!-- PERMANENT LEFT SIDEBAR WITH TOGGLE CAPABILITY -->
+    <!-- PERMANENT LEFT SIDEBAR WITH SMOOTH COLLAPSIBLE RAIL -->
     <aside id="app-sidebar" class="w-full md:w-64 bg-slate-950/95 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col shrink-0 md:h-screen md:sticky md:top-0 z-40 transition-all duration-300">
         <!-- Logo & Profile -->
         <div class="p-4 border-b border-slate-800 flex items-center justify-between">
             <div id="sidebar-logo-text" class="flex items-center gap-2">
-                <div class="bg-indigo-600 p-1.5 rounded-lg shadow-lg shadow-indigo-500/20">
+                <div class="bg-indigo-600 p-1.5 rounded-lg shadow-lg shadow-indigo-500/20 shrink-0">
                     <i data-lucide="layout-dashboard" class="w-5 h-5 text-white"></i>
                 </div>
-                <div>
-                    <span class="text-xl font-bold tracking-tight text-white">JEE<span class="text-indigo-500">Ace</span></span>
-                    <span class="block text-[10px] text-indigo-400 font-mono">Laksh • JEE 2028</span>
+                <div class="truncate">
+                    <span class="text-xl font-bold tracking-tight text-white block">JEE<span class="text-indigo-500">Ace</span></span>
+                    <span class="block text-[10px] text-indigo-400 font-mono -mt-0.5">Laksh • JEE 2028</span>
                 </div>
             </div>
             <div class="flex items-center gap-1">
-                <button onclick="toggleSidebarRail()" title="Toggle Sidebar Width" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
+                <!-- Toggle Button -->
+                <button onclick="toggleSidebarRail()" title="Toggle Sidebar" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
                     <i id="sidebar-toggle-icon" data-lucide="panel-left-close" class="w-4 h-4"></i>
                 </button>
-                <button onclick="exportBackup()" title="Download Backup" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
+                <!-- Export / Import (Hidden when collapsed) -->
+                <button onclick="exportBackup()" id="btn-export-backup" title="Download Backup" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
                     <i data-lucide="download" class="w-4 h-4"></i>
                 </button>
-                <label title="Restore Backup" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer">
+                <label id="label-import-backup" title="Restore Backup" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer">
                     <i data-lucide="upload" class="w-4 h-4"></i>
                     <input type="file" id="import-input" accept=".json" class="hidden" onchange="importBackup(event)">
                 </label>
@@ -103,8 +107,8 @@
 
         <!-- COUNTDOWN TO JEE 2028 (INSPIRATION CARD) -->
         <div id="sidebar-countdown-container" class="p-3">
-            <div onclick="openRealityCheckModal()" class="cursor-pointer relative overflow-hidden rounded-2xl p-4 border border-purple-500/30 shadow-lg shadow-purple-950/40 group hover:border-purple-400/50 transition-all select-none bg-gradient-to-br from-[#120726] via-[#1c0b38] to-[#2c0e4a]">
-                <div class="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-fuchsia-600/30 via-purple-900/10 to-transparent"></div>
+            <div onclick="openRealityCheckModal()" role="button" tabindex="0" class="cursor-pointer relative overflow-hidden rounded-2xl p-4 border border-purple-500/30 shadow-lg shadow-purple-950/40 group hover:border-purple-400/50 transition-all select-none bg-gradient-to-br from-[#120726] via-[#1c0b38] to-[#2c0e4a]">
+                <div class="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-fuchsia-600/30 via-purple-900/10 to-transparent pointer-events-none"></div>
                 <div class="relative z-10 flex items-baseline gap-2.5">
                     <span id="sidebar-countdown-days" class="text-4xl font-black text-slate-200 tracking-tight group-hover:scale-105 transition-transform font-mono">486</span>
                     <div class="leading-none">
@@ -121,7 +125,7 @@
 
         <!-- Left Nav Buttons -->
         <nav class="flex-1 px-2.5 py-2 space-y-1 overflow-y-auto custom-scrollbar">
-            <!-- 1. Analytics -->
+            <!-- Analytics -->
             <div class="rail-btn">
                 <button onclick="switchTab('analytics')" id="nav-btn-analytics" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all sidebar-btn-active">
                     <i data-lucide="line-chart" class="w-4 h-4 shrink-0"></i>
@@ -130,7 +134,7 @@
                 <div class="rail-label bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-2xl">Analytics</div>
             </div>
 
-            <!-- 2. Original Syllabus -->
+            <!-- Syllabus -->
             <div class="rail-btn">
                 <button onclick="switchTab('planner')" id="nav-btn-planner" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 transition-all">
                     <i data-lucide="book-open" class="w-4 h-4 shrink-0"></i>
@@ -139,19 +143,19 @@
                 <div class="rail-label bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-2xl">Syllabus</div>
             </div>
 
-            <!-- 3. Daily Planner -->
+            <!-- Daily Planner -->
             <div class="rail-btn">
                 <button onclick="switchTab('daily')" id="nav-btn-daily" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 transition-all">
                     <div class="flex items-center gap-3 truncate">
                         <i data-lucide="calendar" class="w-4 h-4 shrink-0"></i>
                         <span class="sidebar-text truncate">Daily Planner</span>
                     </div>
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse sidebar-text"></span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse sidebar-text shrink-0"></span>
                 </button>
                 <div class="rail-label bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-2xl">Daily Planner</div>
             </div>
 
-            <!-- 4. F1 Hub -->
+            <!-- F1 Hub -->
             <div class="rail-btn">
                 <button onclick="switchTab('f1hub')" id="nav-btn-f1hub" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 transition-all">
                     <i data-lucide="flag" class="w-4 h-4 shrink-0"></i>
@@ -160,7 +164,7 @@
                 <div class="rail-label bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-2xl">F1 Hub</div>
             </div>
 
-            <!-- 5. Goals -->
+            <!-- Goals -->
             <div class="rail-btn">
                 <button onclick="switchTab('goals')" id="nav-btn-goals" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 transition-all">
                     <i data-lucide="trophy" class="w-4 h-4 shrink-0"></i>
@@ -169,7 +173,7 @@
                 <div class="rail-label bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-2xl">Goals</div>
             </div>
 
-            <!-- NEW ITEM 1: Allen Syllabus Tracker -->
+            <!-- Allen Syllabus Tracker (Below All Old Tabs) -->
             <div class="rail-btn border-t border-slate-800/80 pt-1 mt-1">
                 <button onclick="switchTab('allensyllabus')" id="nav-btn-allensyllabus" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 transition-all">
                     <i data-lucide="layers" class="w-4 h-4 shrink-0 text-orange-400"></i>
@@ -179,6 +183,7 @@
             </div>
         </nav>
 
+        <!-- Footer -->
         <div class="p-3 border-t border-slate-800 text-[11px] font-mono text-slate-500 text-center">
             <span class="sidebar-text">Allen Batch • 7AM - 12PM</span>
             <span id="sidebar-live-clock" class="block text-[10px] text-indigo-400 mt-0.5">--:--:--</span>
@@ -443,149 +448,11 @@
                 </div>
             </div>
 
-            <!-- TAB 3: DAILY PLANNER WITH NEW STATS & TIMELINE -->
-            <div id="view-daily" class="hidden space-y-6">
-                <!-- Today's Timeline Header Box -->
-                <div class="glass-card p-5 rounded-3xl flex items-center justify-between border border-slate-800">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-10 h-10 rounded-2xl bg-orange-600/20 text-orange-500 border border-orange-500/30 flex items-center justify-center">
-                            <i data-lucide="clock" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-bold text-white">Today's Timeline</h2>
-                            <p class="text-xs text-slate-400">View your study sessions, routine blocks, and daily progress.</p>
-                        </div>
-                    </div>
-                    <button onclick="document.getElementById('calendar-tasks-view').scrollIntoView({ behavior: 'smooth' })" class="px-4 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 text-xs font-bold flex items-center gap-2 border border-orange-500/20 transition-all">
-                        <span>VIEW TIMELINE</span>
-                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                    </button>
-                </div>
-
-                <!-- 8 Metric Cards Grid + Deep Insights Card -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                    <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <i data-lucide="flame" class="w-4 h-4 text-orange-500 mb-1"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Study Streak</span>
-                            <div class="text-2xl font-black text-white font-mono mt-1">1 <span class="text-xs font-normal text-slate-400">Days</span></div>
-                        </div>
-                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <i data-lucide="clock" class="w-4 h-4 text-amber-500 mb-1"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Focused Today</span>
-                            <div id="stat-focused-today" class="text-2xl font-black text-white font-mono mt-1">0m</div>
-                        </div>
-                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <i data-lucide="activity" class="w-4 h-4 text-blue-400 mb-1"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">7-Day Avg</span>
-                            <div class="text-2xl font-black text-white font-mono mt-1">45m</div>
-                        </div>
-                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <i data-lucide="award" class="w-4 h-4 text-emerald-400 mb-1"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">7-Day Peak</span>
-                            <div class="text-2xl font-black text-white font-mono mt-1">2h 15m</div>
-                        </div>
-                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <i data-lucide="target" class="w-4 h-4 text-rose-400 mb-1"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Consistency (30D)</span>
-                            <div class="text-2xl font-black text-white font-mono mt-1">82%</div>
-                        </div>
-                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <i data-lucide="zap" class="w-4 h-4 text-indigo-400 mb-1"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Avg Session</span>
-                            <div class="text-2xl font-black text-white font-mono mt-1">50m</div>
-                        </div>
-                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <i data-lucide="moon" class="w-4 h-4 text-purple-400 mb-1"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Chronotype</span>
-                            <div class="text-base font-black text-white font-mono mt-1">Night Owl</div>
-                        </div>
-                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
-                            <i data-lucide="calendar" class="w-4 h-4 text-amber-400 mb-1"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Wknd vs Wkdy</span>
-                            <div class="text-base font-black text-white font-mono mt-1">1.3x</div>
-                        </div>
-                    </div>
-
-                    <!-- Right: Deep Insights Card -->
-                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
-                        <h3 class="text-sm font-bold text-white">Deep Insights</h3>
-                        <div class="space-y-3">
-                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                                    <i data-lucide="sun" class="w-4 h-4"></i>
-                                </div>
-                                <div>
-                                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Peak Focus Time</span>
-                                    <span class="text-sm font-bold text-white font-mono">08:00 PM - 11:30 PM</span>
-                                </div>
-                            </div>
-                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                                    <i data-lucide="calendar-check" class="w-4 h-4"></i>
-                                </div>
-                                <div>
-                                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Most Productive Day</span>
-                                    <span class="text-sm font-bold text-white">Wednesday</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Study Trends & Subject Breakdown -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                    <div class="lg:col-span-2 glass-card p-5 rounded-2xl">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-bold text-white">Study Trends</h3>
-                            <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">THIS WEEK</span>
-                        </div>
-                        <div class="h-60 relative w-full">
-                            <canvas id="chart-study-trends"></canvas>
-                        </div>
-                    </div>
-                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-sm font-bold text-white">Subject Breakdown</h3>
-                            <span class="text-[11px] font-mono text-slate-400">All Time</span>
-                        </div>
-                        <div class="h-48 relative w-full flex items-center justify-center">
-                            <canvas id="chart-subject-donut"></canvas>
-                        </div>
-                        <div class="flex items-center justify-center gap-4 text-xs font-semibold mt-2">
-                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Phy</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Chem</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-orange-500"></span> Math</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 30-Day Momentum & Monthly Focus Heatmap -->
-                <div class="space-y-5">
-                    <div class="glass-card p-5 rounded-2xl">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-bold text-white">30-Day Momentum</h3>
-                            <span id="metric-30d-total" class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">30D TOTAL: 0h 0m</span>
-                        </div>
-                        <div class="h-44 relative w-full">
-                            <canvas id="chart-30d-momentum"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="glass-card p-5 rounded-2xl">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-bold text-white">Monthly Focus Heatmap</h3>
-                            <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">SEP 2026</span>
-                        </div>
-                        <div class="grid grid-cols-7 gap-2 font-mono text-center text-[10px] text-slate-500 mb-2 font-bold uppercase">
-                            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-                        </div>
-                        <div id="heatmap-grid" class="grid grid-cols-7 gap-2"></div>
-                    </div>
-                </div>
-
-                <!-- Original Daily Planner Controls & Calendar Grid -->
-                <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-8">
+            <!-- TAB 3: DAILY PLANNER (CALENDAR ON TOP, DYNAMIC REAL-DATA STATS BELOW) -->
+            <div id="view-daily" class="hidden space-y-8">
+                
+                <!-- 1. CALENDAR CONTROLS & ROUTINE (PLACED ON TOP) -->
+                <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -637,10 +504,145 @@
                     <div id="daily-task-list" class="space-y-3"></div>
                 </div>
 
-                <!-- Motivation Embed Banner -->
-                <div class="w-full rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900 mt-6">
-                    <iframe src="https://thecbsecore.github.io/jhcnb-JBCFEA" class="w-full h-[540px] border-0" loading="lazy"></iframe>
+                <!-- 2. TODAY'S TIMELINE BANNER -->
+                <div class="glass-card p-5 rounded-3xl flex items-center justify-between border border-slate-800 mt-6">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-2xl bg-orange-600/20 text-orange-500 border border-orange-500/30 flex items-center justify-center">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-white">Today's Timeline</h2>
+                            <p class="text-xs text-slate-400">Real-time statistics calculated directly from your planner routines.</p>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('calendar-tasks-view').scrollIntoView({ behavior: 'smooth' })" class="px-4 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 text-xs font-bold flex items-center gap-2 border border-orange-500/20 transition-all">
+                        <span>VIEW TIMELINE</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
                 </div>
+
+                <!-- 3. REAL-CALCULATED 8 METRICS & DEEP INSIGHTS -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="flame" class="w-4 h-4 text-orange-500 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Study Streak</span>
+                            <div class="text-2xl font-black text-white font-mono mt-1"><span id="metric-streak">0</span> <span class="text-xs font-normal text-slate-400">Days</span></div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="clock" class="w-4 h-4 text-amber-500 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Focused Today</span>
+                            <div id="stat-focused-today" class="text-2xl font-black text-white font-mono mt-1">0m</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="activity" class="w-4 h-4 text-blue-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">7-Day Avg</span>
+                            <div id="stat-7d-avg" class="text-2xl font-black text-white font-mono mt-1">0m</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="award" class="w-4 h-4 text-emerald-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">7-Day Peak</span>
+                            <div id="stat-7d-peak" class="text-2xl font-black text-white font-mono mt-1">0m</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="target" class="w-4 h-4 text-rose-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Consistency (30D)</span>
+                            <div id="stat-consistency-30d" class="text-2xl font-black text-white font-mono mt-1">0%</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="zap" class="w-4 h-4 text-indigo-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Avg Session</span>
+                            <div id="stat-avg-session" class="text-2xl font-black text-white font-mono mt-1">0m</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="moon" class="w-4 h-4 text-purple-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Chronotype</span>
+                            <div id="stat-chronotype" class="text-sm font-black text-white font-mono mt-1.5">Night Owl</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="calendar" class="w-4 h-4 text-amber-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Wknd vs Wkdy</span>
+                            <div id="stat-wknd-ratio" class="text-sm font-black text-white font-mono mt-1.5">1.0x</div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Deep Insights Card -->
+                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                        <h3 class="text-sm font-bold text-white">Deep Insights</h3>
+                        <div class="space-y-3">
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                                    <i data-lucide="sun" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Peak Focus Time</span>
+                                    <span id="stat-peak-time" class="text-sm font-bold text-white font-mono">08:00 PM - 11:30 PM</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                                    <i data-lucide="calendar-check" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Most Productive Day</span>
+                                    <span id="stat-productive-day" class="text-sm font-bold text-white">Wednesday</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. REAL-CALCULATED STUDY TRENDS & SUBJECT BREAKDOWN -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <div class="lg:col-span-2 glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-white">Study Trends (Actual Logged Minutes)</h3>
+                            <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">THIS WEEK</span>
+                        </div>
+                        <div class="h-60 relative w-full">
+                            <canvas id="chart-study-trends"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-sm font-bold text-white">Subject Breakdown</h3>
+                            <span class="text-[11px] font-mono text-slate-400">All Logged Tasks</span>
+                        </div>
+                        <div class="h-48 relative w-full flex items-center justify-center">
+                            <canvas id="chart-subject-donut"></canvas>
+                        </div>
+                        <div class="flex items-center justify-center gap-4 text-xs font-semibold mt-2">
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Phy</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Chem</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-orange-500"></span> Math</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 30-DAY MOMENTUM & MONTHLY FOCUS HEATMAP -->
+                <div class="space-y-5">
+                    <div class="glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-white">30-Day Momentum</h3>
+                            <span id="metric-30d-total" class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">30D TOTAL: 0h 0m</span>
+                        </div>
+                        <div class="h-44 relative w-full">
+                            <canvas id="chart-30d-momentum"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-white">Monthly Focus Heatmap</h3>
+                            <span id="heatmap-month-label" class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">CURRENT MONTH</span>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 font-mono text-center text-[10px] text-slate-500 mb-2 font-bold uppercase">
+                            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+                        </div>
+                        <div id="heatmap-grid" class="grid grid-cols-7 gap-2"></div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- TAB 4: F1 HUB -->
@@ -677,9 +679,8 @@
                 </section>
             </div>
 
-            <!-- NEW TAB: ALLEN SYLLABUS TRACKER (CUSTOM & CLEAN) -->
+            <!-- NEW TAB: ALLEN SYLLABUS TRACKER (START EMPTY, EDITABLE) -->
             <div id="view-allensyllabus" class="hidden space-y-6">
-                <!-- Class 11 vs 12 Switcher Bar -->
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
                         <button onclick="setSyllabusClass('11')" id="btn-class-11" class="px-5 py-2 rounded-xl text-xs font-bold bg-orange-600 text-white transition-all">Class 11th</button>
@@ -733,14 +734,14 @@
                             </button>
                         </div>
 
-                        <!-- Resources Added List -->
+                        <!-- Resources Added List with Working Deletion -->
                         <div class="glass-card p-4 rounded-2xl space-y-2">
                             <span class="text-xs font-bold text-slate-400 block mb-2">Saved Resources</span>
-                            <div id="saved-resources-list" class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar text-xs"></div>
+                            <div id="saved-resources-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar text-xs"></div>
                         </div>
                     </div>
 
-                    <!-- Right Subjects Container (Physics, Chemistry, Maths) -->
+                    <!-- Right Subjects Container (Starts Empty) -->
                     <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-5" id="syllabus-subjects-container"></div>
                 </div>
             </div>
@@ -805,7 +806,7 @@
                 </div>
                 <div>
                     <label class="block text-slate-400 font-bold uppercase mb-1">Resource Title</label>
-                    <input type="text" id="modal-resource-title" placeholder="e.g. HC Verma Solved Examples / Lecture Video" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                    <input type="text" id="modal-resource-title" placeholder="e.g. HC Verma Solved Examples" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
                 </div>
                 <div>
                     <label class="block text-slate-400 font-bold uppercase mb-1">Type</label>
@@ -871,8 +872,8 @@
         </div>
     </div>
 
-    <!-- MODAL: REALITY CHECK -->
-    <div id="reality-check-modal" class="fixed inset-0 z-[90] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <!-- MODAL: REALITY CHECK (WORKING & PROPERLY LAYERED) -->
+    <div id="reality-check-modal" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0c10] border border-slate-800/80 w-full max-w-md rounded-3xl p-6 sm:p-7 shadow-2xl relative select-none">
             <button onclick="closeRealityCheckModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-900 text-slate-400 hover:text-white flex items-center justify-center border border-slate-800 transition-colors">
                 <i data-lucide="x" class="w-4 h-4"></i>
@@ -1257,7 +1258,7 @@
             localStorage.setItem('jee_sidebar_collapsed', JSON.stringify(appState.isSidebarCollapsed));
         }
 
-        // --- Sidebar Rail Toggle ---
+        // --- Clean Sidebar Rail Toggle ---
         function toggleSidebarRail() {
             appState.isSidebarCollapsed = !appState.isSidebarCollapsed;
             applySidebarState();
@@ -1270,21 +1271,27 @@
             const countdownCard = document.getElementById('sidebar-countdown-container');
             const textLabels = document.querySelectorAll('.sidebar-text');
             const toggleIcon = document.getElementById('sidebar-toggle-icon');
+            const exportBtn = document.getElementById('btn-export-backup');
+            const importBtn = document.getElementById('label-import-backup');
 
             if (appState.isSidebarCollapsed) {
                 sidebar.classList.remove('md:w-64');
                 sidebar.classList.add('md:w-16', 'sidebar-rail');
-                logoText.classList.add('hidden');
-                countdownCard.classList.add('hidden');
+                logoText?.classList.add('hidden');
+                countdownCard?.classList.add('hidden');
+                exportBtn?.classList.add('hidden');
+                importBtn?.classList.add('hidden');
                 textLabels.forEach(el => el.classList.add('hidden'));
-                toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+                toggleIcon?.setAttribute('data-lucide', 'panel-left-open');
             } else {
                 sidebar.classList.remove('md:w-16', 'sidebar-rail');
                 sidebar.classList.add('md:w-64');
-                logoText.classList.remove('hidden');
-                countdownCard.classList.remove('hidden');
+                logoText?.classList.remove('hidden');
+                countdownCard?.classList.remove('hidden');
+                exportBtn?.classList.remove('hidden');
+                importBtn?.classList.remove('hidden');
                 textLabels.forEach(el => el.classList.remove('hidden'));
-                toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+                toggleIcon?.setAttribute('data-lucide', 'panel-left-close');
             }
             lucide.createIcons();
         }
@@ -1304,7 +1311,7 @@
                 }
             });
 
-            if (viewId === 'daily') { renderCalendar(); renderDailyDashboardCharts(); }
+            if (viewId === 'daily') { renderCalendar(); calculateAndRenderDailyPlannerMetrics(); }
             if (viewId === 'analytics') renderChart();
             if (viewId === 'planner') { renderSyllabus(); updateCountdown(); }
             if (viewId === 'allensyllabus') renderSyllabusTree();
@@ -1313,7 +1320,54 @@
         }
 
         // ==========================================
-        // --- CLEAN CUSTOM ALLEN SYLLABUS TRACKER (11th & 12th) ---
+        // --- REALITY CHECK MODAL (WORKING RELIABLY) ---
+        // ==========================================
+        function calculateDaysRemainingMetrics() {
+            const now = new Date();
+            const diffTime = JEE_2028_DATE - now;
+            const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+            let sundays = 0;
+            let cur = new Date(now);
+            while (cur <= JEE_2028_DATE) {
+                if (cur.getDay() === 0) sundays++;
+                cur.setDate(cur.getDate() + 1);
+            }
+
+            const hoursLost = daysLeft * 2;
+
+            const sb = document.getElementById('sidebar-countdown-days');
+            if (sb) sb.innerText = daysLeft;
+
+            const r1 = document.getElementById('rc-days-big');
+            if (r1) r1.innerText = daysLeft;
+
+            const r2 = document.getElementById('rc-sleeps-left');
+            if (r2) r2.innerText = daysLeft;
+
+            const r3 = document.getElementById('rc-sundays-left');
+            if (r3) r3.innerText = sundays;
+
+            const r4 = document.getElementById('rc-hours-lost');
+            if (r4) r4.innerText = `${hoursLost} hours`;
+
+            const r5 = document.getElementById('rc-days-inline');
+            if (r5) r5.innerText = `${daysLeft} days`;
+        }
+
+        function openRealityCheckModal() {
+            calculateDaysRemainingMetrics();
+            const modal = document.getElementById('reality-check-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeRealityCheckModal() {
+            const modal = document.getElementById('reality-check-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // ==========================================
+        // --- CLEAN CUSTOM ALLEN SYLLABUS TRACKER ---
         // ==========================================
         function setSyllabusClass(cls) {
             appState.currentClass = cls;
@@ -1406,7 +1460,6 @@
                 container.appendChild(subCard);
             });
 
-            // Update Progress Left Box
             const totalDone = masteredCount + doneCount;
             const overallPerc = totalChapters ? Math.round((totalDone / totalChapters) * 100) : 0;
             document.getElementById('overall-syllabus-perc').innerText = `${overallPerc}%`;
@@ -1420,6 +1473,36 @@
             lucide.createIcons();
         }
 
+        // Web Audio Synthesizer Fallback Chime (Guarantees sound plays)
+        function playChimeSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+                
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(587.33, now); // D5
+                gain1.gain.setValueAtTime(0.3, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.35);
+
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(880, now + 0.15); // A5
+                gain2.gain.setValueAtTime(0.3, now + 0.15);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now + 0.15);
+                osc2.stop(now + 0.6);
+            } catch (err) {}
+        }
+
         function toggleCustomChapterCheck(id, btnEl) {
             const list = appState.customSyllabus[appState.currentClass] || [];
             const item = list.find(x => x.id === id);
@@ -1430,15 +1513,11 @@
 
             if (!isDone) {
                 if (btnEl) triggerFireEffect(btnEl.getBoundingClientRect());
+                playChimeSound();
                 const audio = document.getElementById('special-audio');
                 if (audio) {
                     audio.pause();
                     audio.currentTime = 0;
-                    let count = 0;
-                    audio.onended = () => {
-                        count++;
-                        if (count < 2) { audio.currentTime = 0; audio.play().catch(() => {}); }
-                    };
                     audio.play().catch(() => {});
                 }
             }
@@ -1501,7 +1580,7 @@
             renderSyllabusTree();
         }
 
-        // Resources Handling
+        // Resources Handling With Proper Delete
         function openAddResourceModal() {
             document.getElementById('modal-resource-title').value = '';
             document.getElementById('modal-resource-url').value = '';
@@ -1523,6 +1602,12 @@
             renderResourcesList();
         }
 
+        function deleteCustomResource(id) {
+            appState.customResources = appState.customResources.filter(r => r.id !== id);
+            saveToStorage();
+            renderResourcesList();
+        }
+
         function renderResourcesList() {
             const resList = document.getElementById('saved-resources-list');
             if (!resList) return;
@@ -1535,13 +1620,16 @@
 
             appState.customResources.forEach(r => {
                 const item = document.createElement('div');
-                item.className = "p-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between gap-2";
+                item.className = "p-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-2";
                 item.innerHTML = `
-                    <div class="truncate">
-                        <span class="block font-bold text-white truncate">${r.title}</span>
-                        <span class="block text-[10px] text-indigo-400">${r.scope} • ${r.type}</span>
+                    <div class="truncate flex-1">
+                        <span class="block font-bold text-white truncate text-xs">${r.title}</span>
+                        <span class="block text-[10px] text-indigo-400 truncate">${r.scope} • ${r.type}</span>
                     </div>
-                    ${r.url ? `<a href="${r.url}" target="_blank" class="text-slate-400 hover:text-white p-1"><i data-lucide="external-link" class="w-3 h-3"></i></a>` : ''}
+                    <div class="flex items-center gap-1 shrink-0">
+                        ${r.url ? `<a href="${r.url}" target="_blank" class="text-slate-400 hover:text-white p-1"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>` : ''}
+                        <button onclick="deleteCustomResource(${r.id})" class="text-slate-500 hover:text-red-400 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                    </div>
                 `;
                 resList.appendChild(item);
             });
@@ -1549,13 +1637,118 @@
         }
 
         // ==========================================
-        // --- DAILY PLANNER CHARTS & HEATMAP ---
+        // --- REAL DYNAMIC DAILY PLANNER CALCULATOR ---
         // ==========================================
         let trendsChartInstance = null;
         let donutChartInstance = null;
         let momentumChartInstance = null;
 
-        function renderDailyDashboardCharts() {
+        function calculateAndRenderDailyPlannerMetrics() {
+            const tasks = appState.scheduledTasks;
+            const now = new Date();
+            const todayStr = formatLocalDate(now);
+
+            // 1. Focused Today (minutes completed or in progress today)
+            const todayTasks = tasks.filter(t => t.date === todayStr);
+            let focusedTodayMins = 0;
+            todayTasks.forEach(t => {
+                if (t.status === 'Completed' || t.status === 'In Progress') {
+                    focusedTodayMins += Number(t.duration) || 0;
+                }
+            });
+            document.getElementById('stat-focused-today').innerText = `${focusedTodayMins}m`;
+
+            // 2. 7-Day Average & Peak & Daily Trend
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            let weekDaysData = [0, 0, 0, 0, 0, 0, 0]; // Mon to Sun
+            let last7DaysTotal = 0;
+            let peakDayMins = 0;
+
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - (6 - i));
+                const ds = formatLocalDate(d);
+                const dayMins = tasks.filter(t => t.date === ds && (t.status === 'Completed' || t.status === 'In Progress'))
+                                     .reduce((acc, cur) => acc + (Number(cur.duration) || 0), 0);
+                
+                // Align to Mon-Sun
+                const dayOfWeek = (d.getDay() + 6) % 7; // 0 is Mon
+                weekDaysData[dayOfWeek] = dayMins;
+                last7DaysTotal += dayMins;
+                if (dayMins > peakDayMins) peakDayMins = dayMins;
+            }
+
+            const avg7d = Math.round(last7DaysTotal / 7);
+            document.getElementById('stat-7d-avg').innerText = `${avg7d}m`;
+            document.getElementById('stat-7d-peak').innerText = `${Math.floor(peakDayMins/60)}h ${peakDayMins%60}m`;
+
+            // 3. Consistency (30D)
+            let activeDays30 = 0;
+            let totalMins30 = 0;
+            for (let i = 0; i < 30; i++) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - i);
+                const ds = formatLocalDate(d);
+                const dayTasksList = tasks.filter(t => t.date === ds && (t.status === 'Completed' || t.status === 'In Progress'));
+                if (dayTasksList.length > 0) activeDays30++;
+                totalMins30 += dayTasksList.reduce((acc, c) => acc + (Number(c.duration) || 0), 0);
+            }
+            const consistencyPerc = Math.round((activeDays30 / 30) * 100);
+            document.getElementById('stat-consistency-30d').innerText = `${consistencyPerc}%`;
+            document.getElementById('metric-30d-total').innerText = `30D TOTAL: ${Math.floor(totalMins30/60)}h ${totalMins30%60}m`;
+
+            // 4. Study Streak Calculation
+            let streak = 0;
+            let checkDate = new Date(now);
+            while (true) {
+                const ds = formatLocalDate(checkDate);
+                const hasDone = tasks.some(t => t.date === ds && (t.status === 'Completed' || t.status === 'In Progress'));
+                if (hasDone) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    // Check if today hasn't had tasks yet, don't break streak if yesterday was active
+                    if (formatLocalDate(now) === ds) {
+                        checkDate.setDate(checkDate.getDate() - 1);
+                        continue;
+                    }
+                    break;
+                }
+            }
+            document.getElementById('metric-streak').innerText = streak;
+
+            // 5. Avg Session Duration
+            const completedList = tasks.filter(t => t.status === 'Completed');
+            const avgSession = completedList.length ? Math.round(completedList.reduce((a, b) => a + (Number(b.duration) || 0), 0) / completedList.length) : 45;
+            document.getElementById('stat-avg-session').innerText = `${avgSession}m`;
+
+            // 6. Weekend vs Weekday Ratio
+            let wkndMins = 0, wkndDays = 0, wkdyMins = 0, wkdyDays = 0;
+            for (let i = 0; i < 30; i++) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - i);
+                const ds = formatLocalDate(d);
+                const m = tasks.filter(t => t.date === ds && t.status === 'Completed').reduce((a, b) => a + (Number(b.duration) || 0), 0);
+                if (d.getDay() === 0 || d.getDay() === 6) { wkndMins += m; wkndDays++; }
+                else { wkdyMins += m; wkdyDays++; }
+            }
+            const avgWknd = wkndDays ? (wkndMins / wkndDays) : 0;
+            const avgWkdy = wkdyDays ? (wkdyMins / wkdyDays) : 0;
+            const ratio = avgWkdy > 0 ? (avgWknd / avgWkdy).toFixed(1) : "1.0";
+            document.getElementById('stat-wknd-ratio').innerText = `${ratio}x`;
+
+            // 7. Most Productive Day
+            const dayTotals = [0, 0, 0, 0, 0, 0, 0];
+            tasks.forEach(t => {
+                if (t.status === 'Completed' && t.date) {
+                    const dt = new Date(t.date);
+                    dayTotals[dt.getDay()] += (Number(t.duration) || 0);
+                }
+            });
+            const bestDayIndex = dayTotals.indexOf(Math.max(...dayTotals));
+            document.getElementById('stat-productive-day').innerText = dayNames[bestDayIndex] || 'Wednesday';
+
+            // 8. Render Study Trends Bar Chart
             const ctxTrends = document.getElementById('chart-study-trends');
             if (ctxTrends) {
                 if (trendsChartInstance) trendsChartInstance.destroy();
@@ -1564,7 +1757,7 @@
                     data: {
                         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                         datasets: [{
-                            data: [45, 60, 120, 80, 90, 110, 70],
+                            data: weekDaysData,
                             backgroundColor: '#ff334b',
                             borderRadius: 6,
                             barThickness: 24
@@ -1582,6 +1775,16 @@
                 });
             }
 
+            // 9. Subject Breakdown Donut Chart
+            let phyMins = 0, chemMins = 0, mathMins = 0;
+            tasks.forEach(t => {
+                const m = Number(t.duration) || 0;
+                if (t.subject === 'Physics') phyMins += m;
+                else if (t.subject === 'Chemistry') chemMins += m;
+                else if (t.subject === 'Maths') mathMins += m;
+            });
+            const subData = (phyMins === 0 && chemMins === 0 && mathMins === 0) ? [1, 1, 1] : [phyMins, chemMins, mathMins];
+
             const ctxDonut = document.getElementById('chart-subject-donut');
             if (ctxDonut) {
                 if (donutChartInstance) donutChartInstance.destroy();
@@ -1590,7 +1793,7 @@
                     data: {
                         labels: ['Physics', 'Chemistry', 'Mathematics'],
                         datasets: [{
-                            data: [40, 35, 25],
+                            data: subData,
                             backgroundColor: ['#3b82f6', '#10b981', '#f97316'],
                             borderWidth: 0,
                             cutout: '72%'
@@ -1604,21 +1807,35 @@
                 });
             }
 
+            // 10. 30-Day Momentum Line Chart
+            let momentumLabels = [];
+            let momentumPoints = [];
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - (i * 5));
+                momentumLabels.push(d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }));
+                
+                const ds = formatLocalDate(d);
+                const dayMins = tasks.filter(t => t.date === ds && (t.status === 'Completed' || t.status === 'In Progress'))
+                                     .reduce((a, b) => a + (Number(b.duration) || 0), 0);
+                momentumPoints.push((dayMins / 60).toFixed(1));
+            }
+
             const ctxMomentum = document.getElementById('chart-30d-momentum');
             if (ctxMomentum) {
                 if (momentumChartInstance) momentumChartInstance.destroy();
                 momentumChartInstance = new Chart(ctxMomentum, {
                     type: 'line',
                     data: {
-                        labels: ['Aug 25', 'Aug 30', 'Sep 4', 'Sep 9', 'Sep 14', 'Sep 19'],
+                        labels: momentumLabels,
                         datasets: [{
-                            data: [1.2, 1.8, 2.5, 2.1, 3.2, 2.8],
+                            data: momentumPoints,
                             borderColor: '#f97316',
                             backgroundColor: 'rgba(249, 115, 22, 0.1)',
                             borderWidth: 2,
                             fill: true,
                             tension: 0.35,
-                            pointRadius: 3
+                            pointRadius: 4
                         }]
                     },
                     options: {
@@ -1633,42 +1850,59 @@
                 });
             }
 
-            renderHeatmapGrid();
+            // 11. Render Real Monthly Heatmap
+            renderRealHeatmapGrid();
         }
 
-        function renderHeatmapGrid() {
+        function renderRealHeatmapGrid() {
             const grid = document.getElementById('heatmap-grid');
             if (!grid) return;
             grid.innerHTML = '';
 
-            for (let i = 1; i <= 30; i++) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const currentDay = now.getDate();
+
+            document.getElementById('heatmap-month-label').innerText = now.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }).toUpperCase();
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const d = new Date(year, month, i);
+                const ds = formatLocalDate(d);
+                const isToday = i === currentDay;
+
+                const dayMins = appState.scheduledTasks
+                    .filter(t => t.date === ds && (t.status === 'Completed' || t.status === 'In Progress'))
+                    .reduce((a, b) => a + (Number(b.duration) || 0), 0);
+
                 const cell = document.createElement('div');
-                const isSelected = i === 23;
-                cell.className = `p-3 rounded-2xl border text-center transition-all ${isSelected ? 'border-orange-500 bg-slate-900 shadow-lg' : 'border-slate-800 bg-slate-900/60'}`;
+                cell.className = `p-3 rounded-2xl border text-center transition-all ${isToday ? 'border-orange-500 bg-slate-900 shadow-lg' : 'border-slate-800 bg-slate-900/60'}`;
                 cell.innerHTML = `
-                    <span class="block text-[11px] text-slate-400 font-mono">${i}</span>
-                    <span class="block text-xs font-bold text-slate-400 mt-1 uppercase">${i % 3 === 0 ? '2.5h' : 'OFF'}</span>
+                    <span class="block text-[11px] font-mono ${isToday ? 'text-orange-400 font-bold' : 'text-slate-400'}">${i}</span>
+                    <span class="block text-xs font-bold mt-1 uppercase ${dayMins > 0 ? 'text-emerald-400 font-mono' : 'text-slate-500'}">
+                        ${dayMins > 0 ? `${(dayMins/60).toFixed(1)}h` : 'OFF'}
+                    </span>
                 `;
                 grid.appendChild(cell);
             }
         }
 
         // ==========================================
-        // --- CALENDAR & TASKS ---
+        // --- CALENDAR & TASKS WORKSPACE ---
         // ==========================================
         function setCalendarView(mode) {
             calendarView = mode;
             ['month', 'week', 'today'].forEach(m => {
                 const btn = document.getElementById(`btn-view-${m}`);
-                btn.className = (m === mode) ? "px-4 py-1.5 rounded-lg bg-indigo-600 text-white font-bold" : "px-4 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold";
+                if (btn) btn.className = (m === mode) ? "px-4 py-1.5 rounded-lg bg-indigo-600 text-white font-bold" : "px-4 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold";
             });
             renderCalendar();
         }
 
         function navDate(delta) {
-            if (delta === 0) {
-                selectedDate = new Date();
-            } else {
+            if (delta === 0) selectedDate = new Date();
+            else {
                 if (calendarView === 'month') selectedDate.setMonth(selectedDate.getMonth() + delta);
                 else if (calendarView === 'week') selectedDate.setDate(selectedDate.getDate() + (delta * 7));
                 else selectedDate.setDate(selectedDate.getDate() + delta);
@@ -1747,7 +1981,6 @@
             let totalMins = 0;
             tasks.forEach(t => { totalMins += Number(t.duration) || 0; });
             document.getElementById('tasks-duration-badge').innerText = `${Math.floor(totalMins/60)}h ${totalMins%60}m Total`;
-            document.getElementById('stat-focused-today').innerText = `${totalMins}m`;
 
             if (tasks.length === 0) {
                 list.innerHTML = `<div class="glass-card p-10 text-center rounded-3xl border border-dashed border-slate-800 text-slate-500 text-sm">No tasks scheduled for this date. Click "Add Routine" to begin.</div>`;
@@ -1797,12 +2030,14 @@
             saveToStorage();
             closeTaskModal();
             renderCalendar();
+            calculateAndRenderDailyPlannerMetrics();
         }
 
         function deleteTask(id) {
             appState.scheduledTasks = appState.scheduledTasks.filter(x => x.id !== id);
             saveToStorage();
             renderCalendar();
+            calculateAndRenderDailyPlannerMetrics();
         }
 
         function autoCalcTaskDuration() {
@@ -1836,7 +2071,10 @@
             const t = appState.syllabus.find(x => x.id === id);
             if (!t) return;
             t.completed = !t.completed;
-            if (t.completed && btnEl) triggerFireEffect(btnEl.getBoundingClientRect());
+            if (t.completed && btnEl) {
+                triggerFireEffect(btnEl.getBoundingClientRect());
+                playChimeSound();
+            }
             saveToStorage();
             renderSyllabus();
         }
@@ -2004,6 +2242,7 @@
             task.status = 'In Progress';
             saveToStorage();
             renderCalendar();
+            calculateAndRenderDailyPlannerMetrics();
 
             resetTimer();
             activeBoundTaskId = taskId;
@@ -2021,6 +2260,7 @@
                     if (task) task.status = 'Completed';
                     saveToStorage();
                     renderCalendar();
+                    calculateAndRenderDailyPlannerMetrics();
                 }
                 alert("🎉 Task completed!");
                 resetTimer();
@@ -2041,6 +2281,7 @@
                     task.status = 'Completed';
                     saveToStorage();
                     renderCalendar();
+                    calculateAndRenderDailyPlannerMetrics();
                 }
             }
             alert("Session recorded with overtime.");
@@ -2060,7 +2301,7 @@
         }
 
         // ==========================================
-        // --- GOALS ---
+        // --- GOALS GALLERY ---
         // ==========================================
         let stagedGoalImageBase64 = '';
         function renderGoals() {
@@ -2221,7 +2462,7 @@
         }
 
         // ==========================================
-        // --- AI COACH & MODALS ---
+        // --- AI COACH & AUDIO ---
         // ==========================================
         function toggleAIChat() { document.getElementById('ai-chatbox').classList.toggle('hidden'); }
         function openApiKeyModal() { document.getElementById('api-key-modal').classList.remove('hidden'); document.getElementById('custom-api-key').value = appState.apiKey; }
@@ -2336,20 +2577,15 @@
         // --- APP INITIALIZATION ---
         // ==========================================
         window.onload = () => {
-            const diffTime = Math.max(0, Math.ceil((JEE_2028_DATE - new Date()) / (1000 * 60 * 60 * 24)));
-            document.getElementById('sidebar-countdown-days').innerText = diffTime;
-            document.getElementById('rc-days-big').innerText = diffTime;
-            document.getElementById('rc-sleeps-left').innerText = diffTime;
-            document.getElementById('rc-hours-lost').innerText = `${diffTime * 2} hours`;
-            document.getElementById('rc-days-inline').innerText = `${diffTime} days`;
-
+            calculateDaysRemainingMetrics();
             applySidebarState();
-            switchTab('analytics');
+            switchTab('daily');
             renderChart();
             renderSyllabus();
             renderSyllabusTree();
             renderCalendar();
             renderGoals();
+            calculateAndRenderDailyPlannerMetrics();
             updateAllTimerDisplays();
             renderChat();
             updateCountdown();
