@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background: #070709; }
         .glass-card {
             background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(14px);
@@ -27,9 +27,9 @@
             border-left: 3px solid #6366f1;
         }
 
-        /* Collapsed Sidebar Rail Behavior */
+        /* Clean Sidebar Rail Behavior */
         #app-sidebar.collapsed {
-            width: 4.5rem !important; /* 72px */
+            width: 4.5rem !important;
         }
         #app-sidebar.collapsed .sidebar-full-only {
             display: none !important;
@@ -62,12 +62,6 @@
         }
         #app-sidebar.collapsed .rail-btn:hover .rail-tooltip {
             display: block;
-            animation: fadeIn 0.15s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-50%) translateX(4px); }
-            to { opacity: 1; transform: translateY(-50%) translateX(10px); }
         }
 
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -141,7 +135,7 @@
             </div>
         </div>
 
-        <!-- Left Nav Buttons (Single Clean Row, Smooth Tooltip on Rail) -->
+        <!-- Left Nav Buttons (Single Clean List) -->
         <nav class="flex-1 px-2.5 py-2 space-y-1 overflow-y-auto custom-scrollbar">
             <div class="rail-btn">
                 <button onclick="switchTab('analytics')" id="nav-btn-analytics" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all sidebar-btn-active">
@@ -186,7 +180,7 @@
                 <div class="rail-tooltip">Goals</div>
             </div>
 
-            <!-- New Whole Prep Syllabus Tracker Row (Appended Below Cleanly) -->
+            <!-- Whole Prep Tracker (Cleanly Appended Below) -->
             <div class="rail-btn border-t border-slate-800/80 pt-1 mt-1">
                 <button onclick="switchTab('fullprep')" id="nav-btn-fullprep" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 transition-all">
                     <i data-lucide="layers" class="w-4 h-4 shrink-0 text-orange-400"></i>
@@ -198,7 +192,6 @@
 
         <div class="sidebar-full-only p-3 border-t border-slate-800 text-[11px] font-mono text-slate-500 text-center">
             <span>Allen Batch • 7AM - 12PM</span>
-            <span id="sidebar-live-clock" class="block text-[10px] text-indigo-400 mt-0.5">--:--:--</span>
         </div>
     </aside>
 
@@ -308,7 +301,7 @@
                             <div class="bg-indigo-600 p-2 rounded-full group-hover:scale-110 transition-transform">
                                 <i data-lucide="plus" class="w-6 h-6 text-white"></i>
                             </div>
-                            <span class="font-bold text-indigo-400 text-sm">Add New Test</span>
+                            <span class="font-bold text-indigo-400">Add New Test</span>
                         </button>
                     </div>
                 </div>
@@ -460,8 +453,10 @@
                 </div>
             </div>
 
-            <!-- TAB 3: DAILY PLANNER (ORIGINAL CALENDAR AT TOP + UNTOUCHED ROUTINES) -->
-            <div id="view-daily" class="space-y-6">
+            <!-- TAB 3: DAILY PLANNER (CALENDAR ON TOP + TIMELINE STATS BELOW) -->
+            <div id="view-daily" class="hidden space-y-8">
+                
+                <!-- 1. CALENDAR & ROUTINE CONTROLS -->
                 <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
@@ -514,84 +509,142 @@
                     <div id="daily-task-list" class="space-y-3"></div>
                 </div>
 
-                <!-- DAILY NON-NEGOTIABLE CHECKLIST & REWARD SYSTEM -->
-                <div class="glass-card p-5 rounded-3xl border border-indigo-500/20 bg-slate-900/80 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div class="space-y-2 flex-1">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                Daily Quota
-                            </span>
-                            <h3 class="text-sm font-bold text-white">Non-Negotiable Targets (Resets Daily at 12 AM)</h3>
+                <!-- 2. TODAY'S TIMELINE BANNER -->
+                <div class="glass-card p-5 rounded-3xl flex items-center justify-between border border-slate-800 mt-6">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-2xl bg-orange-600/20 text-orange-500 border border-orange-500/30 flex items-center justify-center">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
                         </div>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
-                            <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-indigo-500/40 cursor-pointer transition-all select-none">
-                                <input type="checkbox" id="quota-revision" onchange="toggleDailyQuota('revision')" class="w-4 h-4 rounded text-indigo-600 bg-slate-900 border-slate-700 focus:ring-indigo-500">
-                                <span class="text-xs font-semibold text-slate-200">1. Daily Revision</span>
-                            </label>
-                            <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-orange-500/40 cursor-pointer transition-all select-none">
-                                <input type="checkbox" id="quota-maths" onchange="toggleDailyQuota('maths')" class="w-4 h-4 rounded text-orange-500 bg-slate-900 border-slate-700 focus:ring-orange-500">
-                                <span class="text-xs font-semibold text-slate-200">2. Maths HW</span>
-                            </label>
-                            <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 cursor-pointer transition-all select-none">
-                                <input type="checkbox" id="quota-phy" onchange="toggleDailyQuota('phy')" class="w-4 h-4 rounded text-blue-500 bg-slate-900 border-slate-700 focus:ring-blue-500">
-                                <span class="text-xs font-semibold text-slate-200">3. Physics HW</span>
-                            </label>
-                            <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-emerald-500/40 cursor-pointer transition-all select-none">
-                                <input type="checkbox" id="quota-chem" onchange="toggleDailyQuota('chem')" class="w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500">
-                                <span class="text-xs font-semibold text-slate-200">4. Chem 10-Q</span>
-                            </label>
+                        <div>
+                            <h2 class="text-lg font-bold text-white">Today's Timeline</h2>
+                            <p class="text-xs text-slate-400">Real-time statistics calculated directly from your planner routines.</p>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('calendar-tasks-view').scrollIntoView({ behavior: 'smooth' })" class="px-4 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 text-xs font-bold flex items-center gap-2 border border-orange-500/20 transition-all">
+                        <span>VIEW TIMELINE</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <!-- 3. REAL-CALCULATED 8 METRICS & DEEP INSIGHTS -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="flame" class="w-4 h-4 text-orange-500 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Study Streak</span>
+                            <div class="text-2xl font-black text-white font-mono mt-1"><span id="metric-streak">0</span> <span class="text-xs font-normal text-slate-400">Days</span></div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="clock" class="w-4 h-4 text-amber-500 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Focused Today</span>
+                            <div id="stat-focused-today" class="text-2xl font-black text-white font-mono mt-1">0m</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="activity" class="w-4 h-4 text-blue-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">7-Day Avg</span>
+                            <div id="stat-7d-avg" class="text-2xl font-black text-white font-mono mt-1">0m</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="award" class="w-4 h-4 text-emerald-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">7-Day Peak</span>
+                            <div id="stat-7d-peak" class="text-2xl font-black text-white font-mono mt-1">0m</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="target" class="w-4 h-4 text-rose-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Consistency (30D)</span>
+                            <div id="stat-consistency-30d" class="text-2xl font-black text-white font-mono mt-1">0%</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="zap" class="w-4 h-4 text-indigo-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Avg Session</span>
+                            <div id="stat-avg-session" class="text-2xl font-black text-white font-mono mt-1">0m</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="moon" class="w-4 h-4 text-purple-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Chronotype</span>
+                            <div id="stat-chronotype" class="text-sm font-black text-white font-mono mt-1.5">Night Owl</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <i data-lucide="calendar" class="w-4 h-4 text-amber-400 mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Wknd vs Wkdy</span>
+                            <div id="stat-wknd-ratio" class="text-sm font-black text-white font-mono mt-1.5">1.0x</div>
                         </div>
                     </div>
 
-                    <div id="quota-reward-box" class="w-full md:w-auto p-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 flex items-center gap-3 transition-all min-w-[210px]">
-                        <div id="reward-icon" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center">
-                            <i data-lucide="lock" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <div id="reward-title" class="text-xs font-bold text-slate-400">1h Entertainment</div>
-                            <div id="reward-status" class="text-[10px] text-slate-500 font-mono">0 / 4 Targets Done</div>
+                    <!-- Right: Deep Insights Card -->
+                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                        <h3 class="text-sm font-bold text-white">Deep Insights</h3>
+                        <div class="space-y-3">
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                                    <i data-lucide="sun" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Peak Focus Time</span>
+                                    <span id="stat-peak-time" class="text-sm font-bold text-white font-mono">08:00 PM - 11:30 PM</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                                    <i data-lucide="calendar-check" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Most Productive Day</span>
+                                    <span id="stat-productive-day" class="text-sm font-bold text-white">Wednesday</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TASK BREAKDOWN GRAPHS -->
-                <div class="glass-card p-6 rounded-3xl border border-slate-800/80 shadow-2xl space-y-6 pt-4">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
-                        <div>
-                            <h4 class="text-base font-bold text-white flex items-center gap-2">
-                                <i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-400"></i> Subject Task Completion Telemetry
-                            </h4>
-                            <p class="text-xs text-slate-400">Real-time status breakdown for overall routines and core subjects</p>
+                <!-- 4. REAL-CALCULATED STUDY TRENDS & SUBJECT BREAKDOWN -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <div class="lg:col-span-2 glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-white">Study Trends (Actual Logged Minutes)</h3>
+                            <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">THIS WEEK</span>
                         </div>
-                        <div class="flex items-center gap-3 text-xs font-mono">
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Done</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Active</span>
-                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span> Pending</span>
+                        <div class="h-60 relative w-full">
+                            <canvas id="chart-study-trends"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-sm font-bold text-white">Subject Breakdown</h3>
+                            <span class="text-[11px] font-mono text-slate-400">All Logged Tasks</span>
+                        </div>
+                        <div class="h-48 relative w-full flex items-center justify-center">
+                            <canvas id="chart-subject-donut"></canvas>
+                        </div>
+                        <div class="flex items-center justify-center gap-4 text-xs font-semibold mt-2">
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Phy</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Chem</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-orange-500"></span> Math</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 30-DAY MOMENTUM & MONTHLY FOCUS HEATMAP -->
+                <div class="space-y-5">
+                    <div class="glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-white">30-Day Momentum</h3>
+                            <span id="metric-30d-total" class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">30D TOTAL: 0h 0m</span>
+                        </div>
+                        <div class="h-44 relative w-full">
+                            <canvas id="chart-30d-momentum"></canvas>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                            <span class="text-xs font-black text-indigo-400 uppercase tracking-wider">Overall Combined</span>
-                            <div class="w-32 h-32 relative my-2"><canvas id="chart-task-overall"></canvas></div>
-                            <div id="stat-text-overall" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                    <div class="glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-white">Monthly Focus Heatmap</h3>
+                            <span id="heatmap-month-label" class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">CURRENT MONTH</span>
                         </div>
-                        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                            <span class="text-xs font-black text-blue-400 uppercase tracking-wider">Physics Tasks</span>
-                            <div class="w-32 h-32 relative my-2"><canvas id="chart-task-physics"></canvas></div>
-                            <div id="stat-text-physics" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
+                        <div class="grid grid-cols-7 gap-2 font-mono text-center text-[10px] text-slate-500 mb-2 font-bold uppercase">
+                            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
                         </div>
-                        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                            <span class="text-xs font-black text-emerald-400 uppercase tracking-wider">Chemistry Tasks</span>
-                            <div class="w-32 h-32 relative my-2"><canvas id="chart-task-chemistry"></canvas></div>
-                            <div id="stat-text-chemistry" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
-                        </div>
-                        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-between">
-                            <span class="text-xs font-black text-orange-400 uppercase tracking-wider">Maths Tasks</span>
-                            <div class="w-32 h-32 relative my-2"><canvas id="chart-task-maths"></canvas></div>
-                            <div id="stat-text-maths" class="text-[11px] font-mono text-slate-400 text-center">0 / 0 Done</div>
-                        </div>
+                        <div id="heatmap-grid" class="grid grid-cols-7 gap-2"></div>
                     </div>
                 </div>
 
@@ -688,7 +741,6 @@
 
             <!-- NEW TAB: WHOLE PREP SYLLABUS TRACKER (STARTS EMPTY FOR CUSTOM INPUT) -->
             <div id="view-fullprep" class="hidden space-y-6">
-                <!-- Grade Switcher -->
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
                         <button onclick="setPrepClass('11')" id="btn-prep-11" class="px-5 py-2 rounded-xl text-xs font-bold bg-orange-600 text-white transition-all">Class 11th</button>
@@ -861,7 +913,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Image Source</label>
                     <input type="file" id="goal-file-input" accept="image/*" class="w-full text-xs text-slate-400 mb-2 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500">
-                    <input type="text" id="goal-img-url" placeholder="Or enter image filename/URL" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none">
+                    <input type="text" id="goal-img-url" placeholder="Or enter image filename/URL (e.g. 2028.png)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Image Vertical Alignment</label>
@@ -879,8 +931,8 @@
         </div>
     </div>
 
-    <!-- MODAL: REALITY CHECK (WORKING & PROPERLY LAYERED) -->
-    <div id="reality-check-modal" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <!-- MODAL: REALITY CHECK -->
+    <div id="reality-check-modal" class="fixed inset-0 z-[90] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0c10] border border-slate-800/80 w-full max-w-md rounded-3xl p-6 sm:p-7 shadow-2xl relative select-none">
             <button onclick="closeRealityCheckModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-900 text-slate-400 hover:text-white flex items-center justify-center border border-slate-800 transition-colors">
                 <i data-lucide="x" class="w-4 h-4"></i>
@@ -923,11 +975,13 @@
                     </p>
                 </div>
             </div>
-            <p class="text-center text-[11px] text-slate-400 italic">"Every hour you waste is a victory for your competition."</p>
+            <p class="text-center text-[11px] text-slate-400 italic">
+                "Every hour you waste is a victory for your competition."
+            </p>
         </div>
     </div>
 
-    <!-- FLOATING LIVE FOCUS POMODORO (HH:MM:SS) -->
+    <!-- FLOATING LIVE FOCUS POMODORO -->
     <div id="focus-timer-container" class="fixed bottom-6 left-6 z-50 flex flex-col items-start select-none touch-none">
         <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-slate-900/95 hover:bg-slate-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-slate-700 transition-transform active:scale-95 backdrop-blur-md">
             <i data-lucide="timer" class="w-5 h-5 text-indigo-400"></i>
@@ -1265,7 +1319,7 @@
             localStorage.setItem('jee_sidebar_collapsed', JSON.stringify(appState.isSidebarCollapsed));
         }
 
-        // --- Sidebar Rail Toggle Function ---
+        // --- Clean Sidebar Rail Toggle ---
         function toggleSidebarRail() {
             appState.isSidebarCollapsed = !appState.isSidebarCollapsed;
             applySidebarState();
@@ -1286,14 +1340,14 @@
             lucide.createIcons();
         }
 
-        function switchTab(viewId) {
+        function switchTab(view) {
             const views = ['analytics', 'planner', 'daily', 'f1hub', 'goals', 'fullprep'];
             views.forEach(v => {
                 const el = document.getElementById(`view-${v}`);
-                if (el) el.classList.toggle('hidden', v !== viewId);
+                if (el) el.classList.toggle('hidden', v !== view);
                 const btn = document.getElementById(`nav-btn-${v}`);
                 if (btn) {
-                    if (v === viewId) {
+                    if (v === view) {
                         btn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all sidebar-btn-active";
                     } else {
                         btn.className = "sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60";
@@ -1301,16 +1355,16 @@
                 }
             });
 
-            if (viewId === 'daily') { renderCalendar(); }
-            if (viewId === 'analytics') renderChart();
-            if (viewId === 'planner') { renderSyllabus(); updateCountdown(); }
-            if (viewId === 'fullprep') renderPrepSyllabusTree();
-            if (viewId === 'goals') renderGoals();
+            if (view === 'daily') { renderCalendar(); renderTaskMetrics(); }
+            if (view === 'analytics') renderChart();
+            if (view === 'planner') { renderSyllabus(); updateCountdown(); }
+            if (view === 'fullprep') renderPrepSyllabusTree();
+            if (view === 'goals') renderGoals();
             lucide.createIcons();
         }
 
         // ==========================================
-        // --- REALITY CHECK MODAL (ACCURATE & CLICKABLE) ---
+        // --- REALITY CHECK MODAL ---
         // ==========================================
         function calculateDaysRemainingMetrics() {
             const now = new Date();
@@ -1352,7 +1406,7 @@
         }
 
         // ==========================================
-        // --- WHOLE PREP SYLLABUS TRACKER (STARTS EMPTY) ---
+        // --- WHOLE PREP SYLLABUS TRACKER ---
         // ==========================================
         function setPrepClass(cls) {
             appState.currentClass = cls;
@@ -1467,7 +1521,7 @@
                 const osc1 = ctx.createOscillator();
                 const gain1 = ctx.createGain();
                 osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(587.33, now); // D5
+                osc1.frequency.setValueAtTime(587.33, now);
                 gain1.gain.setValueAtTime(0.3, now);
                 gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
                 osc1.connect(gain1);
@@ -1478,7 +1532,7 @@
                 const osc2 = ctx.createOscillator();
                 const gain2 = ctx.createGain();
                 osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(880, now + 0.15); // A5
+                osc2.frequency.setValueAtTime(880, now + 0.15);
                 gain2.gain.setValueAtTime(0.3, now + 0.15);
                 gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
                 osc2.connect(gain2);
@@ -1500,11 +1554,7 @@
                 if (btnEl) triggerFireEffect(btnEl.getBoundingClientRect());
                 playChimeSound();
                 const audio = document.getElementById('special-audio');
-                if (audio) {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    audio.play().catch(() => {});
-                }
+                if (audio) { audio.pause(); audio.currentTime = 0; audio.play().catch(() => {}); }
             }
             saveToStorage();
             renderPrepSyllabusTree();
@@ -1621,7 +1671,7 @@
         }
 
         // ==========================================
-        // --- CALENDAR & ROUTINES (ORIGINAL UNTOUCHED) ---
+        // --- CALENDAR & ROUTINES ---
         // ==========================================
         function setCalendarView(mode) {
             calendarView = mode;
@@ -1640,48 +1690,6 @@
                 else selectedDate.setDate(selectedDate.getDate() + delta);
             }
             renderCalendar();
-        }
-
-        function getSubjectStyle(sub) {
-            if (sub === 'Physics') return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-            if (sub === 'Chemistry') return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-            if (sub === 'Maths') return 'bg-orange-500/20 text-orange-300 border-orange-500/30';
-            if (sub === 'Allen') return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-            return 'bg-slate-700/50 text-slate-300 border-slate-600';
-        }
-
-        function getStatusBadge(status) {
-            if (status === 'Completed') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Completed</span>';
-            if (status === 'In Progress') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">In Progress</span>';
-            if (status === 'Pending') return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30">Pending</span>';
-            return '<span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">Not Started</span>';
-        }
-
-        function onTaskDragStart(e, taskId) {
-            e.dataTransfer.setData('text/plain', taskId.toString());
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function onCellDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            e.currentTarget.classList.add('drag-over');
-        }
-
-        function onCellDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over');
-        }
-
-        function onCellDrop(e, targetDateStr) {
-            e.preventDefault();
-            e.currentTarget.classList.remove('drag-over');
-            const taskId = parseInt(e.dataTransfer.getData('text/plain'));
-            const task = appState.scheduledTasks.find(t => t.id === taskId);
-            if (task && task.date !== targetDateStr) {
-                task.date = targetDateStr;
-                saveToStorage();
-                renderCalendar();
-            }
         }
 
         function renderCalendar() {
@@ -1759,7 +1767,6 @@
                 title.innerText = calendarView === 'today' ? "Today's Routine & Schedule" : "Weekly Overview";
                 renderTaskList();
             }
-            renderTaskMetrics();
             lucide.createIcons();
         }
 
@@ -1780,7 +1787,7 @@
             document.getElementById('tasks-duration-badge').innerText = `${formatDuration(totalMins) || '0m'} Total`;
 
             if (tasks.length === 0) {
-                list.innerHTML = `<div class="glass-card p-12 text-center rounded-3xl border border-dashed border-slate-800 text-slate-500 text-sm">No tasks or lectures scheduled for this date. Click "Add Routine" to schedule.</div>`;
+                list.innerHTML = `<div class="glass-card p-12 text-center rounded-3xl border border-dashed border-slate-800 text-slate-500">No tasks or lectures scheduled for this date. Click "Add Routine" to schedule.</div>`;
             } else {
                 tasks.forEach(t => {
                     const dur = t.duration ? formatDuration(t.duration) : (t.start && t.end ? formatDuration(calculateDurationMinutes(t.start, t.end)) : '');
@@ -1822,395 +1829,6 @@
             lucide.createIcons();
         }
 
-        let taskCharts = {};
-        function buildDoughnut(canvasId, done, inProg, pending) {
-            const ctx = document.getElementById(canvasId);
-            if (!ctx) return;
-            if (taskCharts[canvasId]) taskCharts[canvasId].destroy();
-
-            const total = done + inProg + pending;
-            const data = total === 0 ? [0, 0, 1] : [done, inProg, pending];
-            const colors = total === 0 ? ['#1e293b', '#1e293b', '#334155'] : ['#10b981', '#f59e0b', '#475569'];
-
-            taskCharts[canvasId] = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'In Progress', 'Pending/Not Started'],
-                    datasets: [{ data: data, backgroundColor: colors, borderWidth: 0, hoverOffset: 3 }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '72%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } }
-                }
-            });
-        }
-
-        function renderTaskMetrics() {
-            const tasks = appState.scheduledTasks;
-            const getCounts = (taskList) => {
-                const done = taskList.filter(t => t.status === 'Completed').length;
-                const inProg = taskList.filter(t => t.status === 'In Progress').length;
-                const pending = taskList.filter(t => t.status !== 'Completed' && t.status !== 'In Progress').length;
-                return { done, inProg, pending, total: taskList.length };
-            };
-
-            const ov = getCounts(tasks);
-            buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
-            const elOv = document.getElementById('stat-text-overall');
-            if (elOv) elOv.innerText = `${ov.done}/${ov.total} Done (${ov.total ? Math.round((ov.done/ov.total)*100) : 0}%)`;
-
-            const phy = getCounts(tasks.filter(t => t.subject === 'Physics'));
-            buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
-            const elPhy = document.getElementById('stat-text-physics');
-            if (elPhy) elPhy.innerText = `${phy.done}/${phy.total} Done (${phy.total ? Math.round((phy.done/phy.total)*100) : 0}%)`;
-
-            const chm = getCounts(tasks.filter(t => t.subject === 'Chemistry'));
-            buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
-            const elChm = document.getElementById('stat-text-chemistry');
-            if (elChm) elChm.innerText = `${chm.done}/${chm.total} Done (${chm.total ? Math.round((chm.done/chm.total)*100) : 0}%)`;
-
-            const mth = getCounts(tasks.filter(t => t.subject === 'Maths'));
-            buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
-            const elMth = document.getElementById('stat-text-maths');
-            if (elMth) elMth.innerText = `${mth.done}/${mth.total} Done (${mth.total ? Math.round((mth.done/mth.total)*100) : 0}%)`;
-        }
-
-        function openTaskModalForDate(targetDate, editTaskId = null) {
-            const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
-            const dateStr = formatLocalDate(d);
-            document.getElementById('task-date').value = dateStr;
-            document.getElementById('task-edit-id').value = editTaskId || '';
-            document.getElementById('task-modal-title').innerText = editTaskId ? 'Edit Routine Task' : 'Schedule Task / Routine';
-
-            if (editTaskId) {
-                const t = appState.scheduledTasks.find(x => x.id === editTaskId);
-                if (t) {
-                    document.getElementById('task-title').value = t.title || '';
-                    document.getElementById('task-subject').value = t.subject || 'Physics';
-                    document.getElementById('task-start').value = t.start || '';
-                    document.getElementById('task-end').value = t.end || '';
-                    document.getElementById('task-duration').value = t.duration || '';
-                    document.getElementById('task-status').value = t.status || 'Not Started';
-                }
-            } else {
-                document.getElementById('task-title').value = '';
-                document.getElementById('task-start').value = '';
-                document.getElementById('task-end').value = '';
-                document.getElementById('task-duration').value = '';
-                document.getElementById('task-status').value = 'Not Started';
-            }
-
-            document.getElementById('task-modal').classList.remove('hidden');
-        }
-        function closeTaskModal() { document.getElementById('task-modal').classList.add('hidden'); }
-
-        function saveTask() {
-            const editId = document.getElementById('task-edit-id').value;
-            const title = document.getElementById('task-title').value.trim();
-            const subject = document.getElementById('task-subject').value;
-            const start = document.getElementById('task-start').value;
-            const end = document.getElementById('task-end').value;
-            let duration = parseInt(document.getElementById('task-duration').value) || 0;
-            if (!duration && start && end) duration = calculateDurationMinutes(start, end);
-            const status = document.getElementById('task-status').value;
-            const dateStr = document.getElementById('task-date').value || formatLocalDate(selectedDate);
-
-            if (!title) return alert("Please enter a task title.");
-
-            if (editId) {
-                const task = appState.scheduledTasks.find(t => t.id === parseInt(editId));
-                if (task) {
-                    task.title = title;
-                    task.subject = subject;
-                    task.start = start;
-                    task.end = end;
-                    task.duration = duration;
-                    task.status = status;
-                    task.date = dateStr;
-                }
-            } else {
-                appState.scheduledTasks.push({ id: Date.now(), date: dateStr, title, subject, start, end, duration, status });
-            }
-
-            saveToStorage();
-            closeTaskModal();
-            renderCalendar();
-        }
-
-        function cycleTaskStatus(id) {
-            const t = appState.scheduledTasks.find(x => x.id === id);
-            if (!t) return;
-            const seq = ['Not Started', 'In Progress', 'Completed', 'Pending'];
-            const nextIdx = (seq.indexOf(t.status) + 1) % seq.length;
-            t.status = seq[nextIdx];
-            saveToStorage();
-            renderCalendar();
-        }
-
-        function deleteTask(id) {
-            appState.scheduledTasks = appState.scheduledTasks.filter(x => x.id !== id);
-            saveToStorage();
-            renderCalendar();
-        }
-
-        function autoCalcTaskDuration() {
-            const s = document.getElementById('task-start').value;
-            const e = document.getElementById('task-end').value;
-            if (s && e) {
-                const [sh, sm] = s.split(':').map(Number);
-                const [eh, em] = e.split(':').map(Number);
-                let diff = (eh * 60 + em) - (sh * 60 + sm);
-                if (diff < 0) diff += 24 * 60;
-                document.getElementById('task-duration').value = diff;
-            }
-        }
-
-        function calculateDurationMinutes(start, end) {
-            if (!start || !end) return 0;
-            const [sh, sm] = start.split(':').map(Number);
-            const [eh, em] = end.split(':').map(Number);
-            let diff = (eh * 60 + em) - (sh * 60 + sm);
-            if (diff < 0) diff += 24 * 60;
-            return diff;
-        }
-
-        function formatDuration(minutes) {
-            if (!minutes || minutes <= 0) return '';
-            const h = Math.floor(minutes / 60);
-            const m = minutes % 60;
-            if (h > 0 && m > 0) return `${h}h ${m}m`;
-            if (h > 0) return `${h}h`;
-            return `${m}m`;
-        }
-
-        // ==========================================
-        // --- DAY SUMMARY MODAL (ACCURATE LOGS) ---
-        // ==========================================
-        function openDaySummaryModal() {
-            const dateStr = formatLocalDate(selectedDate);
-            document.getElementById('summary-date-label').innerText = selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-            const modal = document.getElementById('day-summary-modal');
-            const content = document.getElementById('summary-content');
-            modal.classList.remove('hidden');
-
-            const dayTasks = appState.scheduledTasks.filter(t => t.date === dateStr);
-            const subjectMap = { 
-                Physics: { planned: 0, done: 0 }, 
-                Chemistry: { planned: 0, done: 0 }, 
-                Maths: { planned: 0, done: 0 }, 
-                Allen: { planned: 0, done: 0 }, 
-                General: { planned: 0, done: 0 } 
-            };
-
-            let totalPlanned = 0;
-            let totalDone = 0;
-
-            dayTasks.forEach(t => {
-                let mins = Number(t.duration) || 0;
-                if (!mins && t.start && t.end) mins = calculateDurationMinutes(t.start, t.end);
-                const sub = subjectMap[t.subject] !== undefined ? t.subject : 'General';
-                subjectMap[sub].planned += mins;
-                totalPlanned += mins;
-
-                if (t.status === 'Completed') {
-                    subjectMap[sub].done += mins;
-                    totalDone += mins;
-                }
-            });
-
-            document.getElementById('summary-total-time').innerText = `${formatDuration(totalDone) || '0m'} / ${formatDuration(totalPlanned) || '0m'}`;
-
-            if (totalPlanned === 0) {
-                content.innerHTML = `<div class="p-6 text-center text-slate-500 text-xs">No routines planned or completed for this day.</div>`;
-                return;
-            }
-
-            content.innerHTML = Object.keys(subjectMap).map(sub => {
-                const { planned, done } = subjectMap[sub];
-                if (planned === 0) return '';
-                const perc = Math.min(100, Math.round((done / planned) * 100));
-
-                let barColor = 'bg-slate-500';
-                if (sub === 'Physics') barColor = 'bg-blue-500';
-                else if (sub === 'Chemistry') barColor = 'bg-emerald-500';
-                else if (sub === 'Maths') barColor = 'bg-orange-500';
-                else if (sub === 'Allen') barColor = 'bg-purple-500';
-
-                return `
-                    <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800 space-y-2">
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="font-bold text-white flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full ${barColor}"></span>
-                                ${sub}
-                            </span>
-                            <span class="font-mono text-slate-300 font-semibold">
-                                <span class="text-emerald-400 font-bold">${formatDuration(done) || '0m'}</span> / ${formatDuration(planned)} (${perc}%)
-                            </span>
-                        </div>
-                        <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full ${barColor} transition-all duration-500" style="width: ${perc}%"></div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-        function closeDaySummaryModal() { document.getElementById('day-summary-modal').classList.add('hidden'); }
-
-        // ==========================================
-        // --- DAILY QUOTA CHECKLIST & REWARDS ---
-        // ==========================================
-        const QUOTA_KEY = 'jee_daily_quota';
-        function getStoredQuota() {
-            const todayStr = formatLocalDate(new Date());
-            const stored = JSON.parse(localStorage.getItem(QUOTA_KEY));
-            if (!stored || stored.date !== todayStr) {
-                const fresh = { date: todayStr, revision: false, maths: false, phy: false, chem: false };
-                localStorage.setItem(QUOTA_KEY, JSON.stringify(fresh));
-                return fresh;
-            }
-            return stored;
-        }
-
-        function toggleDailyQuota(taskKey) {
-            const quota = getStoredQuota();
-            const checkbox = document.getElementById(`quota-${taskKey}`);
-            if (checkbox) {
-                quota[taskKey] = checkbox.checked;
-                localStorage.setItem(QUOTA_KEY, JSON.stringify(quota));
-                renderDailyQuotaUI();
-            }
-        }
-
-        function renderDailyQuotaUI() {
-            const quota = getStoredQuota();
-            ['revision', 'maths', 'phy', 'chem'].forEach(key => {
-                const cb = document.getElementById(`quota-${key}`);
-                if (cb) cb.checked = !!quota[key];
-            });
-
-            const completedCount = ['revision', 'maths', 'phy', 'chem'].filter(k => quota[k]).length;
-            const rewardBox = document.getElementById('quota-reward-box');
-            const rewardIcon = document.getElementById('reward-icon');
-            const rewardTitle = document.getElementById('reward-title');
-            const rewardStatus = document.getElementById('reward-status');
-
-            if (completedCount === 4) {
-                rewardBox.className = "w-full md:w-auto p-3.5 rounded-2xl border border-amber-500/50 bg-gradient-to-r from-amber-500/20 to-emerald-500/20 shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center gap-3 transition-all min-w-[210px] animate-pulse";
-                rewardIcon.className = "w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shadow-lg";
-                rewardIcon.innerHTML = `<i data-lucide="unlock" class="w-5 h-5 text-slate-950"></i>`;
-                rewardTitle.className = "text-xs font-black text-amber-300";
-                rewardTitle.innerText = "1h Reward Unlocked! 🎮";
-                rewardStatus.className = "text-[10px] text-emerald-400 font-bold";
-                rewardStatus.innerText = "All 4 Done • Enjoy your time";
-            } else {
-                rewardBox.className = "w-full md:w-auto p-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 flex items-center gap-3 transition-all min-w-[210px]";
-                rewardIcon.className = "w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center";
-                rewardIcon.innerHTML = `<i data-lucide="lock" class="w-5 h-5"></i>`;
-                rewardTitle.className = "text-xs font-bold text-slate-400";
-                rewardTitle.innerText = "1h Entertainment Locked";
-                rewardStatus.className = "text-[10px] text-slate-500 font-mono";
-                rewardStatus.innerText = `${completedCount} / 4 Targets Done`;
-            }
-            lucide.createIcons();
-        }
-
-        // ==========================================
-        // --- ORIGINAL SYLLABUS LOGIC ---
-        // ==========================================
-        function addTopic() {
-            const name = document.getElementById('topic-name').value.trim();
-            const subject = document.getElementById('topic-subject').value;
-            const note = document.getElementById('topic-note').value.trim();
-            if (!name) return alert('Enter topic name');
-            appState.syllabus.push({ id: Date.now(), subject, name, note, completed: false });
-            document.getElementById('topic-name').value = '';
-            document.getElementById('topic-note').value = '';
-            saveToStorage();
-            renderSyllabus();
-        }
-
-        function toggleTopic(id, btnEl) {
-            const t = appState.syllabus.find(x => x.id === id);
-            if (!t) return;
-            t.completed = !t.completed;
-            if (t.completed && btnEl) {
-                triggerFireEffect(btnEl.getBoundingClientRect());
-                playChimeSound();
-            }
-            saveToStorage();
-            renderSyllabus();
-        }
-
-        function deleteTopic(id) {
-            appState.syllabus = appState.syllabus.filter(x => x.id !== id);
-            saveToStorage();
-            renderSyllabus();
-        }
-
-        function archiveSyllabus() {
-            if (confirm('Clear all completed topics?')) {
-                appState.syllabus = appState.syllabus.filter(t => !t.completed);
-                saveToStorage();
-                renderSyllabus();
-            }
-        }
-
-        function renderSyllabus() {
-            const list = document.getElementById('syllabus-list');
-            list.innerHTML = '';
-            ['Physics', 'Chemistry', 'Maths', 'General'].forEach(sub => {
-                const subTopics = appState.syllabus.filter(t => t.subject === sub);
-                if (!subTopics.length) return;
-                const sec = document.createElement('div');
-                sec.className = "mb-6";
-                sec.innerHTML = `<h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">${sub}</h4><div class="space-y-2"></div>`;
-                const container = sec.querySelector('div');
-                subTopics.forEach(t => {
-                    const row = document.createElement('div');
-                    row.className = `flex items-center gap-3 p-4 rounded-xl border relative ${t.completed ? 'bg-slate-900/30 border-slate-800' : 'glass-card border-slate-700/50'}`;
-                    row.innerHTML = `
-                        <button onclick="toggleTopic(${t.id}, this)" class="relative w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${t.completed ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-slate-600 hover:border-indigo-400'}">
-                            ${t.completed ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
-                        </button>
-                        <div class="flex-1 ${t.completed ? 'line-through text-slate-500' : 'text-white'} font-bold text-sm">
-                            ${t.name} <span class="text-xs font-normal text-slate-400 ml-2">${t.note || ''}</span>
-                        </div>
-                        <button onclick="deleteTopic(${t.id})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    `;
-                    container.appendChild(row);
-                });
-                list.appendChild(sec);
-            });
-
-            const total = appState.syllabus.length;
-            const done = appState.syllabus.filter(t => t.completed).length;
-            const perc = total ? Math.round((done / total) * 100) : 0;
-            document.getElementById('progress-text').innerText = `${done}/${total} Topics`;
-            document.getElementById('progress-percent').innerText = `${perc}%`;
-            document.getElementById('overall-progress-bar').style.width = `${perc}%`;
-            lucide.createIcons();
-        }
-
-        function triggerFireEffect(rect) {
-            if (!rect) return;
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            for (let deg = 0; deg < 360; deg += 60) {
-                const particle = document.createElement('div');
-                particle.className = 'fire-particle';
-                particle.innerText = '🔥';
-                const rad = (deg * Math.PI) / 180;
-                particle.style.left = `${cx - 5}px`;
-                particle.style.top = `${cy - 5}px`;
-                particle.style.setProperty('--tx', `${Math.cos(rad) * 20}px`);
-                particle.style.setProperty('--ty', `${Math.sin(rad) * 20 - 6}px`);
-                document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 550);
-            }
-        }
-
         // ==========================================
         // --- POMODORO & OVERTIME STOPWATCH ---
         // ==========================================
@@ -2222,57 +1840,16 @@
         let activeBoundTaskId = null;
         let pipWindowInstance = null;
 
-        function getLiveISTString() {
-            return new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        }
-
-        function onDirectTimeChange() {
-            if (isTimerRunning || isOvertimeMode) return;
-            const h = parseInt(document.getElementById('timer-input-h').value) || 0;
-            const m = parseInt(document.getElementById('timer-input-m').value) || 0;
-            const s = parseInt(document.getElementById('timer-input-s').value) || 0;
-            timerRemaining = Math.max(1, (h * 3600) + (m * 60) + s);
-            updateAllTimerDisplays();
-        }
-
-        function setTimerDirect(h, m, s) {
-            if (isOvertimeMode) resetTimer();
-            pauseTimer();
-            document.getElementById('timer-input-h').value = h.toString().padStart(2, '0');
-            document.getElementById('timer-input-m').value = m.toString().padStart(2, '0');
-            document.getElementById('timer-input-s').value = s.toString().padStart(2, '0');
-            timerRemaining = (h * 3600) + (m * 60) + s;
-            updateAllTimerDisplays();
-        }
-
-        function updateAllTimerDisplays() {
-            const totalSecs = isOvertimeMode ? overtimeElapsed : timerRemaining;
-            const h = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
-            const m = Math.floor((totalSecs % 3600) / 60).toString().padStart(2, '0');
-            const s = (totalSecs % 60).toString().padStart(2, '0');
-
-            document.getElementById('timer-input-h').value = h;
-            document.getElementById('timer-input-m').value = m;
-            document.getElementById('timer-input-s').value = s;
-
-            if (pipWindowInstance && !pipWindowInstance.closed) {
-                const timeEl = pipWindowInstance.document.getElementById('pip-time');
-                if (timeEl) timeEl.innerText = `${h}:${m}:${s}`;
-                const istEl = pipWindowInstance.document.getElementById('pip-ist');
-                if (istEl) istEl.innerText = `IST ${getLiveISTString()}`;
-                const statusEl = pipWindowInstance.document.getElementById('pip-status');
-                if (statusEl) {
-                    statusEl.innerText = isOvertimeMode ? "OVERTIME STOPWATCH" : (isTimerRunning ? "FOCUS RUNNING" : "PAUSED");
-                    statusEl.className = isOvertimeMode ? "font-bold text-amber-400 text-xs" : (isTimerRunning ? "font-bold text-emerald-400 text-xs" : "font-bold text-slate-400 text-xs");
-                }
-            }
-            renderPipCanvas();
-        }
-
         function startTimer() {
             if (isTimerRunning) return;
+            if (!isOvertimeMode && timerRemaining <= 0) timerRemaining = getDirectConfiguredSeconds();
             isTimerRunning = true;
-            document.getElementById('timer-status-dot').className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+
+            const startBtn = document.getElementById('timer-start-btn');
+            startBtn.classList.add('bg-emerald-600');
+            startBtn.innerHTML = `<i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse"></i> Running`;
+            document.getElementById('timer-status-dot').className = isOvertimeMode ? "w-2 h-2 rounded-full bg-amber-400 animate-ping" : "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+            lucide.createIcons();
 
             timerInterval = setInterval(() => {
                 if (!isOvertimeMode) {
@@ -2282,19 +1859,25 @@
                     } else {
                         clearInterval(timerInterval);
                         isTimerRunning = false;
-                        document.getElementById('task-completed-modal').classList.remove('hidden');
+                        onCountdownEnded();
                     }
                 } else {
                     overtimeElapsed++;
                     updateAllTimerDisplays();
                 }
             }, 1000);
+            updateAllTimerDisplays();
         }
 
         function pauseTimer() {
             clearInterval(timerInterval);
             isTimerRunning = false;
+            const startBtn = document.getElementById('timer-start-btn');
+            startBtn.classList.remove('bg-emerald-600');
+            startBtn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume`;
             document.getElementById('timer-status-dot').className = "w-2 h-2 rounded-full bg-amber-400";
+            lucide.createIcons();
+            updateAllTimerDisplays();
         }
 
         function resetTimer() {
@@ -2303,546 +1886,26 @@
             isOvertimeMode = false;
             overtimeElapsed = 0;
             activeBoundTaskId = null;
+
+            document.getElementById('pomo-subject-container').classList.add('hidden');
+            document.getElementById('pomo-presets-row').classList.remove('hidden');
             document.getElementById('timer-save-overtime-btn').classList.add('hidden');
+            document.getElementById('timer-start-btn').classList.remove('hidden', 'bg-emerald-600');
+            document.getElementById('timer-start-btn').innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Start`;
+            document.getElementById('timer-pause-btn').classList.remove('hidden');
+            document.getElementById('active-task-label').innerText = "Focus Session";
             document.getElementById('timer-status-dot').className = "w-2 h-2 rounded-full bg-slate-500";
+            document.getElementById('timer-hint-text').innerText = "Tap HH:MM:SS directly to configure";
+
             timerRemaining = 25 * 60;
             updateAllTimerDisplays();
+            lucide.createIcons();
         }
 
         function toggleFocusTimer() {
-            document.getElementById('focus-timer-widget').classList.toggle('hidden');
-        }
-
-        function startTaskPomodoro(taskId) {
-            const task = appState.scheduledTasks.find(t => t.id === taskId);
-            if (!task) return;
-            task.status = 'In Progress';
-            saveToStorage();
-            renderCalendar();
-
-            resetTimer();
-            activeBoundTaskId = taskId;
-            document.getElementById('active-task-label').innerText = task.title;
-            document.getElementById('focus-timer-widget').classList.remove('hidden');
-            setTimerDirect(0, task.duration || 45, 0);
-            startTimer();
-            togglePiP(true);
-        }
-
-        function handleTaskCompletedResponse(isCompleted) {
-            document.getElementById('task-completed-modal').classList.add('hidden');
-            if (isCompleted) {
-                if (activeBoundTaskId) {
-                    const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
-                    if (task) task.status = 'Completed';
-                    saveToStorage();
-                    renderCalendar();
-                }
-                alert("🎉 Task marked as completed!");
-                resetTimer();
-            } else {
-                isOvertimeMode = true;
-                overtimeElapsed = 0;
-                document.getElementById('timer-save-overtime-btn').classList.remove('hidden');
-                startTimer();
-            }
-        }
-
-        function finishOvertime() {
-            pauseTimer();
-            if (activeBoundTaskId) {
-                const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
-                if (task) {
-                    task.duration = (task.duration || 0) + Math.ceil(overtimeElapsed / 60);
-                    task.status = 'Completed';
-                    saveToStorage();
-                    renderCalendar();
-                }
-            }
-            alert("Session recorded with overtime.");
-            resetTimer();
-        }
-
-        async function togglePiP(forceOpen = false) {
-            if ('documentPictureInPicture' in window) {
-                if (pipWindowInstance && !pipWindowInstance.closed) {
-                    if (!forceOpen) {
-                        pipWindowInstance.close();
-                        pipWindowInstance = null;
-                    }
-                    return;
-                }
-
-                try {
-                    pipWindowInstance = await window.documentPictureInPicture.requestWindow({ width: 340, height: 200 });
-                    pipWindowInstance.document.body.className = "bg-slate-950 text-slate-200 flex flex-col justify-between p-4 h-screen select-none font-sans";
-                    
-                    const label = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Task') : 'Focus Routine';
-                    pipWindowInstance.document.body.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1e293b; padding-bottom:6px;">
-                            <span style="color:#f59e0b; font-weight:800; font-size:11px; letter-spacing:0.05em;">AIM: IIT BOMBAY</span>
-                            <span id="pip-ist" style="font-family:monospace; color:#94a3b8; font-size:10px;">IST ${getLiveISTString()}</span>
-                        </div>
-                        <div style="text-align:center; margin:auto 0;">
-                            <div style="color:#818cf8; font-size:11px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${label}</div>
-                            <div id="pip-time" style="font-family:monospace; font-size:36px; font-weight:900; color:#ffffff; margin:4px 0;">00:25:00</div>
-                            <div id="pip-status" style="font-size:10px; font-weight:800; color:#10b981; letter-spacing:0.05em;">ACTIVE</div>
-                        </div>
-                    `;
-                    pipWindowInstance.addEventListener('pagehide', () => { pipWindowInstance = null; });
-                    updateAllTimerDisplays();
-                    return;
-                } catch (err) {}
-            }
-
-            const canvas = document.getElementById('pip-canvas');
-            const video = document.getElementById('pip-video');
-            renderPipCanvas();
-
-            try {
-                if (document.pictureInPictureElement && !forceOpen) {
-                    await document.exitPictureInPicture();
-                } else if (!document.pictureInPictureElement) {
-                    if (!video.srcObject) {
-                        video.srcObject = canvas.captureStream(15);
-                        await video.play();
-                    }
-                    await video.requestPictureInPicture();
-                }
-            } catch (err) {}
-        }
-
-        function renderPipCanvas() {
-            const canvas = document.getElementById('pip-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const istTime = getLiveISTString();
-
-            const totalSecs = isOvertimeMode ? overtimeElapsed : timerRemaining;
-            const h = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
-            const m = Math.floor((totalSecs % 3600) / 60).toString().padStart(2, '0');
-            const s = (totalSecs % 60).toString().padStart(2, '0');
-
-            ctx.fillStyle = '#020617';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#f59e0b';
-            ctx.font = 'bold 12px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('AIM: IIT BOMBAY', 16, 26);
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '600 11px monospace';
-            ctx.textAlign = 'right';
-            ctx.fillText(`IST ${istTime}`, canvas.width - 16, 26);
-
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(16, 36);
-            ctx.lineTo(canvas.width - 16, 36);
-            ctx.stroke();
-
-            ctx.fillStyle = '#818cf8';
-            ctx.font = '600 12px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            const taskText = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Focus Task') : 'Focus Routine';
-            ctx.fillText(taskText.slice(0, 28), canvas.width / 2, 58);
-
-            ctx.fillStyle = isOvertimeMode ? '#fbbf24' : '#ffffff';
-            ctx.font = 'bold 40px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText(`${h}:${m}:${s}`, canvas.width / 2, 105);
-
-            ctx.font = 'bold 11px Inter, sans-serif';
-            if (isOvertimeMode) {
-                ctx.fillStyle = '#f59e0b';
-                ctx.fillText('⏳ OVERTIME RUNNING', canvas.width / 2, 138);
-            } else {
-                ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
-                ctx.fillText(isTimerRunning ? '● RUNNING' : '❚❚ PAUSED', canvas.width / 2, 138);
-            }
-        }
-
-        // ==========================================
-        // --- GOALS GALLERY ---
-        // ==========================================
-        let stagedGoalImageBase64 = '';
-        function renderGoals() {
-            const longGrid = document.getElementById('long-goals-grid');
-            const shortGrid = document.getElementById('short-goals-grid');
-            if (!longGrid || !shortGrid) return;
-            longGrid.innerHTML = '';
-            shortGrid.innerHTML = '';
-
-            appState.goals.forEach(goal => {
-                const card = document.createElement('div');
-                card.className = "glass-card rounded-2xl overflow-hidden group flex flex-col justify-between border border-slate-800";
-                card.innerHTML = `
-                    <div class="h-36 bg-slate-900 relative overflow-hidden">
-                        <img src="${goal.image}" class="w-full h-full object-cover opacity-60" onerror="this.src='2028.png'">
-                        <button onclick="deleteGoal(${goal.id})" class="absolute top-2 right-2 p-1.5 rounded-lg bg-black/60 text-slate-400 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                    </div>
-                    <div class="p-5">
-                        <button onclick="toggleGoalStatus(${goal.id})" class="px-2.5 py-0.5 rounded text-[10px] font-bold ${goal.completed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">
-                            ${goal.completed ? 'Completed' : 'Pending'}
-                        </button>
-                        <h4 class="font-bold text-white text-base mt-2 ${goal.completed ? 'line-through opacity-60' : ''}">${goal.title}</h4>
-                        <p class="text-slate-500 text-xs mt-1">Target: ${goal.targetDate}</p>
-                    </div>
-                `;
-                if (goal.type === 'long') longGrid.appendChild(card);
-                else shortGrid.appendChild(card);
-            });
-            lucide.createIcons();
-        }
-
-        function toggleGoalStatus(id) {
-            const g = appState.goals.find(x => x.id === id);
-            if (g) { g.completed = !g.completed; saveToStorage(); renderGoals(); }
-        }
-
-        function deleteGoal(id) {
-            if (confirm("Delete this goal?")) {
-                appState.goals = appState.goals.filter(x => x.id !== id);
-                saveToStorage();
-                renderGoals();
-            }
-        }
-
-        function openAddGoalModal(type) {
-            document.getElementById('goal-type-select').value = type;
-            document.getElementById('goal-title-input').value = '';
-            document.getElementById('goal-target-input').value = '';
-            document.getElementById('goal-modal').classList.remove('hidden');
-        }
-        function closeAddGoalModal() { document.getElementById('goal-modal').classList.add('hidden'); }
-
-        function saveNewGoal() {
-            const type = document.getElementById('goal-type-select').value;
-            const title = document.getElementById('goal-title-input').value.trim();
-            const targetDate = document.getElementById('goal-target-input').value.trim() || 'Undated';
-            const align = document.getElementById('goal-align-select').value;
-            let image = stagedGoalImageBase64 || document.getElementById('goal-img-url').value.trim() || '2028.png';
-
-            if (!title) return alert("Please enter goal title.");
-            appState.goals.push({ id: Date.now(), type, title, targetDate, image, align, completed: false });
-            saveToStorage();
-            closeAddGoalModal();
-            renderGoals();
-        }
-
-        // ==========================================
-        // --- PERFORMANCE ANALYTICS & TESTS ---
-        // ==========================================
-        function setChartFilter(type) {
-            activeChartFilter = type;
-            ['all', 'pcm', 'physics', 'chem', 'maths'].forEach(b => {
-                const btn = document.getElementById(`btn-chart-${b}`);
-                if (!btn) return;
-                btn.className = (b === type) 
-                    ? "px-3 py-1.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-sm"
-                    : "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
-            });
-            renderChart();
-        }
-
-        function renderChart() {
-            const ctx = document.getElementById('scoreChart');
-            if (!ctx) return;
-            const sorted = [...appState.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
-            const labels = sorted.map(t => t.name);
-
-            let datasets = [];
-            if (activeChartFilter === 'all') {
-                datasets = [{
-                    label: 'Total Score',
-                    data: sorted.map(t => Number(t.total || 0)),
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
-                    borderWidth: 3, fill: true, tension: 0.35, pointRadius: 4
-                }];
-            } else if (activeChartFilter === 'pcm') {
-                datasets = [
-                    { label: 'Physics', data: sorted.map(t => Number(t.p || 0)), borderColor: '#3b82f6', tension: 0.35, pointRadius: 4 },
-                    { label: 'Chemistry', data: sorted.map(t => Number(t.c || 0)), borderColor: '#10b981', tension: 0.35, pointRadius: 4 },
-                    { label: 'Maths', data: sorted.map(t => Number(t.m || 0)), borderColor: '#f97316', tension: 0.35, pointRadius: 4 }
-                ];
-            } else if (activeChartFilter === 'physics') {
-                datasets = [{ label: 'Physics Score', data: sorted.map(t => Number(t.p || 0)), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            } else if (activeChartFilter === 'chem') {
-                datasets = [{ label: 'Chemistry Score', data: sorted.map(t => Number(t.c || 0)), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            } else if (activeChartFilter === 'maths') {
-                datasets = [{ label: 'Maths Score', data: sorted.map(t => Number(t.m || 0)), borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.15)', borderWidth: 3, fill: true, tension: 0.35 }];
-            }
-
-            if (performanceChart) performanceChart.destroy();
-            performanceChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: labels.length ? labels : ['No tests yet'], datasets: datasets.length ? datasets : [{ label: 'No Data', data: [0], borderColor: '#334155' }] },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } },
-                        y: { min: 0, max: (activeChartFilter === 'all') ? 300 : 100, grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } }
-                    }
-                }
-            });
-            calculateAnalytics();
-        }
-
-        function calculateAnalytics() {
-            const { tests } = appState;
-            document.getElementById('empty-state').classList.toggle('hidden', tests.length > 0);
-
-            const totalScore = tests.reduce((sum, t) => sum + Number(t.total || 0), 0);
-            const avgScore = tests.length ? (totalScore / tests.length).toFixed(1) : 0;
-            document.getElementById('stat-avg-score').innerText = avgScore;
-            document.getElementById('stat-avg-perc').innerText = `${tests.length ? ((avgScore / 300) * 100).toFixed(1) : 0}% Avg`;
-
-            const recent = tests.slice(-3);
-            const recentAvg = recent.length ? (recent.reduce((sum, t) => sum + Number(t.total || 0), 0) / recent.length).toFixed(1) : 0;
-            document.getElementById('stat-recent-avg').innerText = recentAvg;
-
-            const avgP = tests.length ? (tests.reduce((sum, t) => sum + Number(t.p || 0), 0) / tests.length).toFixed(1) : 0;
-            const avgC = tests.length ? (tests.reduce((sum, t) => sum + Number(t.c || 0), 0) / tests.length).toFixed(1) : 0;
-            const avgM = tests.length ? (tests.reduce((sum, t) => sum + Number(t.m || 0), 0) / tests.length).toFixed(1) : 0;
-            document.getElementById('avg-p').innerText = avgP;
-            document.getElementById('avg-c').innerText = avgC;
-            document.getElementById('avg-m').innerText = avgM;
-            document.getElementById('bar-p').style.width = `${avgP}%`;
-            document.getElementById('bar-c').style.width = `${avgC}%`;
-            document.getElementById('bar-m').style.width = `${avgM}%`;
-
-            const percentiles = tests.map(t => (t.rank && t.students) ? ((t.students - t.rank) / t.students * 100) : 0);
-            document.getElementById('stat-best-percentile').innerText = `${Math.max(...percentiles, 0).toFixed(1)}%`;
-
-            renderTestTable();
-        }
-
-        function renderTestTable() {
-            const tbody = document.getElementById('test-table-body');
-            document.getElementById('test-count').innerText = `${appState.tests.length} Tests Recorded`;
-            tbody.innerHTML = '';
-
-            [...appState.tests].reverse().forEach((test, originalIndex) => {
-                const actualIdx = appState.tests.length - 1 - originalIndex;
-                const perc = (test.students && test.rank) ? ((test.students - test.rank) / test.students * 100).toFixed(1) : 'N/A';
-                const row = document.createElement('tr');
-                row.className = "hover:bg-slate-800/30 transition-colors group";
-                row.innerHTML = `
-                    <td class="px-6 py-4">
-                        <div class="font-bold text-white">${test.name}</div>
-                        <div class="text-xs text-slate-500">${test.date}</div>
-                        ${test.notes ? `<div class="text-xs text-slate-400 italic mt-1 bg-slate-900/40 p-1.5 rounded border border-slate-800">${test.notes}</div>` : ''}
-                    </td>
-                    <td class="px-6 py-4 text-center font-mono text-xs">
-                        <span class="text-blue-400">${test.p}</span> | <span class="text-emerald-400">${test.c}</span> | <span class="text-orange-400">${test.m}</span>
-                    </td>
-                    <td class="px-6 py-4 text-center font-bold text-indigo-400 text-base">
-                        ${test.total} <span class="text-xs text-slate-500 font-normal">/ ${test.max}</span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 text-xs font-bold border border-indigo-500/20 inline-block">
-                            ${perc}${perc !== 'N/A' ? '%' : ''}
-                        </span>
-                        ${(test.rank && test.students) ? `<div class="text-[11px] text-slate-400 font-mono mt-1">Rank <span class="text-white font-bold">${test.rank}</span> / ${test.students}</div>` : ''}
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="editTest(${actualIdx})" class="p-1 hover:text-indigo-400"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                            <button onclick="deleteTest(${actualIdx})" class="p-1 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            lucide.createIcons();
-        }
-
-        const pIn = document.getElementById('t-p'), cIn = document.getElementById('t-c'), mIn = document.getElementById('t-m'), totalIn = document.getElementById('t-total');
-        [pIn, cIn, mIn].forEach(el => {
-            el.addEventListener('input', () => {
-                totalIn.value = Number(pIn.value || 0) + Number(cIn.value || 0) + Number(mIn.value || 0);
-            });
-        });
-
-        document.getElementById('test-form').onsubmit = (e) => {
-            e.preventDefault();
-            const editIdx = parseInt(document.getElementById('edit-index').value);
-            const data = {
-                name: document.getElementById('t-name').value,
-                date: document.getElementById('t-date').value,
-                p: pIn.value, c: cIn.value, m: mIn.value, total: totalIn.value,
-                max: document.getElementById('t-max').value,
-                rank: document.getElementById('t-rank').value,
-                students: document.getElementById('t-students').value,
-                notes: document.getElementById('t-notes').value
-            };
-            if (editIdx > -1) appState.tests[editIdx] = data;
-            else appState.tests.push(data);
-            saveToStorage();
-            calculateAnalytics();
-            renderChart();
-            closeTestModal();
-        };
-
-        function openTestModal(idx = -1) {
-            document.getElementById('test-modal').classList.remove('hidden');
-            document.getElementById('edit-index').value = idx;
-            document.getElementById('modal-title').innerText = idx > -1 ? 'Edit Test' : 'Add New Test';
-            if (idx > -1) {
-                const t = appState.tests[idx];
-                document.getElementById('t-name').value = t.name;
-                document.getElementById('t-date').value = t.date;
-                pIn.value = t.p; cIn.value = t.c; mIn.value = t.m; totalIn.value = t.total;
-                document.getElementById('t-max').value = t.max;
-                document.getElementById('t-rank').value = t.rank;
-                document.getElementById('t-students').value = t.students;
-                document.getElementById('t-notes').value = t.notes || '';
-            } else {
-                document.getElementById('test-form').reset();
-                document.getElementById('t-max').value = 300;
-            }
-        }
-        function closeTestModal() { document.getElementById('test-modal').classList.add('hidden'); }
-        function deleteTest(idx) {
-            if (confirm('Delete this test score?')) {
-                appState.tests.splice(idx, 1);
-                saveToStorage();
-                renderChart();
-            }
-        }
-        function editTest(idx) { openTestModal(idx); }
-
-        // ==========================================
-        // --- AI COACH & AUDIO ---
-        // ==========================================
-        function toggleAIChat() { document.getElementById('ai-chatbox').classList.toggle('hidden'); renderChat(); }
-        function openApiKeyModal() { document.getElementById('api-key-modal').classList.remove('hidden'); document.getElementById('custom-api-key').value = appState.apiKey; }
-        function closeApiKeyModal() { document.getElementById('api-key-modal').classList.add('hidden'); }
-        function saveApiKey() {
-            appState.apiKey = document.getElementById('custom-api-key').value.trim();
-            saveToStorage();
-            closeApiKeyModal();
-        }
-
-        function formatAiMarkdown(text) {
-            if (!text) return '';
-            return text
-                .replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="text-indigo-300 font-bold">$1</strong>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
-                .replace(/\*(.*?)\*/g, '<span class="text-indigo-200 font-medium">$1</span>')
-                .replace(/^### (.*$)/gim, '<h4 class="text-xs font-black text-indigo-400 uppercase mt-2 mb-1">$1</h4>')
-                .replace(/^## (.*$)/gim, '<h3 class="text-sm font-bold text-white mt-2.5 mb-1">$1</h3>')
-                .replace(/^# (.*$)/gim, '<h2 class="text-base font-black text-white mt-3 mb-1.5">$1</h2>')
-                .replace(/^\s*[\*\-]\s+(.*$)/gim, '<div class="flex items-start gap-1.5 ml-1 my-1"><span class="text-indigo-400 font-bold">•</span><span class="flex-1 text-slate-200">$1</span></div>')
-                .replace(/\n/g, '<br>');
-        }
-
-        async function handleUserSubmit(e) {
-            e.preventDefault();
-            const input = document.getElementById('ai-user-input');
-            const prompt = input.value.trim();
-            if (!prompt) return;
-            input.value = '';
-
-            appState.chatHistory.push({ role: 'user', content: prompt });
-            renderChat();
-
-            const thread = document.getElementById('ai-chat-thread');
-            const loadEl = document.createElement('div');
-            loadEl.id = 'ai-loading';
-            loadEl.className = 'text-slate-400 text-xs italic p-2';
-            loadEl.innerText = 'Mentor is planning...';
-            thread.appendChild(loadEl);
-
-            try {
-                if (!appState.apiKey) throw new Error("Please enter your Gemini API Key using the key icon above.");
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(appState.apiKey)}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ role: 'user', parts: [{ text: `You are Laksh's grounded JEE Mentor. Answer concisely: ${prompt}` }] }]
-                    })
-                });
-                const data = await res.json();
-                document.getElementById('ai-loading')?.remove();
-                const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response.";
-                appState.chatHistory.push({ role: 'assistant', content: reply });
-                saveToStorage();
-                renderChat();
-            } catch (err) {
-                document.getElementById('ai-loading')?.remove();
-                alert(err.message);
-            }
-        }
-
-        function renderChat() {
-            const thread = document.getElementById('ai-chat-thread');
-            if (!thread) return;
-            thread.innerHTML = '';
-            if (!appState.chatHistory.length) {
-                thread.innerHTML = `<div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-400 leading-relaxed text-xs">Hey Laksh! I'm your dedicated JEE Mentor. I have full visibility of your test scores, test history, syllabus, and calendar. Ask me any study doubts, test strategies, or schedules!</div>`;
-                return;
-            }
-            appState.chatHistory.forEach(m => {
-                const b = document.createElement('div');
-                b.className = m.role === 'user' ? 'flex justify-end' : 'flex justify-start';
-                b.innerHTML = `<div class="p-3 rounded-2xl max-w-[85%] leading-relaxed text-xs ${m.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-200 border border-slate-700/60'}">${m.role === 'user' ? m.content : formatAiMarkdown(m.content)}</div>`;
-                thread.appendChild(b);
-            });
-            thread.scrollTop = thread.scrollHeight;
-        }
-
-        function toggleAudio(audioId, btnId) {
-            const audio = document.getElementById(audioId);
-            const btn = document.getElementById(btnId);
-            if (audio.paused) {
-                audio.play();
-                btn.innerHTML = `<i data-lucide="pause" class="w-4 h-4 fill-white"></i>`;
-            } else {
-                audio.pause();
-                btn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>`;
-            }
-            lucide.createIcons();
-        }
-
-        function exportBackup() {
-            const dl = document.createElement('a');
-            dl.setAttribute("href", "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2)));
-            dl.setAttribute("download", `jee_backup_${formatLocalDate(new Date())}.json`);
-            dl.click();
-        }
-
-        function importBackup(e) {
-            const f = e.target.files[0];
-            if (!f) return;
-            const r = new FileReader();
-            r.onload = (evt) => {
-                try {
-                    appState = { ...appState, ...JSON.parse(evt.target.result) };
-                    saveToStorage();
-                    location.reload();
-                } catch (err) { alert("Invalid backup file."); }
-            };
-            r.readAsText(f);
-        }
-
-        function updateCountdown() {
-            const diff = Math.ceil((new Date(appState.nextTest.date) - new Date()) / (1000 * 60 * 60 * 24));
-            document.getElementById('countdown-days').innerText = diff > 0 ? String(diff).padStart(2, '0') : '00';
-            document.getElementById('display-next-name').innerText = appState.nextTest.name;
-        }
-
-        function openNextTestModal() { document.getElementById('next-test-modal').classList.remove('hidden'); }
-        function closeNextTestModal() { document.getElementById('next-test-modal').classList.add('hidden'); }
-        function saveNextTest() {
-            appState.nextTest.name = document.getElementById('nt-name').value;
-            appState.nextTest.date = document.getElementById('nt-date').value;
-            saveToStorage();
-            updateCountdown();
-            closeNextTestModal();
+            const w = document.getElementById('focus-timer-widget');
+            w.classList.toggle('hidden');
+            if (!w.classList.contains('hidden')) updateAllTimerDisplays();
         }
 
         // ==========================================
@@ -2858,7 +1921,6 @@
             renderCalendar();
             renderGoals();
             updateAllTimerDisplays();
-            renderDailyQuotaUI();
             renderChat();
             updateCountdown();
 
