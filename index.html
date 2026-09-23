@@ -1035,7 +1035,7 @@
     </div>
 
     <!-- FLOATING AI MENTOR WIDGET (BOTTOM-RIGHT) -->
-    <div id="ai-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div id="ai-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-log items-end">
         <button onclick="toggleAIChat()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-indigo-400/30 transition-transform active:scale-95">
             <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
             <span class="font-bold text-sm">Ask AI Mentor</span>
@@ -1210,6 +1210,9 @@
         </div>
     </div>
 
+    <!-- AUDIO ELEMENT FOR SPECIAL.MP3 -->
+    <audio id="special-audio" src="special.mp3" preload="auto"></audio>
+
     <script>
         const JEE_2028_DATE = new Date('2028-01-22T00:00:00');
 
@@ -1233,14 +1236,14 @@
             // Physics -> Mechanics I
             { id: 101, subject: 'Physics', module: 'Mechanics I', chapter: 'Units and Dimension', status: 'To Do' },
             { id: 102, subject: 'Physics', module: 'Mechanics I', chapter: 'Kinematics', status: 'To Do' },
-            { id: 103, subject: 'Physics', module: 'Mechanics I', chapter: 'NLM and Friction', status: 'To Do' },
+            { id: 103, subject: 'Physics', module: 'Mechanics I', chapter: 'NLM, Friction', status: 'To Do' },
             { id: 104, subject: 'Physics', module: 'Mechanics I', chapter: 'Circular Motion', status: 'To Do' },
-            { id: 105, subject: 'Physics', module: 'Mechanics I', chapter: 'Work, Power and Energy (WPE)', status: 'To Do' },
+            { id: 105, subject: 'Physics', module: 'Mechanics I', chapter: 'WPE', status: 'To Do' },
             // Physics -> Mechanics II & Waves
             { id: 106, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Centre of Mass - Momentum and Collision', status: 'To Do' },
             { id: 107, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Rotational Dynamics', status: 'To Do' },
             { id: 108, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Fluid Mechanics', status: 'To Do' },
-            { id: 109, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Elasticity and Thermal Expansion', status: 'To Do' },
+            { id: 109, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Elasticity, thermal expansion', status: 'To Do' },
             // Physics -> Thermodynamics
             { id: 110, subject: 'Physics', module: 'Thermodynamics', chapter: 'Calorimetry and Heat Transfer', status: 'To Do' },
             { id: 111, subject: 'Physics', module: 'Thermodynamics', chapter: 'KTG & Thermodynamics', status: 'To Do' },
@@ -1255,13 +1258,13 @@
             { id: 207, subject: 'Mathematics', module: 'Algebra', chapter: 'Binomial Theorem', status: 'To Do' },
             { id: 208, subject: 'Mathematics', module: 'Algebra', chapter: 'Permutation and Combination', status: 'To Do' },
             // Maths -> Trigonometry & Stats
-            { id: 209, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Ratios and Identities', status: 'To Do' },
-            { id: 210, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Equations', status: 'To Do' },
-            { id: 211, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Solution of Triangles', status: 'To Do' },
+            { id: 209, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'trigonometric rtaios and identitites', status: 'To Do' },
+            { id: 210, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: '-/- Equations', status: 'To Do' },
+            { id: 211, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Soln of Triangle', status: 'To Do' },
             // Maths -> Coordinate & Vectors
-            { id: 212, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Line and Linear Inequality', status: 'To Do' },
+            { id: 212, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Line and Linear inequality', status: 'To Do' },
             { id: 213, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Circle', status: 'To Do' },
-            { id: 214, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Sections (Parabola, Ellipse, Hyperbola)', status: 'To Do' }
+            { id: 214, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Section : Parabola Elipse Hyperbola', status: 'To Do' }
         ];
 
         let appState = {
