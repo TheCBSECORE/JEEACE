@@ -3004,6 +3004,63 @@ RULES:
             reader.readAsText(file);
         }
 
+        function switchTab(tab) {
+    const tabs = ['analytics', 'planner', 'daily', 'f1hub', 'goals', 'fullprep'];
+
+    // Hide all views
+    tabs.forEach(name => {
+        const view = document.getElementById(`view-${name}`);
+        if (view) {
+            view.classList.add('hidden');
+        }
+    });
+
+    // Show selected view
+    const selectedView = document.getElementById(`view-${tab}`);
+    if (selectedView) {
+        selectedView.classList.remove('hidden');
+    }
+
+    // Update sidebar active state
+    tabs.forEach(name => {
+        const btn = document.getElementById(`nav-btn-${name}`);
+        if (!btn) return;
+
+        btn.classList.remove('sidebar-btn-active');
+
+        if (name === tab) {
+            btn.classList.add('sidebar-btn-active');
+        }
+    });
+
+    // Re-render things that need refreshing when their tab opens
+    if (tab === 'planner') {
+        renderSyllabus();
+    }
+
+    if (tab === 'daily') {
+        renderCalendar();
+        renderDailyQuotaUI();
+    }
+
+    if (tab === 'goals') {
+        renderGoals();
+    }
+
+    if (tab === 'fullprep') {
+        renderPrepSyllabusTree();
+    }
+
+    // Recreate Lucide icons
+    lucide.createIcons();
+
+    // Scroll to top
+    document.getElementById('main-container')?.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
         window.onload = () => {
             calculateDaysRemainingMetrics();
             applySidebarState();
