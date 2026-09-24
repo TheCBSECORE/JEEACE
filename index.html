@@ -1454,6 +1454,44 @@
             return appState.prepCategories[appState.currentClass] || {};
         }
 
+        function renamePrepCategory(subject, oldModName) {
+            const newModName = prompt(`Rename folder "${oldModName}" to:`, oldModName);
+            if (!newModName || !newModName.trim() || newModName.trim() === oldModName) return;
+            const finalName = newModName.trim();
+
+            const targetClasses = (appState.currentClass === 'combined') ? ['11', '12'] : [appState.currentClass];
+            targetClasses.forEach(cls => {
+                if (appState.prepCategories[cls]?.[subject]) {
+                    const idx = appState.prepCategories[cls][subject].indexOf(oldModName);
+                    if (idx !== -1) appState.prepCategories[cls][subject][idx] = finalName;
+                }
+                (appState.prepSyllabus[cls] || []).forEach(item => {
+                    if (item.subject === subject && (item.module || 'General') === oldModName) {
+                        item.module = finalName;
+                    }
+                });
+            });
+
+            saveToStorage();
+            renderPrepSyllabusTree();
+        }
+
+        function editPrepChapterName(chapterId) {
+            let foundItem = null;
+            ['11', '12'].forEach(cls => {
+                const item = (appState.prepSyllabus[cls] || []).find(x => x.id === chapterId);
+                if (item) foundItem = item;
+            });
+            if (!foundItem) return;
+
+            const newName = prompt('Edit chapter name:', foundItem.chapter);
+            if (newName && newName.trim() && newName.trim() !== foundItem.chapter) {
+                foundItem.chapter = newName.trim();
+                saveToStorage();
+                renderPrepSyllabusTree();
+            }
+        }
+
         function deletePrepCategory(subject, modName) {
             if (appState.currentClass === 'combined') {
                 const clsTarget = prompt(`Delete category "${modName}" from Class 11th, Class 12th, or Both? (Enter 11, 12, or both):`, '11');
@@ -1563,6 +1601,9 @@
                                                 <option value="Done" ${item.status === 'Done' ? 'selected' : ''}>Done</option>
                                                 <option value="Mastered" ${item.status === 'Mastered' ? 'selected' : ''}>Mastered</option>
                                             </select>
+                                            <button onclick="editPrepChapterName(${item.id})" title="Rename chapter" class="text-slate-500 hover:text-indigo-400 p-1 opacity-0 group-hover/chap:opacity-100 transition-opacity">
+                                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                            </button>
                                             <button onclick="deletePrepChapter(${item.id})" title="Delete chapter" class="text-slate-600 hover:text-red-400 p-1 opacity-0 group-hover/chap:opacity-100 transition-opacity">
                                                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                             </button>
@@ -1580,8 +1621,11 @@
                                     <i data-lucide="folder" class="w-4 h-4 text-slate-400"></i>
                                     <span class="font-black text-xs text-white">${modName}</span>
                                 </div>
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-2">
                                     <span class="font-mono font-black text-xs text-orange-400">${modPerc}%</span>
+                                    <button onclick="event.stopPropagation(); renamePrepCategory('${sub}', '${modName}')" title="Rename category" class="text-slate-500 hover:text-indigo-400 p-1 transition-colors">
+                                        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                    </button>
                                     <button onclick="event.stopPropagation(); deletePrepCategory('${sub}', '${modName}')" title="Delete category" class="text-slate-600 hover:text-red-400 p-1 transition-colors">
                                         <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                     </button>
@@ -2332,7 +2376,7 @@
 
             dayTasks.forEach(t => {
                 let mins = Number(t.duration) || 0;
-                if (!mins && t.start && t.end) mins = calculateDurationMinutes(t.start, t.end);
+                if (!mins && t.start && t.end) mins = calculateDurationMinutes(t.start, end);
                 const sub = subjectMap[t.subject] !== undefined ? t.subject : 'General';
                 subjectMap[sub].planned += mins;
                 totalPlanned += mins;
