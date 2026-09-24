@@ -690,11 +690,12 @@
 
             <!-- TAB 6: WHOLE PREP SYLLABUS TRACKER (EXPANDABLE FOLDERS AS IN IMAGES) -->
             <div id="view-fullprep" class="hidden space-y-6">
-                <!-- Class Selector Pill -->
+                <!-- Class Selector Pill (11th, 12th, and Combined) -->
                 <div class="flex items-center gap-3">
                     <div class="flex items-center bg-[#13151b] p-1.5 rounded-2xl border border-slate-800/80">
                         <button onclick="setPrepClass('11')" id="btn-prep-11" class="px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 transition-all shadow-md">Class 11th</button>
                         <button onclick="setPrepClass('12')" id="btn-prep-12" class="px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Class 12th</button>
+                        <button onclick="setPrepClass('combined')" id="btn-prep-combined" class="px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Combined</button>
                     </div>
                 </div>
 
@@ -797,22 +798,29 @@
             </div>
             <div class="space-y-3 text-xs">
                 <div>
+                    <label class="block text-slate-400 font-bold uppercase mb-1">Target Class</label>
+                    <select id="prep-modal-class" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                        <option value="11">Class 11th</option>
+                        <option value="12">Class 12th</option>
+                    </select>
+                </div>
+                <div>
                     <label class="block text-slate-400 font-bold uppercase mb-1">Subject</label>
                     <select id="prep-modal-subject" onchange="updateModuleDropdownOptions()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none"></select>
                 </div>
                 <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Folder / Module</label>
+                    <label class="block text-slate-400 font-bold uppercase mb-1">Folder / Category</label>
                     <div class="flex gap-2">
                         <select id="prep-modal-module-select" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none"></select>
                     </div>
                 </div>
                 <div>
                     <label class="block text-slate-400 font-bold uppercase mb-1">Or New Folder Name</label>
-                    <input type="text" id="prep-modal-module" placeholder="e.g. Electromagnetism" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                    <input type="text" id="prep-modal-module" placeholder="e.g. Mechanics" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
                 </div>
                 <div>
                     <label class="block text-slate-400 font-bold uppercase mb-1">Chapter Name</label>
-                    <input type="text" id="prep-modal-chapter" placeholder="e.g. Motion In One Dimension" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                    <input type="text" id="prep-modal-chapter" placeholder="e.g. Kinematics" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
                 </div>
             </div>
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
@@ -1288,63 +1296,75 @@
             { id: 5, type: 'short', title: 'ALLEN SRG BATCH', targetDate: 'December 31, 2026', image: 'ln.jpg', align: 'object-center', completed: false }
         ];
 
-        // Pre-loaded categories & chapters matching images
+        // 11th Sequence Matching your specific Physics Flow
         const default11thSyllabus = [
-            // Physics
-            { id: 101, subject: 'Physics', module: 'Mechanics I', chapter: 'Motion In One Dimension', status: 'To Do' },
-            { id: 102, subject: 'Physics', module: 'Mechanics I', chapter: 'Motion In Two Dimensions', status: 'To Do' },
-            { id: 103, subject: 'Physics', module: 'Mechanics I', chapter: 'Laws of Motion', status: 'To Do' },
-            { id: 104, subject: 'Physics', module: 'Mechanics I', chapter: 'Work Power Energy', status: 'To Do' },
-            { id: 105, subject: 'Physics', module: 'Mechanics I', chapter: 'Center of Mass Momentum', status: 'To Do' },
-            { id: 106, subject: 'Physics', module: 'Mechanics I', chapter: 'Rotational Motion', status: 'To Do' },
-            { id: 107, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Gravitation', status: 'To Do' },
-            { id: 108, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Fluid Mechanics', status: 'To Do' },
-            { id: 109, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Simple Harmonic Motion', status: 'To Do' },
-            { id: 110, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Wave Motion', status: 'To Do' },
-            { id: 111, subject: 'Physics', module: 'Thermodynamics', chapter: 'Thermal Properties & Calorimetry', status: 'To Do' },
-            { id: 112, subject: 'Physics', module: 'Thermodynamics', chapter: 'Kinetic Theory & Laws of Thermodynamics', status: 'To Do' },
-            { id: 113, subject: 'Physics', module: 'Electromagnetism', chapter: 'Electrostatics', status: 'To Do' },
-            { id: 114, subject: 'Physics', module: 'Optics & Modern', chapter: 'Ray & Wave Optics', status: 'To Do' },
-            { id: 115, subject: 'Physics', module: 'Experimental', chapter: 'Vernier Calipers, Screw Gauge & Errors', status: 'To Do' },
+            // Physics (Class 11th Flow)
+            { id: 101, subject: 'Physics', module: 'Mathematical Tools & Basic Concepts', chapter: 'Mathematical Tools', status: 'To Do' },
+            { id: 102, subject: 'Physics', module: 'Units and Dimensions', chapter: 'Units and Dimensions', status: 'To Do' },
+            { id: 103, subject: 'Physics', module: 'Mechanics', chapter: 'Kinematics (Rectilinear & Projectile Motion)', status: 'To Do' },
+            { id: 104, subject: 'Physics', module: 'Mechanics', chapter: "Newton's Laws of Motion (NLM) & Friction", status: 'To Do' },
+            { id: 105, subject: 'Physics', module: 'Mechanics', chapter: 'Work, Power, and Energy (WPE)', status: 'To Do' },
+            { id: 106, subject: 'Physics', module: 'Mechanics', chapter: 'Circular Motion', status: 'To Do' },
+            { id: 107, subject: 'Physics', module: 'Mechanics', chapter: 'Centre of Mass, Momentum, and Collisions', status: 'To Do' },
+            { id: 108, subject: 'Physics', module: 'Mechanics', chapter: 'Rotational Dynamics', status: 'To Do' },
+            { id: 109, subject: 'Physics', module: 'Properties of Matter & Thermal Physics', chapter: 'Fluid Mechanics', status: 'To Do' },
+            { id: 110, subject: 'Physics', module: 'Properties of Matter & Thermal Physics', chapter: 'Elasticity & Thermal Expansion', status: 'To Do' },
+            { id: 111, subject: 'Physics', module: 'Properties of Matter & Thermal Physics', chapter: 'Calorimetry and Heat Transfer', status: 'To Do' },
+            { id: 112, subject: 'Physics', module: 'Properties of Matter & Thermal Physics', chapter: 'Kinetic Theory of Gases (KTG) & Thermodynamics', status: 'To Do' },
 
-            // Chemistry
+            // Chemistry (Class 11th Core)
             { id: 301, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Mole Concept', status: 'To Do' },
             { id: 302, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Structure of Atom', status: 'To Do' },
             { id: 303, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Chemical Bonding', status: 'To Do' },
             { id: 304, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Thermodynamics', status: 'To Do' },
             { id: 305, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Chemical Equilibrium', status: 'To Do' },
             { id: 306, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Ionic Equilibrium', status: 'To Do' },
-            { id: 307, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Solutions', status: 'To Do' },
-            { id: 308, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Redox Reactions', status: 'To Do' },
-            { id: 309, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Electrochemistry', status: 'To Do' },
-            { id: 310, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'Periodic Table & Periodicity', status: 'To Do' },
-            { id: 311, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'p-Block Elements', status: 'To Do' },
-            { id: 312, subject: 'Chemistry', module: 'Organic Chem', chapter: 'General Organic Chemistry (GOC)', status: 'To Do' },
-            { id: 313, subject: 'Chemistry', module: 'Organic Chem', chapter: 'Hydrocarbons', status: 'To Do' },
+            { id: 307, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'Periodic Table & Periodicity', status: 'To Do' },
+            { id: 308, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'p-Block Elements', status: 'To Do' },
+            { id: 309, subject: 'Chemistry', module: 'Organic Chem', chapter: 'General Organic Chemistry (GOC)', status: 'To Do' },
+            { id: 310, subject: 'Chemistry', module: 'Organic Chem', chapter: 'Hydrocarbons', status: 'To Do' },
 
-            // Mathematics
+            // Mathematics (Class 11th Core)
             { id: 201, subject: 'Mathematics', module: 'Algebra', chapter: 'Quadratic Equations', status: 'To Do' },
             { id: 202, subject: 'Mathematics', module: 'Algebra', chapter: 'Sequence and Series', status: 'To Do' },
             { id: 203, subject: 'Mathematics', module: 'Algebra', chapter: 'Binomial Theorem', status: 'To Do' },
             { id: 204, subject: 'Mathematics', module: 'Algebra', chapter: 'Permutations & Combinations', status: 'To Do' },
-            { id: 205, subject: 'Mathematics', module: 'Calculus', chapter: 'Functions & Graphs', status: 'To Do' },
-            { id: 206, subject: 'Mathematics', module: 'Calculus', chapter: 'Limits, Continuity & Derivability', status: 'To Do' },
-            { id: 207, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Lines & Circles', status: 'To Do' },
-            { id: 208, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Sections', status: 'To Do' },
-            { id: 209, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Equations & Identities', status: 'To Do' }
+            { id: 205, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Lines & Circles', status: 'To Do' },
+            { id: 206, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Sections', status: 'To Do' },
+            { id: 207, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Equations & Identities', status: 'To Do' }
         ];
 
-        // Standard categories list to guarantee categories exist even before adding chapters
-        const defaultPredefinedCategories = {
-            "Physics": ["Mechanics I", "Mechanics II & Waves", "Thermodynamics", "Electromagnetism", "Optics & Modern", "Experimental"],
-            "Chemistry": ["Physical Chem", "Inorganic Chem", "Organic Chem"],
-            "Mathematics": ["Algebra", "Calculus", "Coordinate & Vectors", "Trigonometry & Stats"]
+        // 12th Syllabus Categories
+        const default12thSyllabus = [
+            { id: 401, subject: 'Physics', module: 'Electromagnetism', chapter: 'Electrostatics & Gauss Law', status: 'To Do' },
+            { id: 402, subject: 'Physics', module: 'Electromagnetism', chapter: 'Current Electricity & Magnetism', status: 'To Do' },
+            { id: 403, subject: 'Physics', module: 'Optics & Modern', chapter: 'Ray Optics & Wave Optics', status: 'To Do' },
+            { id: 404, subject: 'Physics', module: 'Optics & Modern', chapter: 'Modern Physics', status: 'To Do' },
+            { id: 501, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Solutions & Electrochemistry', status: 'To Do' },
+            { id: 502, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'Coordination Compounds', status: 'To Do' },
+            { id: 503, subject: 'Chemistry', module: 'Organic Chem', chapter: 'Haloalkanes, Alcohols & Carbonyls', status: 'To Do' },
+            { id: 601, subject: 'Mathematics', module: 'Calculus', chapter: 'Functions, Limits & Derivatives', status: 'To Do' },
+            { id: 602, subject: 'Mathematics', module: 'Calculus', chapter: 'Definite & Indefinite Integrals', status: 'To Do' },
+            { id: 603, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: '3D Geometry & Vectors', status: 'To Do' }
+        ];
+
+        const defaultClassCategories = {
+            "11": {
+                "Physics": ["Mathematical Tools & Basic Concepts", "Units and Dimensions", "Mechanics", "Properties of Matter & Thermal Physics"],
+                "Chemistry": ["Physical Chem", "Inorganic Chem", "Organic Chem"],
+                "Mathematics": ["Algebra", "Coordinate & Vectors", "Trigonometry & Stats"]
+            },
+            "12": {
+                "Physics": ["Electromagnetism", "Optics & Modern", "Experimental"],
+                "Chemistry": ["Physical Chem", "Inorganic Chem", "Organic Chem"],
+                "Mathematics": ["Calculus", "Coordinate & Vectors"]
+            }
         };
 
         let appState = {
             currentClass: '11',
-            prepSyllabus: JSON.parse(localStorage.getItem('jee_prep_syllabus')) || { "11": default11thSyllabus, "12": [] },
-            prepCategories: JSON.parse(localStorage.getItem('jee_prep_categories')) || defaultPredefinedCategories,
+            prepSyllabus: JSON.parse(localStorage.getItem('jee_prep_syllabus')) || { "11": default11thSyllabus, "12": default12thSyllabus },
+            prepCategories: JSON.parse(localStorage.getItem('jee_prep_categories')) || defaultClassCategories,
             prepResources: JSON.parse(localStorage.getItem('jee_prep_resources')) || [],
             tests: JSON.parse(localStorage.getItem('jee_tests')) || [],
             syllabus: JSON.parse(localStorage.getItem('jee_syllabus')) || [],
@@ -1356,7 +1376,13 @@
             isSidebarCollapsed: JSON.parse(localStorage.getItem('jee_sidebar_collapsed')) || false
         };
 
-        let openFoldersState = {}; // Track toggled folders { "Physics-Mechanics I": true }
+        // Guarantee category schema updates
+        if (!appState.prepCategories["11"] || !appState.prepCategories["11"]["Physics"]) {
+            appState.prepCategories = defaultClassCategories;
+            appState.prepSyllabus = { "11": default11thSyllabus, "12": default12thSyllabus };
+        }
+
+        let openFoldersState = {};
 
         let activeChartFilter = 'all';
         let performanceChart = null;
@@ -1397,15 +1423,16 @@
             lucide.createIcons();
         }
 
-        // --- Whole Prep Syllabus Tracker Logic (Image Matching Accordion & Cards) ---
+        // --- Whole Prep Syllabus Tracker Logic (11th, 12th, Combined) ---
         function setPrepClass(cls) {
             appState.currentClass = cls;
-            document.getElementById('btn-prep-11').className = (cls === '11') 
-                ? "px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 transition-all shadow-md" 
-                : "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
-            document.getElementById('btn-prep-12').className = (cls === '12') 
-                ? "px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 transition-all shadow-md" 
-                : "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
+            ['11', '12', 'combined'].forEach(c => {
+                const btn = document.getElementById(`btn-prep-${c}`);
+                if (!btn) return;
+                btn.className = (c === cls)
+                    ? "px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 transition-all shadow-md"
+                    : "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
+            });
             renderPrepSyllabusTree();
         }
 
@@ -1414,17 +1441,72 @@
             renderPrepSyllabusTree();
         }
 
+        function getActivePrepSyllabusList() {
+            if (appState.currentClass === 'combined') {
+                return [...(appState.prepSyllabus["11"] || []), ...(appState.prepSyllabus["12"] || [])];
+            }
+            return appState.prepSyllabus[appState.currentClass] || [];
+        }
+
+        function getActivePrepCategoriesMap() {
+            if (appState.currentClass === 'combined') {
+                const map11 = appState.prepCategories["11"] || {};
+                const map12 = appState.prepCategories["12"] || {};
+                const combinedMap = {};
+                const allSubs = [...new Set([...Object.keys(map11), ...Object.keys(map12)])];
+                allSubs.forEach(sub => {
+                    combinedMap[sub] = [...new Set([...(map11[sub] || []), ...(map12[sub] || [])])];
+                });
+                return combinedMap;
+            }
+            return appState.prepCategories[appState.currentClass] || {};
+        }
+
+        function deletePrepCategory(subject, modName) {
+            if (appState.currentClass === 'combined') {
+                const clsTarget = prompt(`Delete category "${modName}" from Class 11th, Class 12th, or Both? (Enter 11, 12, or both):`, '11');
+                if (!clsTarget) return;
+                const lower = clsTarget.toLowerCase().trim();
+                if (lower === '11') {
+                    deleteCategoryFromClass('11', subject, modName);
+                } else if (lower === '12') {
+                    deleteCategoryFromClass('12', subject, modName);
+                } else if (lower === 'both') {
+                    deleteCategoryFromClass('11', subject, modName);
+                    deleteCategoryFromClass('12', subject, modName);
+                } else {
+                    alert('Invalid class choice.');
+                    return;
+                }
+            } else {
+                if (confirm(`Delete category "${modName}" and all its chapters from Class ${appState.currentClass}th?`)) {
+                    deleteCategoryFromClass(appState.currentClass, subject, modName);
+                }
+            }
+        }
+
+        function deleteCategoryFromClass(cls, subject, modName) {
+            if (appState.prepCategories[cls]?.[subject]) {
+                appState.prepCategories[cls][subject] = appState.prepCategories[cls][subject].filter(m => m !== modName);
+            }
+            if (appState.prepSyllabus[cls]) {
+                appState.prepSyllabus[cls] = appState.prepSyllabus[cls].filter(x => !(x.subject === subject && (x.module || 'General') === modName));
+            }
+            saveToStorage();
+            renderPrepSyllabusTree();
+        }
+
         function renderPrepSyllabusTree() {
             const container = document.getElementById('prep-subjects-container');
             if (!container) return;
             container.innerHTML = '';
 
-            const list = appState.prepSyllabus[appState.currentClass] || [];
+            const list = getActivePrepSyllabusList();
+            const categoriesMap = getActivePrepCategoriesMap();
             const searchVal = (document.getElementById('prep-search-input')?.value || '').toLowerCase().trim();
             const filterVal = document.getElementById('prep-filter-status')?.value || 'all';
 
-            // Get all defined subjects
-            const subjects = Object.keys(appState.prepCategories);
+            const subjects = Object.keys(categoriesMap);
 
             let totalChapters = list.length;
             let masteredCount = 0;
@@ -1447,16 +1529,14 @@
                 const subDone = subItems.filter(x => x.status === 'Done' || x.status === 'Mastered').length;
                 const subPerc = subItems.length ? Math.round((subDone / subItems.length) * 100) : 0;
 
-                // Combine predefined categories with any dynamic custom module added
-                const predefinedMods = appState.prepCategories[sub] || [];
+                const predefinedMods = categoriesMap[sub] || [];
                 const existingModsInItems = [...new Set(subItems.map(x => x.module || 'General'))];
                 const allModules = [...new Set([...predefinedMods, ...existingModsInItems])];
 
                 let modulesHtml = allModules.map(modName => {
-                    const folderKey = `${sub}-${modName}`;
+                    const folderKey = `${appState.currentClass}-${sub}-${modName}`;
                     let modItems = subItems.filter(x => (x.module || 'General') === modName);
 
-                    // Filter chapters
                     if (searchVal) modItems = modItems.filter(x => x.chapter.toLowerCase().includes(searchVal));
                     if (filterVal !== 'all') modItems = modItems.filter(x => x.status === filterVal);
 
@@ -1469,7 +1549,7 @@
                         if (modItems.length === 0) {
                             chaptersHtml = `
                                 <div class="px-4 py-3 text-[11px] text-slate-500 italic bg-[#151720]/60 rounded-2xl flex items-center justify-between">
-                                    <span>No chapters in this folder yet.</span>
+                                    <span>No chapters in this category.</span>
                                     <button onclick="quickAddChapter('${sub}', '${modName}')" class="text-orange-400 font-bold hover:underline">+ Add</button>
                                 </div>
                             `;
@@ -1502,7 +1582,7 @@
                     }
 
                     return `
-                        <div class="space-y-2">
+                        <div class="space-y-2 group/folder">
                             <div onclick="toggleFolder('${folderKey}')" class="p-4 rounded-2xl bg-[#171922] hover:bg-[#1c1e29] border border-slate-800/80 flex items-center justify-between cursor-pointer select-none transition-all">
                                 <div class="flex items-center gap-3">
                                     <i data-lucide="folder" class="w-4 h-4 text-slate-400"></i>
@@ -1510,6 +1590,9 @@
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <span class="font-mono font-black text-xs text-orange-400">${modPerc}%</span>
+                                    <button onclick="event.stopPropagation(); deletePrepCategory('${sub}', '${modName}')" title="Delete category" class="text-slate-600 hover:text-red-400 p-1 transition-colors">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    </button>
                                     <i data-lucide="${isOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-slate-400 transition-transform"></i>
                                 </div>
                             </div>
@@ -1550,6 +1633,7 @@
 
         function quickAddChapter(subject, moduleName) {
             openAddPrepChapterModal();
+            document.getElementById('prep-modal-class').value = appState.currentClass === 'combined' ? '11' : appState.currentClass;
             document.getElementById('prep-modal-subject').value = subject;
             updateModuleDropdownOptions();
             document.getElementById('prep-modal-module-select').value = moduleName;
@@ -1559,16 +1643,18 @@
         function populateSubjectAndModuleDropdowns() {
             const subSelect = document.getElementById('prep-modal-subject');
             if (!subSelect) return;
-            const subjects = Object.keys(appState.prepCategories);
+            const categoriesMap = getActivePrepCategoriesMap();
+            const subjects = Object.keys(categoriesMap);
             subSelect.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
             updateModuleDropdownOptions();
         }
 
         function updateModuleDropdownOptions() {
+            const cls = document.getElementById('prep-modal-class')?.value || (appState.currentClass === 'combined' ? '11' : appState.currentClass);
             const sub = document.getElementById('prep-modal-subject')?.value || 'Physics';
             const modSelect = document.getElementById('prep-modal-module-select');
             if (!modSelect) return;
-            const mods = appState.prepCategories[sub] || ["General"];
+            const mods = appState.prepCategories[cls]?.[sub] || ["General"];
             modSelect.innerHTML = mods.map(m => `<option value="${m}">${m}</option>`).join('');
         }
 
@@ -1581,8 +1667,10 @@
         function savePrepSubject() {
             const subName = document.getElementById('prep-modal-new-subject').value.trim();
             if (!subName) return alert("Please enter subject name.");
-            if (!appState.prepCategories[subName]) {
-                appState.prepCategories[subName] = ["General"];
+            
+            const targetCls = appState.currentClass === 'combined' ? '11' : appState.currentClass;
+            if (!appState.prepCategories[targetCls][subName]) {
+                appState.prepCategories[targetCls][subName] = ["General"];
                 saveToStorage();
                 renderPrepSyllabusTree();
             }
@@ -1593,10 +1681,11 @@
             const newSub = prompt(`Rename ${oldSub} to:`, oldSub);
             if (newSub && newSub.trim() && newSub.trim() !== oldSub) {
                 const trimmed = newSub.trim();
-                appState.prepCategories[trimmed] = appState.prepCategories[oldSub] || ["General"];
-                delete appState.prepCategories[oldSub];
-
                 ["11", "12"].forEach(cls => {
+                    if (appState.prepCategories[cls]?.[oldSub]) {
+                        appState.prepCategories[cls][trimmed] = appState.prepCategories[cls][oldSub];
+                        delete appState.prepCategories[cls][oldSub];
+                    }
                     (appState.prepSyllabus[cls] || []).forEach(item => {
                         if (item.subject === oldSub) item.subject = trimmed;
                     });
@@ -1607,12 +1696,15 @@
         }
 
         function togglePrepChapterCheck(id, btnEl) {
-            const list = appState.prepSyllabus[appState.currentClass] || [];
-            const item = list.find(x => x.id === id);
-            if (!item) return;
+            let found = null;
+            ["11", "12"].forEach(cls => {
+                const item = (appState.prepSyllabus[cls] || []).find(x => x.id === id);
+                if (item) found = item;
+            });
+            if (!found) return;
 
-            const isDone = item.status === 'Done' || item.status === 'Mastered';
-            item.status = isDone ? 'To Do' : 'Done';
+            const isDone = found.status === 'Done' || found.status === 'Mastered';
+            found.status = isDone ? 'To Do' : 'Done';
 
             if (!isDone) {
                 if (btnEl) triggerFireEffect(btnEl.getBoundingClientRect());
@@ -1622,30 +1714,35 @@
         }
 
         function changePrepChapterStatus(id, newStatus) {
-            const list = appState.prepSyllabus[appState.currentClass] || [];
-            const item = list.find(x => x.id === id);
-            if (item) {
-                item.status = newStatus;
-                saveToStorage();
-                renderPrepSyllabusTree();
-            }
+            ["11", "12"].forEach(cls => {
+                const item = (appState.prepSyllabus[cls] || []).find(x => x.id === id);
+                if (item) item.status = newStatus;
+            });
+            saveToStorage();
+            renderPrepSyllabusTree();
         }
 
         function deletePrepChapter(id) {
-            appState.prepSyllabus[appState.currentClass] = (appState.prepSyllabus[appState.currentClass] || []).filter(x => x.id !== id);
+            ["11", "12"].forEach(cls => {
+                appState.prepSyllabus[cls] = (appState.prepSyllabus[cls] || []).filter(x => x.id !== id);
+            });
             saveToStorage();
             renderPrepSyllabusTree();
         }
 
         function resetPrepProgress() {
-            if (confirm("Reset all chapters in this class to To Do?")) {
-                (appState.prepSyllabus[appState.currentClass] || []).forEach(x => x.status = 'To Do');
+            if (confirm("Reset all chapters in the active view to To Do?")) {
+                const targetClasses = appState.currentClass === 'combined' ? ['11', '12'] : [appState.currentClass];
+                targetClasses.forEach(cls => {
+                    (appState.prepSyllabus[cls] || []).forEach(x => x.status = 'To Do');
+                });
                 saveToStorage();
                 renderPrepSyllabusTree();
             }
         }
 
         function openAddPrepChapterModal() {
+            document.getElementById('prep-modal-class').value = appState.currentClass === 'combined' ? '11' : appState.currentClass;
             document.getElementById('prep-modal-module').value = '';
             document.getElementById('prep-modal-chapter').value = '';
             populateSubjectAndModuleDropdowns();
@@ -1654,6 +1751,7 @@
         function closeAddPrepChapterModal() { document.getElementById('modal-add-prep-chapter').classList.add('hidden'); }
 
         function savePrepChapter() {
+            const cls = document.getElementById('prep-modal-class').value;
             const subject = document.getElementById('prep-modal-subject').value;
             const chosenModule = document.getElementById('prep-modal-module-select').value;
             const customModule = document.getElementById('prep-modal-module').value.trim();
@@ -1662,15 +1760,15 @@
 
             if (!chapter) return alert("Please enter chapter name.");
 
-            if (!appState.prepSyllabus[appState.currentClass]) {
-                appState.prepSyllabus[appState.currentClass] = [];
+            if (!appState.prepSyllabus[cls]) appState.prepSyllabus[cls] = [];
+            if (!appState.prepCategories[cls]) appState.prepCategories[cls] = {};
+            if (!appState.prepCategories[cls][subject]) appState.prepCategories[cls][subject] = [];
+
+            if (customModule && !appState.prepCategories[cls][subject].includes(customModule)) {
+                appState.prepCategories[cls][subject].push(customModule);
             }
 
-            if (customModule && !appState.prepCategories[subject].includes(customModule)) {
-                appState.prepCategories[subject].push(customModule);
-            }
-
-            appState.prepSyllabus[appState.currentClass].push({
+            appState.prepSyllabus[cls].push({
                 id: Date.now(),
                 subject,
                 module: finalModule,
@@ -1678,8 +1776,8 @@
                 status: 'To Do'
             });
 
-            // Automatically open the target folder
-            openFoldersState[`${subject}-${finalModule}`] = true;
+            openFoldersState[`${cls}-${subject}-${finalModule}`] = true;
+            openFoldersState[`combined-${subject}-${finalModule}`] = true;
 
             saveToStorage();
             closeAddPrepChapterModal();
@@ -2342,7 +2440,6 @@
             document.getElementById('timer-input-m').value = m;
             document.getElementById('timer-input-s').value = s;
 
-            // Update PiP Window HTML if active
             if (pipWindowInstance && !pipWindowInstance.closed) {
                 const timeEl = pipWindowInstance.document.getElementById('pip-time');
                 if (timeEl) timeEl.innerText = `${h}:${m}:${s}`;
@@ -2587,7 +2684,6 @@
                 } catch (err) {}
             }
 
-            // Fallback: Canvas stream PiP
             const canvas = document.getElementById('pip-canvas');
             const video = document.getElementById('pip-video');
             renderPipCanvas();
@@ -3195,7 +3291,7 @@
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
             const testHistorySummary = JSON.stringify(appState.tests || []);
-            const syllabusList = JSON.stringify((appState.prepSyllabus["11"] || []).map(s => `${s.subject} [${s.module}]: ${s.chapter} (${s.status})`));
+            const syllabusList = JSON.stringify(getActivePrepSyllabusList().map(s => `${s.subject} [${s.module}]: ${s.chapter} (${s.status})`));
 
             const systemContext = `You are Laksh's grounded, candid, and disciplined JEE Mentor.
 Goal: IIT Bombay CSE 2028 (AIR < 60).
@@ -3205,7 +3301,7 @@ Active Target Milestone: ${appState.nextTest?.name || 'Upcoming Test'} on ${appS
 
 RELEVANT DATA CONTEXT:
 - Past Test Scores & History: ${testHistorySummary}
-- Prep Syllabus 11th Topics: ${syllabusList}
+- Active Prep Syllabus: ${syllabusList}
 
 RULES:
 - Be punchy, direct, and actionable. Jump straight into the advice or schedule requested without long winded introductory lecture or repeated stats dumping.
