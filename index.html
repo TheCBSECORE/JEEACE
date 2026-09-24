@@ -926,7 +926,7 @@
         </div>
     </div>
 
-    <!-- FLOATING LIVE FOCUS POMODORO -->
+    <!-- FLOATING LIVE FOCUS POMODORO (HH:MM:SS FORMAT) -->
     <div id="focus-timer-container" class="fixed bottom-6 left-6 z-50 flex flex-col items-start select-none touch-none">
         <button id="timer-toggle-btn" onclick="toggleFocusTimer()" class="bg-slate-900/95 hover:bg-slate-800 text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-slate-700 transition-transform active:scale-95 backdrop-blur-md">
             <i data-lucide="timer" class="w-5 h-5 text-indigo-400"></i>
@@ -951,11 +951,13 @@
                 </div>
             </div>
 
+            <!-- Subject Badge if bound to routine -->
             <div id="pomo-subject-container" class="hidden flex items-center justify-between px-1 mb-2">
                 <span id="pomo-subject-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-blue-500/20 text-blue-300 border-blue-500/30">Physics</span>
                 <span id="pomo-mode-badge" class="text-[10px] font-mono text-emerald-400 font-bold">COUNTDOWN</span>
             </div>
 
+            <!-- HH:MM:SS Time Inputs -->
             <div class="text-center py-2">
                 <div class="flex justify-center items-center gap-1 font-mono text-3xl sm:text-4xl font-black text-white">
                     <input type="number" id="timer-input-h" min="0" max="23" value="00" class="w-12 bg-transparent text-right text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
@@ -967,6 +969,7 @@
                 <p id="timer-hint-text" class="text-[10px] text-slate-500 mt-1">Tap HH:MM:SS directly to configure</p>
             </div>
 
+            <!-- Presets -->
             <div id="pomo-presets-row" class="flex justify-center gap-1.5 my-2">
                 <button onclick="setTimerDirect(0, 25, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">25m</button>
                 <button onclick="setTimerDirect(0, 45, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">45m</button>
@@ -974,6 +977,7 @@
                 <button onclick="setTimerDirect(1, 30, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">1.5h</button>
             </div>
 
+            <!-- Controls -->
             <div class="flex items-center justify-center gap-2 pt-1">
                 <button id="timer-start-btn" onclick="startTimer()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i> Start
@@ -1210,6 +1214,9 @@
         </div>
     </div>
 
+    <!-- AUDIO ELEMENT FOR SPECIAL.MP3 -->
+    <audio id="special-audio" src="special.mp3" preload="auto"></audio>
+
     <script>
         const JEE_2028_DATE = new Date('2028-01-22T00:00:00');
 
@@ -1228,9 +1235,7 @@
             { id: 5, type: 'short', title: 'ALLEN SRG BATCH', targetDate: 'December 31, 2026', image: 'ln.jpg', align: 'object-center', completed: false }
         ];
 
-        // Default comprehensive Class 11th chapters mapping with specific PCM categories/modules
         const default11thSyllabus = [
-            // Physics Categories
             { id: 101, subject: 'Physics', module: 'Mechanics I', chapter: 'Units and Dimension', status: 'To Do' },
             { id: 102, subject: 'Physics', module: 'Mechanics I', chapter: 'Kinematics', status: 'To Do' },
             { id: 103, subject: 'Physics', module: 'Mechanics I', chapter: 'NLM, Friction', status: 'To Do' },
@@ -1243,7 +1248,6 @@
             { id: 110, subject: 'Physics', module: 'Thermodynamics', chapter: 'Calorimetry and Heat Transfer', status: 'To Do' },
             { id: 111, subject: 'Physics', module: 'Thermodynamics', chapter: 'KTG & Thermodynamics', status: 'To Do' },
 
-            // Chemistry Categories (Physical, Inorganic, Organic)
             { id: 301, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Mole Concept', status: 'To Do' },
             { id: 302, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Atomic Structure', status: 'To Do' },
             { id: 303, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Chemical Bonding', status: 'To Do' },
@@ -1252,7 +1256,6 @@
             { id: 306, subject: 'Chemistry', module: 'Organic Chem', chapter: 'General Organic Chemistry (GOC)', status: 'To Do' },
             { id: 307, subject: 'Chemistry', module: 'Organic Chem', chapter: 'Hydrocarbons', status: 'To Do' },
 
-            // Mathematics Categories (Algebra, Calculus, Coordinate & Vectors, Trigonometry & Stats)
             { id: 201, subject: 'Mathematics', module: 'Algebra', chapter: 'Quadratic Equations', status: 'To Do' },
             { id: 202, subject: 'Mathematics', module: 'Algebra', chapter: 'Sequence and Series', status: 'To Do' },
             { id: 203, subject: 'Mathematics', module: 'Algebra', chapter: 'Binomial Theorem', status: 'To Do' },
@@ -1356,7 +1359,6 @@
                 const subDone = subItems.filter(x => x.status === 'Done' || x.status === 'Mastered').length;
                 const subPerc = subItems.length ? Math.round((subDone / subItems.length) * 100) : 0;
 
-                // Group by Module Category Folders
                 const modulesMap = {};
                 subItems.forEach(item => {
                     const modName = item.module || 'General';
@@ -1594,6 +1596,8 @@
             }
         }
 
+        let stagedGoalImageBase64 = '';
+
         function renderGoals() {
             const longGrid = document.getElementById('long-goals-grid');
             const shortGrid = document.getElementById('short-goals-grid');
@@ -1798,6 +1802,33 @@
             document.getElementById('task-modal').classList.remove('hidden');
         }
 
+        function onTaskDragStart(e, taskId) {
+            e.dataTransfer.setData('text/plain', taskId.toString());
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function onCellDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function onCellDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function onCellDrop(e, targetDateStr) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const taskId = parseInt(e.dataTransfer.getData('text/plain'));
+            const task = appState.scheduledTasks.find(t => t.id === taskId);
+            if (task && task.date !== targetDateStr) {
+                task.date = targetDateStr;
+                saveToStorage();
+                renderCalendar();
+            }
+        }
+
         function renderCalendar() {
             const monthView = document.getElementById('calendar-month-view');
             const tasksView = document.getElementById('calendar-tasks-view');
@@ -1829,19 +1860,9 @@
                     const cell = document.createElement('div');
                     cell.className = `calendar-cell p-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors border-r border-b border-slate-800/70 flex flex-col justify-between group ${isToday ? 'bg-indigo-950/20' : ''}`;
                     
-                    cell.ondragover = (e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); };
-                    cell.ondragleave = (e) => e.currentTarget.classList.remove('drag-over');
-                    cell.ondrop = (e) => {
-                        e.preventDefault();
-                        e.currentTarget.classList.remove('drag-over');
-                        const taskId = parseInt(e.dataTransfer.getData('text/plain'));
-                        const task = appState.scheduledTasks.find(t => t.id === taskId);
-                        if (task && task.date !== dateStr) {
-                            task.date = dateStr;
-                            saveToStorage();
-                            renderCalendar();
-                        }
-                    };
+                    cell.ondragover = (e) => onCellDragOver(e);
+                    cell.ondragleave = (e) => onCellDragLeave(e);
+                    cell.ondrop = (e) => onCellDrop(e, dateStr);
 
                     cell.onclick = (e) => {
                         if (e.target.closest('button') || e.target.closest('.draggable-pill')) return;
@@ -1851,10 +1872,12 @@
 
                     let taskPills = dayTasks.slice(0, 3).map(t => {
                         const durText = t.duration ? formatDuration(t.duration) : (t.start && t.end ? formatDuration(calculateDurationMinutes(t.start, t.end)) : '');
-                        let dotColor = t.status === 'Completed' ? 'bg-emerald-400' : (t.status === 'In Progress' ? 'bg-amber-400 animate-pulse' : 'bg-slate-400');
+                        let dotColor = 'bg-slate-400';
+                        if (t.status === 'Completed') dotColor = 'bg-emerald-400';
+                        else if (t.status === 'In Progress') dotColor = 'bg-amber-400 animate-pulse';
 
                         return `
-                            <div draggable="true" ondragstart="e.dataTransfer.setData('text/plain', ${t.id})" class="draggable-pill text-[10px] px-2 py-0.5 rounded border truncate flex items-center justify-between gap-1 shadow-sm ${getSubjectStyle(t.subject)} ${t.status === 'Completed' ? 'line-through opacity-40' : ''}">
+                            <div draggable="true" ondragstart="onTaskDragStart(event, ${t.id})" class="draggable-pill text-[10px] px-2 py-0.5 rounded border truncate flex items-center justify-between gap-1 shadow-sm ${getSubjectStyle(t.subject)} ${t.status === 'Completed' ? 'line-through opacity-40' : ''}">
                                 <div class="flex items-center gap-1.5 truncate">
                                     <span class="w-1.5 h-1.5 rounded-full ${dotColor} shrink-0"></span>
                                     <span class="truncate">${t.title}</span>
@@ -1873,7 +1896,7 @@
                             <span class="text-xs font-bold ${isToday ? 'w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black' : 'text-slate-400'}">${d}</span>
                             <div class="flex items-center gap-1">
                                 ${dayTasks.length ? `<span class="text-[10px] font-mono text-slate-500 mr-1">${dayTasks.length}</span>` : ''}
-                                <button onclick="event.stopPropagation(); openTaskModalForDate('${dateStr}')" title="Add Routine" class="p-1 text-slate-500 hover:text-indigo-400 hover:bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="event.stopPropagation(); openTaskModalForDate('${dateStr}')" title="Add Routine for this day" class="p-1 text-slate-500 hover:text-indigo-400 hover:bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -2128,6 +2151,9 @@
             document.getElementById('day-summary-modal').classList.add('hidden');
         }
 
+        // ==========================================
+        // --- DRAGGABLE LIVE FOCUS POMODORO (HH:MM:SS) & INTERACTIVE PiP ---
+        // ==========================================
         let timerRemaining = 25 * 60;
         let timerInterval = null;
         let isTimerRunning = false;
@@ -2173,10 +2199,23 @@
             document.getElementById('timer-input-m').value = m;
             document.getElementById('timer-input-s').value = s;
 
+            // Update PiP Window HTML if active
             if (pipWindowInstance && !pipWindowInstance.closed) {
                 const timeEl = pipWindowInstance.document.getElementById('pip-time');
                 if (timeEl) timeEl.innerText = `${h}:${m}:${s}`;
+                const istEl = pipWindowInstance.document.getElementById('pip-ist');
+                if (istEl) istEl.innerText = `IST ${getLiveISTString()}`;
+                const statusEl = pipWindowInstance.document.getElementById('pip-status');
+                if (statusEl) {
+                    statusEl.innerText = isOvertimeMode ? "OVERTIME STOPWATCH" : (isTimerRunning ? "FOCUS RUNNING" : "PAUSED");
+                    statusEl.className = isOvertimeMode ? "font-bold text-amber-400" : (isTimerRunning ? "font-bold text-emerald-400" : "font-bold text-slate-400");
+                }
+                const startBtn = pipWindowInstance.document.getElementById('pip-btn-start');
+                if (startBtn) {
+                    startBtn.innerText = isTimerRunning ? "Pause" : "Start";
+                }
             }
+
             renderPipCanvas();
         }
 
@@ -2249,10 +2288,12 @@
             if (!w.classList.contains('hidden')) updateAllTimerDisplays();
         }
 
+        // --- Start Pomodoro for Specific Task: Auto Sets Status to In Progress ---
         function startTaskPomodoro(taskId) {
             const task = appState.scheduledTasks.find(t => t.id === taskId);
             if (!task) return;
 
+            // Automatically set status to In Progress
             task.status = 'In Progress';
             saveToStorage();
             renderCalendar();
@@ -2278,6 +2319,7 @@
             document.getElementById('focus-timer-widget').classList.remove('hidden');
             setTimerDirect(h, m, 0);
             startTimer();
+
             togglePiP(true);
         }
 
@@ -2337,6 +2379,7 @@
             resetTimer();
         }
 
+        // --- Picture-in-Picture: Interactive Window or Canvas Fallback ---
         async function togglePiP(forceOpen = false) {
             if ('documentPictureInPicture' in window) {
                 if (pipWindowInstance && !pipWindowInstance.closed) {
@@ -2346,26 +2389,85 @@
                     }
                     return;
                 }
+
                 try {
-                    pipWindowInstance = await window.documentPictureInPicture.requestWindow({ width: 340, height: 220 });
-                    pipWindowInstance.document.body.className = "bg-slate-950 text-slate-200 flex flex-col justify-between p-3 select-none h-screen";
+                    pipWindowInstance = await window.documentPictureInPicture.requestWindow({
+                        width: 340,
+                        height: 220
+                    });
+
+                    [...document.styleSheets].forEach(styleSheet => {
+                        try {
+                            const cssRules = [...styleSheet.cssRules].map(rule => rule.cssText).join('');
+                            const style = pipWindowInstance.document.createElement('style');
+                            style.textContent = cssRules;
+                            pipWindowInstance.document.head.appendChild(style);
+                        } catch (e) {
+                            const link = pipWindowInstance.document.createElement('link');
+                            link.rel = 'stylesheet';
+                            link.type = styleSheet.type;
+                            link.media = styleSheet.media;
+                            link.href = styleSheet.href;
+                            pipWindowInstance.document.head.appendChild(link);
+                        }
+                    });
+
                     const taskLabel = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Task') : 'Focus Session';
+
+                    pipWindowInstance.document.body.className = "bg-slate-950 text-slate-200 flex flex-col justify-between p-3 select-none h-screen";
                     pipWindowInstance.document.body.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1e293b; padding-bottom:6px;">
-                            <span style="color:#f59e0b; font-weight:800; font-size:11px;">AIM: IIT BOMBAY</span>
-                            <span id="pip-ist" style="font-family:monospace; color:#94a3b8; font-size:10px;">IST ${getLiveISTString()}</span>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 text-xs">
+                            <span class="text-amber-400 font-bold uppercase tracking-wider text-[11px]">AIM: IIT BOMBAY</span>
+                            <span id="pip-ist" class="font-mono text-slate-400 text-[10px]">IST ${getLiveISTString()}</span>
                         </div>
-                        <div style="text-align:center; margin:auto 0;">
-                            <div style="color:#818cf8; font-size:11px; font-weight:600;">${taskLabel}</div>
-                            <div id="pip-time" style="font-family:monospace; font-size:36px; font-weight:900; color:#ffffff; margin:4px 0;">00:25:00</div>
-                            <div id="pip-status" style="font-size:10px; font-weight:800; color:#10b981;">ACTIVE</div>
+                        <div class="text-center my-auto">
+                            <div class="text-[11px] text-indigo-300 font-semibold truncate px-2 mb-1">${taskLabel}</div>
+                            <div id="pip-time" class="font-mono text-3xl font-black text-white tracking-tight">00:00:00</div>
+                            <div id="pip-status" class="text-[10px] font-bold text-slate-400 mt-1 uppercase">ACTIVE</div>
+                        </div>
+                        <div class="flex gap-2 pt-1 border-t border-slate-800">
+                            <button id="pip-btn-start" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs transition-colors">
+                                ${isTimerRunning ? 'Pause' : 'Start'}
+                            </button>
+                            <button id="pip-btn-reset" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition-colors">
+                                Reset
+                            </button>
                         </div>
                     `;
+
+                    pipWindowInstance.document.getElementById('pip-btn-start').onclick = () => {
+                        if (isTimerRunning) pauseTimer();
+                        else startTimer();
+                    };
+                    pipWindowInstance.document.getElementById('pip-btn-reset').onclick = () => resetTimer();
+
                     pipWindowInstance.addEventListener('pagehide', () => { pipWindowInstance = null; });
                     updateAllTimerDisplays();
                     return;
                 } catch (err) {}
             }
+
+            // Fallback: Canvas stream PiP
+            const canvas = document.getElementById('pip-canvas');
+            const video = document.getElementById('pip-video');
+            renderPipCanvas();
+
+            try {
+                if (document.pictureInPictureElement && !forceOpen) {
+                    await document.exitPictureInPicture();
+                } else if (!document.pictureInPictureElement) {
+                    if (!video.srcObject) {
+                        video.srcObject = canvas.captureStream(15);
+                        await video.play();
+                    }
+                    await video.requestPictureInPicture();
+
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.setActionHandler('play', () => startTimer());
+                        navigator.mediaSession.setActionHandler('pause', () => pauseTimer());
+                    }
+                }
+            } catch (err) {}
         }
 
         function renderPipCanvas() {
@@ -2382,15 +2484,81 @@
             ctx.fillStyle = '#020617';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Header line with AIM: IIT restored
             ctx.fillStyle = '#f59e0b';
             ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.textAlign = 'left';
             ctx.fillText('AIM: IIT BOMBAY', 16, 26);
 
+            // Live IST Clock
             ctx.fillStyle = '#94a3b8';
             ctx.font = '600 11px monospace';
             ctx.textAlign = 'right';
             ctx.fillText(`IST ${istTime}`, canvas.width - 16, 26);
+
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(16, 36);
+            ctx.lineTo(canvas.width - 16, 36);
+            ctx.stroke();
+
+            // Task Name
+            ctx.fillStyle = '#818cf8';
+            ctx.font = '600 12px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            const taskText = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Focus Task') : 'Focus Routine';
+            ctx.fillText(taskText.slice(0, 28), canvas.width / 2, 58);
+
+            // Digits in HH:MM:SS
+            ctx.fillStyle = isOvertimeMode ? '#fbbf24' : '#ffffff';
+            ctx.font = 'bold 40px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${h}:${m}:${s}`, canvas.width / 2, 105);
+
+            // Subtitle state
+            ctx.font = 'bold 11px Inter, sans-serif';
+            if (isOvertimeMode) {
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillText('⏳ OVERTIME RUNNING', canvas.width / 2, 138);
+            } else {
+                ctx.fillStyle = isTimerRunning ? '#10b981' : '#64748b';
+                ctx.fillText(isTimerRunning ? '● RUNNING' : '❚❚ PAUSED', canvas.width / 2, 138);
+            }
         }
+
+        (function makeDraggable() {
+            const el = document.getElementById('focus-timer-widget');
+            const handle = document.getElementById('timer-drag-handle');
+            if (!handle || !el) return;
+            let isDragging = false, startX, startY, origX, origY;
+
+            handle.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = el.getBoundingClientRect();
+                origX = rect.left;
+                origY = rect.top;
+                el.style.position = 'fixed';
+                el.style.bottom = 'auto';
+                el.style.left = `${origX}px`;
+                el.style.top = `${origY}px`;
+
+                const onMove = (ev) => {
+                    if (!isDragging) return;
+                    el.style.left = `${origX + (ev.clientX - startX)}px`;
+                    el.style.top = `${origY + (ev.clientY - startY)}px`;
+                };
+                const onUp = () => {
+                    isDragging = false;
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                };
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+        })();
 
         function setChartFilter(type) {
             activeChartFilter = type;
