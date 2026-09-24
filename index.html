@@ -204,7 +204,7 @@
 
     <!-- MAIN SCROLLABLE CONTENT AREA -->
     <div class="flex-1 min-w-0 overflow-y-auto">
-        <main id="main-container" class="max-w-6xl mx-auto px-4 py-6 md:py-8">
+        <main id="main-container" class="max-w-7xl mx-auto px-4 py-6 md:py-8">
             
             <!-- TAB 1: ANALYTICS -->
             <div id="view-analytics" class="space-y-8">
@@ -688,65 +688,97 @@
                 </section>
             </div>
 
-            <!-- TAB 6: WHOLE PREP SYLLABUS TRACKER -->
+            <!-- TAB 6: WHOLE PREP SYLLABUS TRACKER (EXPANDABLE FOLDERS AS IN IMAGES) -->
             <div id="view-fullprep" class="hidden space-y-6">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
-                        <button onclick="setPrepClass('11')" id="btn-prep-11" class="px-5 py-2 rounded-xl text-xs font-bold bg-orange-600 text-white transition-all">Class 11th</button>
+                <!-- Class Selector Pill -->
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center bg-[#13151b] p-1.5 rounded-2xl border border-slate-800/80">
+                        <button onclick="setPrepClass('11')" id="btn-prep-11" class="px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 transition-all shadow-md">Class 11th</button>
                         <button onclick="setPrepClass('12')" id="btn-prep-12" class="px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Class 12th</button>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <button onclick="openAddPrepChapterModal()" class="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg active:scale-95 transition-all">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Add Chapter
-                        </button>
-                        <button onclick="openAddPrepResourceModal()" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg active:scale-95 transition-all">
-                            <i data-lucide="link" class="w-4 h-4"></i> Add Resource
-                        </button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <div class="space-y-4">
-                        <div class="glass-card p-5 rounded-2xl space-y-3">
-                            <span class="text-xs font-bold text-slate-400 block">Syllabus Progress</span>
-                            <div id="prep-overall-perc" class="text-4xl font-black text-white font-mono">0%</div>
-                            <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block">Syllabus Covered</span>
-                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                                <div id="prep-overall-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                <!-- Main Layout Container: Left Control Panel + Subjects Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    
+                    <!-- Left Column: Syllabus Progress Card -->
+                    <div class="lg:col-span-4 bg-[#101218] border border-slate-800/80 rounded-[32px] p-6 sm:p-7 space-y-6 shadow-2xl">
+                        <div class="space-y-1">
+                            <h3 class="text-xl font-black text-white tracking-tight">Syllabus Progress</h3>
+                            <div class="flex items-baseline gap-2 pt-2">
+                                <span id="prep-overall-perc" class="text-7xl font-black text-white tracking-tighter leading-none font-mono">0%</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 pt-2 text-xs font-mono border-t border-slate-800">
-                                <div><span class="text-slate-500 text-[10px] block">MASTERED</span> <span id="prep-count-mastered" class="font-bold text-white">0</span></div>
-                                <div><span class="text-slate-500 text-[10px] block">DONE</span> <span id="prep-count-done" class="font-bold text-emerald-400">0</span></div>
-                                <div><span class="text-slate-500 text-[10px] block">DOING</span> <span id="prep-count-doing" class="font-bold text-amber-400">0</span></div>
-                                <div><span class="text-slate-500 text-[10px] block">TO DO</span> <span id="prep-count-todo" class="font-bold text-slate-400">0</span></div>
+                            <span class="block text-[11px] font-black tracking-widest text-slate-500 uppercase mt-1">SYLLABUS COVERED</span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-[#1b1e28] h-2 rounded-full overflow-hidden">
+                            <div id="prep-overall-bar" class="h-full bg-gradient-to-r from-amber-500 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+
+                        <!-- 4 Stat Counters -->
+                        <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 text-xs font-mono border-t border-slate-800/80 pt-5">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[11px] font-black text-slate-400 uppercase">MASTERED</span>
+                                <span id="prep-count-mastered" class="font-black text-sm text-orange-400">0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-[11px] font-black text-slate-400 uppercase">DONE</span>
+                                <span id="prep-count-done" class="font-black text-sm text-emerald-400">0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-[11px] font-black text-slate-400 uppercase">DOING</span>
+                                <span id="prep-count-doing" class="font-black text-sm text-amber-400">0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-[11px] font-black text-slate-400 uppercase">TO DO</span>
+                                <span id="prep-count-todo" class="font-black text-sm text-white">0</span>
                             </div>
                         </div>
 
-                        <div class="glass-card p-4 rounded-2xl space-y-3">
+                        <!-- Search & Filter -->
+                        <div class="space-y-3 pt-2">
                             <div class="relative">
-                                <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
-                                <input type="text" id="prep-search-input" oninput="renderPrepSyllabusTree()" placeholder="Search chapters..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white outline-none">
+                                <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-4 top-3.5"></i>
+                                <input type="text" id="prep-search-input" oninput="renderPrepSyllabusTree()" placeholder="Search chapters..." class="w-full bg-[#171922] border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition-colors">
                             </div>
-                            <select id="prep-filter-status" onchange="renderPrepSyllabusTree()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none">
-                                <option value="all">All Statuses</option>
-                                <option value="Mastered">Mastered</option>
-                                <option value="Done">Done</option>
-                                <option value="Doing">Doing</option>
-                                <option value="To Do">To Do</option>
-                            </select>
-                            <button onclick="resetPrepProgress()" class="w-full py-2 text-slate-500 hover:text-red-400 text-xs font-semibold transition-colors">
+
+                            <div class="relative">
+                                <select id="prep-filter-status" onchange="renderPrepSyllabusTree()" class="w-full bg-[#171922] border border-slate-800 rounded-2xl px-4 py-3 text-xs font-bold text-slate-300 outline-none appearance-none cursor-pointer">
+                                    <option value="all">All Statuses</option>
+                                    <option value="Mastered">Mastered</option>
+                                    <option value="Done">Done</option>
+                                    <option value="Doing">Doing</option>
+                                    <option value="To Do">To Do</option>
+                                </select>
+                                <div class="absolute right-4 top-3.5 flex items-center gap-1.5 pointer-events-none text-slate-400">
+                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                                    <i data-lucide="filter" class="w-3.5 h-3.5 ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="space-y-2.5 pt-1">
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <button onclick="openAddPrepChapterModal()" class="py-3 px-4 rounded-2xl bg-[#ff6b2b] hover:bg-[#ff5714] text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-orange-500/20">
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Chapter
+                                </button>
+                                <button onclick="openAddPrepSubjectModal()" class="py-3 px-4 rounded-2xl bg-[#9333ea] hover:bg-[#7e22ce] text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-purple-500/20">
+                                    <i data-lucide="folder-plus" class="w-4 h-4"></i> Add Subject
+                                </button>
+                            </div>
+                            <button onclick="openAddPrepResourceModal()" class="w-full py-3 px-4 rounded-2xl bg-[#171922] hover:bg-[#1e212d] border border-slate-800 text-slate-200 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-98">
+                                <i data-lucide="layers" class="w-4 h-4 text-indigo-400"></i> Add Resource (Global/Subject)
+                            </button>
+                            <button onclick="resetPrepProgress()" class="w-full pt-2 text-[#ff4d6d] hover:text-[#ff3355] text-xs font-black uppercase tracking-wider transition-colors text-center block">
                                 Reset Progress
                             </button>
                         </div>
-
-                        <div class="glass-card p-4 rounded-2xl space-y-2">
-                            <span class="text-xs font-bold text-slate-400 block mb-2">Saved Resources</span>
-                            <div id="prep-resources-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar text-xs"></div>
-                        </div>
                     </div>
 
-                    <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6" id="prep-subjects-container"></div>
+                    <!-- Right Column: Subjects Container (Physics, Chemistry, Mathematics Cards) -->
+                    <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6" id="prep-subjects-container"></div>
                 </div>
             </div>
 
@@ -759,31 +791,56 @@
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2 text-white font-bold">
                     <i data-lucide="folder-plus" class="w-4 h-4 text-orange-500"></i>
-                    <span>Add Custom Chapter</span>
+                    <span>Add Chapter</span>
                 </div>
                 <button onclick="closeAddPrepChapterModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="block text-slate-400 font-bold uppercase mb-1">Subject</label>
-                    <select id="prep-modal-subject" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Mathematics">Mathematics</option>
-                    </select>
+                    <select id="prep-modal-subject" onchange="updateModuleDropdownOptions()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none"></select>
                 </div>
                 <div>
-                    <label class="block text-slate-400 font-bold uppercase mb-1">Unit / Module</label>
-                    <input type="text" id="prep-modal-module" placeholder="e.g. Mechanics I, GOC" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                    <label class="block text-slate-400 font-bold uppercase mb-1">Folder / Module</label>
+                    <div class="flex gap-2">
+                        <select id="prep-modal-module-select" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none"></select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-400 font-bold uppercase mb-1">Or New Folder Name</label>
+                    <input type="text" id="prep-modal-module" placeholder="e.g. Electromagnetism" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
                 </div>
                 <div>
                     <label class="block text-slate-400 font-bold uppercase mb-1">Chapter Name</label>
-                    <input type="text" id="prep-modal-chapter" placeholder="e.g. Kinematics 2D" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                    <input type="text" id="prep-modal-chapter" placeholder="e.g. Motion In One Dimension" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
                 </div>
             </div>
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
                 <button onclick="closeAddPrepChapterModal()" class="px-4 py-2 text-slate-400 hover:text-white font-semibold">Cancel</button>
                 <button onclick="savePrepChapter()" class="px-5 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-xl font-bold transition-all">Add Chapter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD SUBJECT -->
+    <div id="modal-add-prep-subject" class="fixed inset-0 z-[80] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 select-none">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2 text-white font-bold">
+                    <i data-lucide="book-plus" class="w-4 h-4 text-purple-400"></i>
+                    <span>Add New Subject</span>
+                </div>
+                <button onclick="closeAddPrepSubjectModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 font-bold uppercase mb-1">Subject Name</label>
+                    <input type="text" id="prep-modal-new-subject" placeholder="e.g. Physics, Chemistry, Biology" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none">
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeAddPrepSubjectModal()" class="px-4 py-2 text-slate-400 hover:text-white font-semibold">Cancel</button>
+                <button onclick="savePrepSubject()" class="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold transition-all">Add Subject</button>
             </div>
         </div>
     </div>
@@ -951,13 +1008,11 @@
                 </div>
             </div>
 
-            <!-- Subject Badge if bound to routine -->
             <div id="pomo-subject-container" class="hidden flex items-center justify-between px-1 mb-2">
                 <span id="pomo-subject-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-blue-500/20 text-blue-300 border-blue-500/30">Physics</span>
                 <span id="pomo-mode-badge" class="text-[10px] font-mono text-emerald-400 font-bold">COUNTDOWN</span>
             </div>
 
-            <!-- HH:MM:SS Time Inputs -->
             <div class="text-center py-2">
                 <div class="flex justify-center items-center gap-1 font-mono text-3xl sm:text-4xl font-black text-white">
                     <input type="number" id="timer-input-h" min="0" max="23" value="00" class="w-12 bg-transparent text-right text-white focus:text-indigo-400 focus:outline-none border-b border-transparent focus:border-indigo-500 font-mono" onchange="onDirectTimeChange()" oninput="onDirectTimeChange()">
@@ -969,7 +1024,6 @@
                 <p id="timer-hint-text" class="text-[10px] text-slate-500 mt-1">Tap HH:MM:SS directly to configure</p>
             </div>
 
-            <!-- Presets -->
             <div id="pomo-presets-row" class="flex justify-center gap-1.5 my-2">
                 <button onclick="setTimerDirect(0, 25, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">25m</button>
                 <button onclick="setTimerDirect(0, 45, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">45m</button>
@@ -977,7 +1031,6 @@
                 <button onclick="setTimerDirect(1, 30, 0)" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-md font-mono">1.5h</button>
             </div>
 
-            <!-- Controls -->
             <div class="flex items-center justify-center gap-2 pt-1">
                 <button id="timer-start-btn" onclick="startTimer()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i> Start
@@ -1235,41 +1288,63 @@
             { id: 5, type: 'short', title: 'ALLEN SRG BATCH', targetDate: 'December 31, 2026', image: 'ln.jpg', align: 'object-center', completed: false }
         ];
 
+        // Pre-loaded categories & chapters matching images
         const default11thSyllabus = [
-            { id: 101, subject: 'Physics', module: 'Mechanics I', chapter: 'Units and Dimension', status: 'To Do' },
-            { id: 102, subject: 'Physics', module: 'Mechanics I', chapter: 'Kinematics', status: 'To Do' },
-            { id: 103, subject: 'Physics', module: 'Mechanics I', chapter: 'NLM, Friction', status: 'To Do' },
-            { id: 104, subject: 'Physics', module: 'Mechanics I', chapter: 'Circular Motion', status: 'To Do' },
-            { id: 105, subject: 'Physics', module: 'Mechanics I', chapter: 'WPE', status: 'To Do' },
-            { id: 106, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Centre of Mass - Momentum and Collision', status: 'To Do' },
-            { id: 107, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Rotational Dynamics', status: 'To Do' },
+            // Physics
+            { id: 101, subject: 'Physics', module: 'Mechanics I', chapter: 'Motion In One Dimension', status: 'To Do' },
+            { id: 102, subject: 'Physics', module: 'Mechanics I', chapter: 'Motion In Two Dimensions', status: 'To Do' },
+            { id: 103, subject: 'Physics', module: 'Mechanics I', chapter: 'Laws of Motion', status: 'To Do' },
+            { id: 104, subject: 'Physics', module: 'Mechanics I', chapter: 'Work Power Energy', status: 'To Do' },
+            { id: 105, subject: 'Physics', module: 'Mechanics I', chapter: 'Center of Mass Momentum', status: 'To Do' },
+            { id: 106, subject: 'Physics', module: 'Mechanics I', chapter: 'Rotational Motion', status: 'To Do' },
+            { id: 107, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Gravitation', status: 'To Do' },
             { id: 108, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Fluid Mechanics', status: 'To Do' },
-            { id: 109, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Elasticity, thermal expansion', status: 'To Do' },
-            { id: 110, subject: 'Physics', module: 'Thermodynamics', chapter: 'Calorimetry and Heat Transfer', status: 'To Do' },
-            { id: 111, subject: 'Physics', module: 'Thermodynamics', chapter: 'KTG & Thermodynamics', status: 'To Do' },
+            { id: 109, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Simple Harmonic Motion', status: 'To Do' },
+            { id: 110, subject: 'Physics', module: 'Mechanics II & Waves', chapter: 'Wave Motion', status: 'To Do' },
+            { id: 111, subject: 'Physics', module: 'Thermodynamics', chapter: 'Thermal Properties & Calorimetry', status: 'To Do' },
+            { id: 112, subject: 'Physics', module: 'Thermodynamics', chapter: 'Kinetic Theory & Laws of Thermodynamics', status: 'To Do' },
+            { id: 113, subject: 'Physics', module: 'Electromagnetism', chapter: 'Electrostatics', status: 'To Do' },
+            { id: 114, subject: 'Physics', module: 'Optics & Modern', chapter: 'Ray & Wave Optics', status: 'To Do' },
+            { id: 115, subject: 'Physics', module: 'Experimental', chapter: 'Vernier Calipers, Screw Gauge & Errors', status: 'To Do' },
 
+            // Chemistry
             { id: 301, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Mole Concept', status: 'To Do' },
-            { id: 302, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Atomic Structure', status: 'To Do' },
+            { id: 302, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Structure of Atom', status: 'To Do' },
             { id: 303, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Chemical Bonding', status: 'To Do' },
-            { id: 304, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'Periodic Table', status: 'To Do' },
-            { id: 305, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'p-Block Elements', status: 'To Do' },
-            { id: 306, subject: 'Chemistry', module: 'Organic Chem', chapter: 'General Organic Chemistry (GOC)', status: 'To Do' },
-            { id: 307, subject: 'Chemistry', module: 'Organic Chem', chapter: 'Hydrocarbons', status: 'To Do' },
+            { id: 304, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Thermodynamics', status: 'To Do' },
+            { id: 305, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Chemical Equilibrium', status: 'To Do' },
+            { id: 306, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Ionic Equilibrium', status: 'To Do' },
+            { id: 307, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Solutions', status: 'To Do' },
+            { id: 308, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Redox Reactions', status: 'To Do' },
+            { id: 309, subject: 'Chemistry', module: 'Physical Chem', chapter: 'Electrochemistry', status: 'To Do' },
+            { id: 310, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'Periodic Table & Periodicity', status: 'To Do' },
+            { id: 311, subject: 'Chemistry', module: 'Inorganic Chem', chapter: 'p-Block Elements', status: 'To Do' },
+            { id: 312, subject: 'Chemistry', module: 'Organic Chem', chapter: 'General Organic Chemistry (GOC)', status: 'To Do' },
+            { id: 313, subject: 'Chemistry', module: 'Organic Chem', chapter: 'Hydrocarbons', status: 'To Do' },
 
+            // Mathematics
             { id: 201, subject: 'Mathematics', module: 'Algebra', chapter: 'Quadratic Equations', status: 'To Do' },
             { id: 202, subject: 'Mathematics', module: 'Algebra', chapter: 'Sequence and Series', status: 'To Do' },
             { id: 203, subject: 'Mathematics', module: 'Algebra', chapter: 'Binomial Theorem', status: 'To Do' },
-            { id: 204, subject: 'Mathematics', module: 'Algebra', chapter: 'Permutation and Combination', status: 'To Do' },
+            { id: 204, subject: 'Mathematics', module: 'Algebra', chapter: 'Permutations & Combinations', status: 'To Do' },
             { id: 205, subject: 'Mathematics', module: 'Calculus', chapter: 'Functions & Graphs', status: 'To Do' },
-            { id: 206, subject: 'Mathematics', module: 'Calculus', chapter: 'Limits, Continuity & Differentiability', status: 'To Do' },
-            { id: 207, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Line and Circle', status: 'To Do' },
-            { id: 208, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Sections (Parabola, Ellipse, Hyperbola)', status: 'To Do' },
-            { id: 209, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Ratios and Identities', status: 'To Do' }
+            { id: 206, subject: 'Mathematics', module: 'Calculus', chapter: 'Limits, Continuity & Derivability', status: 'To Do' },
+            { id: 207, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Straight Lines & Circles', status: 'To Do' },
+            { id: 208, subject: 'Mathematics', module: 'Coordinate & Vectors', chapter: 'Conic Sections', status: 'To Do' },
+            { id: 209, subject: 'Mathematics', module: 'Trigonometry & Stats', chapter: 'Trigonometric Equations & Identities', status: 'To Do' }
         ];
+
+        // Standard categories list to guarantee categories exist even before adding chapters
+        const defaultPredefinedCategories = {
+            "Physics": ["Mechanics I", "Mechanics II & Waves", "Thermodynamics", "Electromagnetism", "Optics & Modern", "Experimental"],
+            "Chemistry": ["Physical Chem", "Inorganic Chem", "Organic Chem"],
+            "Mathematics": ["Algebra", "Calculus", "Coordinate & Vectors", "Trigonometry & Stats"]
+        };
 
         let appState = {
             currentClass: '11',
             prepSyllabus: JSON.parse(localStorage.getItem('jee_prep_syllabus')) || { "11": default11thSyllabus, "12": [] },
+            prepCategories: JSON.parse(localStorage.getItem('jee_prep_categories')) || defaultPredefinedCategories,
             prepResources: JSON.parse(localStorage.getItem('jee_prep_resources')) || [],
             tests: JSON.parse(localStorage.getItem('jee_tests')) || [],
             syllabus: JSON.parse(localStorage.getItem('jee_syllabus')) || [],
@@ -1281,6 +1356,8 @@
             isSidebarCollapsed: JSON.parse(localStorage.getItem('jee_sidebar_collapsed')) || false
         };
 
+        let openFoldersState = {}; // Track toggled folders { "Physics-Mechanics I": true }
+
         let activeChartFilter = 'all';
         let performanceChart = null;
         let calendarView = 'today';
@@ -1288,6 +1365,7 @@
 
         const saveToStorage = () => {
             localStorage.setItem('jee_prep_syllabus', JSON.stringify(appState.prepSyllabus));
+            localStorage.setItem('jee_prep_categories', JSON.stringify(appState.prepCategories));
             localStorage.setItem('jee_prep_resources', JSON.stringify(appState.prepResources));
             localStorage.setItem('jee_tests', JSON.stringify(appState.tests));
             localStorage.setItem('jee_syllabus', JSON.stringify(appState.syllabus));
@@ -1319,11 +1397,20 @@
             lucide.createIcons();
         }
 
-        // --- Whole Prep Syllabus Tracker Logic ---
+        // --- Whole Prep Syllabus Tracker Logic (Image Matching Accordion & Cards) ---
         function setPrepClass(cls) {
             appState.currentClass = cls;
-            document.getElementById('btn-prep-11').className = (cls === '11') ? "px-5 py-2 rounded-xl text-xs font-bold bg-orange-600 text-white transition-all" : "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
-            document.getElementById('btn-prep-12').className = (cls === '12') ? "px-5 py-2 rounded-xl text-xs font-bold bg-orange-600 text-white transition-all" : "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
+            document.getElementById('btn-prep-11').className = (cls === '11') 
+                ? "px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 transition-all shadow-md" 
+                : "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
+            document.getElementById('btn-prep-12').className = (cls === '12') 
+                ? "px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 transition-all shadow-md" 
+                : "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
+            renderPrepSyllabusTree();
+        }
+
+        function toggleFolder(folderKey) {
+            openFoldersState[folderKey] = !openFoldersState[folderKey];
             renderPrepSyllabusTree();
         }
 
@@ -1336,7 +1423,8 @@
             const searchVal = (document.getElementById('prep-search-input')?.value || '').toLowerCase().trim();
             const filterVal = document.getElementById('prep-filter-status')?.value || 'all';
 
-            const subjects = ["Physics", "Chemistry", "Mathematics"];
+            // Get all defined subjects
+            const subjects = Object.keys(appState.prepCategories);
 
             let totalChapters = list.length;
             let masteredCount = 0;
@@ -1353,79 +1441,95 @@
 
             subjects.forEach(sub => {
                 const subCard = document.createElement('div');
-                subCard.className = "glass-card p-6 rounded-3xl flex flex-col justify-between border border-slate-800 space-y-6 shadow-xl";
+                subCard.className = "bg-[#101218] border border-slate-800/80 rounded-[32px] p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-2xl transition-all";
 
                 const subItems = list.filter(x => x.subject === sub);
                 const subDone = subItems.filter(x => x.status === 'Done' || x.status === 'Mastered').length;
                 const subPerc = subItems.length ? Math.round((subDone / subItems.length) * 100) : 0;
 
-                const modulesMap = {};
-                subItems.forEach(item => {
-                    const modName = item.module || 'General';
-                    if (!modulesMap[modName]) modulesMap[modName] = [];
-                    modulesMap[modName].push(item);
-                });
+                // Combine predefined categories with any dynamic custom module added
+                const predefinedMods = appState.prepCategories[sub] || [];
+                const existingModsInItems = [...new Set(subItems.map(x => x.module || 'General'))];
+                const allModules = [...new Set([...predefinedMods, ...existingModsInItems])];
 
-                let modulesHtml = Object.keys(modulesMap).map(modName => {
-                    let modItems = modulesMap[modName];
+                let modulesHtml = allModules.map(modName => {
+                    const folderKey = `${sub}-${modName}`;
+                    let modItems = subItems.filter(x => (x.module || 'General') === modName);
+
+                    // Filter chapters
                     if (searchVal) modItems = modItems.filter(x => x.chapter.toLowerCase().includes(searchVal));
                     if (filterVal !== 'all') modItems = modItems.filter(x => x.status === filterVal);
 
-                    if (!modItems.length) return '';
+                    const isOpen = searchVal ? true : !!openFoldersState[folderKey];
+                    const modDone = modItems.filter(x => x.status === 'Done' || x.status === 'Mastered').length;
+                    const modPerc = modItems.length ? Math.round((modDone / modItems.length) * 100) : 0;
 
-                    let chaptersHtml = modItems.map(item => {
-                        const isDone = item.status === 'Done' || item.status === 'Mastered';
-                        return `
-                            <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-2.5 truncate">
-                                    <button onclick="togglePrepChapterCheck(${item.id}, this)" class="w-4 h-4 rounded border ${isDone ? 'bg-emerald-500 border-emerald-500 text-slate-950 flex items-center justify-center' : 'border-slate-600'}">
-                                        ${isDone ? '<i data-lucide="check" class="w-3 h-3"></i>' : ''}
-                                    </button>
-                                    <span class="font-bold text-xs truncate ${isDone ? 'line-through text-slate-500' : 'text-white'}">${item.chapter}</span>
+                    let chaptersHtml = '';
+                    if (isOpen) {
+                        if (modItems.length === 0) {
+                            chaptersHtml = `
+                                <div class="px-4 py-3 text-[11px] text-slate-500 italic bg-[#151720]/60 rounded-2xl flex items-center justify-between">
+                                    <span>No chapters in this folder yet.</span>
+                                    <button onclick="quickAddChapter('${sub}', '${modName}')" class="text-orange-400 font-bold hover:underline">+ Add</button>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <select onchange="changePrepChapterStatus(${item.id}, this.value)" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-[10px] text-slate-300 outline-none">
-                                        <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
-                                        <option value="Doing" ${item.status === 'Doing' ? 'selected' : ''}>Doing</option>
-                                        <option value="Done" ${item.status === 'Done' ? 'selected' : ''}>Done</option>
-                                        <option value="Mastered" ${item.status === 'Mastered' ? 'selected' : ''}>Mastered</option>
-                                    </select>
-                                    <button onclick="deletePrepChapter(${item.id})" class="text-slate-600 hover:text-red-400 p-0.5"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-
-                    const modDone = modulesMap[modName].filter(x => x.status === 'Done' || x.status === 'Mastered').length;
-                    const modPerc = modulesMap[modName].length ? Math.round((modDone / modulesMap[modName].length) * 100) : 0;
+                            `;
+                        } else {
+                            chaptersHtml = modItems.map(item => {
+                                const isDone = item.status === 'Done' || item.status === 'Mastered';
+                                return `
+                                    <div class="px-4 py-3 rounded-2xl bg-[#14161f] border border-slate-800/60 flex items-center justify-between gap-3 group/chap hover:border-slate-700 transition-colors">
+                                        <div class="flex items-center gap-3 truncate">
+                                            <button onclick="togglePrepChapterCheck(${item.id}, this)" class="w-4 h-4 rounded-md border transition-all ${isDone ? 'bg-emerald-500 border-emerald-500 text-slate-950 flex items-center justify-center shadow-sm' : 'border-slate-600 hover:border-emerald-400'}">
+                                                ${isDone ? '<i data-lucide="check" class="w-3 h-3 stroke-[3]"></i>' : ''}
+                                            </button>
+                                            <span class="font-bold text-xs truncate ${isDone ? 'line-through text-slate-500' : 'text-slate-200'}">${item.chapter}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 shrink-0">
+                                            <select onchange="changePrepChapterStatus(${item.id}, this.value)" class="bg-[#1b1e2a] border border-slate-800 rounded-lg px-2.5 py-1 text-[10px] font-bold text-slate-300 outline-none cursor-pointer">
+                                                <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
+                                                <option value="Doing" ${item.status === 'Doing' ? 'selected' : ''}>Doing</option>
+                                                <option value="Done" ${item.status === 'Done' ? 'selected' : ''}>Done</option>
+                                                <option value="Mastered" ${item.status === 'Mastered' ? 'selected' : ''}>Mastered</option>
+                                            </select>
+                                            <button onclick="deletePrepChapter(${item.id})" title="Delete chapter" class="text-slate-600 hover:text-red-400 p-1 opacity-0 group-hover/chap:opacity-100 transition-opacity">
+                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
+                    }
 
                     return `
-                        <div class="rounded-2xl bg-slate-900/90 border border-slate-800 p-4 space-y-3 shadow-inner">
-                            <div class="flex items-center justify-between cursor-pointer">
-                                <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
-                                    <i data-lucide="folder" class="w-4 h-4 text-indigo-400"></i>
-                                    <span>${modName}</span>
+                        <div class="space-y-2">
+                            <div onclick="toggleFolder('${folderKey}')" class="p-4 rounded-2xl bg-[#171922] hover:bg-[#1c1e29] border border-slate-800/80 flex items-center justify-between cursor-pointer select-none transition-all">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="folder" class="w-4 h-4 text-slate-400"></i>
+                                    <span class="font-black text-xs text-white">${modName}</span>
                                 </div>
-                                <span class="text-xs font-mono font-bold text-indigo-400">${modPerc}%</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-mono font-black text-xs text-orange-400">${modPerc}%</span>
+                                    <i data-lucide="${isOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                                </div>
                             </div>
-                            <div class="space-y-2 pt-1">${chaptersHtml}</div>
+                            ${isOpen ? `<div class="pl-2 space-y-1.5 animate-fadeIn">${chaptersHtml}</div>` : ''}
                         </div>
                     `;
                 }).join('');
 
                 subCard.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                            <h4 class="text-lg font-bold text-white flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full ${sub === 'Physics' ? 'bg-blue-500' : sub === 'Chemistry' ? 'bg-emerald-500' : 'bg-orange-500'}"></span>
-                                ${sub}
-                            </h4>
-                            <span class="text-lg font-black font-mono text-orange-400">${subPerc}%</span>
+                    <div class="space-y-5">
+                        <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                            <div class="flex items-center gap-2">
+                                <h4 class="text-2xl font-black text-white tracking-tight">${sub}</h4>
+                                <button onclick="renameSubjectPrompt('${sub}')" title="Rename Subject" class="text-slate-500 hover:text-white p-1 transition-colors">
+                                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                            <span class="text-2xl font-black font-mono text-orange-400">${subPerc}%</span>
                         </div>
-                        <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden my-4">
-                            <div class="h-full bg-orange-500 rounded-full" style="width: ${subPerc}%"></div>
-                        </div>
-                        <div class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-1">${modulesHtml}</div>
+                        <div class="space-y-3 max-h-[700px] overflow-y-auto custom-scrollbar pr-1">${modulesHtml}</div>
                     </div>
                 `;
                 container.appendChild(subCard);
@@ -1440,8 +1544,66 @@
             document.getElementById('prep-count-doing').innerText = doingCount;
             document.getElementById('prep-count-todo').innerText = todoCount;
 
-            renderPrepResourcesList();
+            populateSubjectAndModuleDropdowns();
             lucide.createIcons();
+        }
+
+        function quickAddChapter(subject, moduleName) {
+            openAddPrepChapterModal();
+            document.getElementById('prep-modal-subject').value = subject;
+            updateModuleDropdownOptions();
+            document.getElementById('prep-modal-module-select').value = moduleName;
+            document.getElementById('prep-modal-chapter').focus();
+        }
+
+        function populateSubjectAndModuleDropdowns() {
+            const subSelect = document.getElementById('prep-modal-subject');
+            if (!subSelect) return;
+            const subjects = Object.keys(appState.prepCategories);
+            subSelect.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+            updateModuleDropdownOptions();
+        }
+
+        function updateModuleDropdownOptions() {
+            const sub = document.getElementById('prep-modal-subject')?.value || 'Physics';
+            const modSelect = document.getElementById('prep-modal-module-select');
+            if (!modSelect) return;
+            const mods = appState.prepCategories[sub] || ["General"];
+            modSelect.innerHTML = mods.map(m => `<option value="${m}">${m}</option>`).join('');
+        }
+
+        function openAddPrepSubjectModal() {
+            document.getElementById('prep-modal-new-subject').value = '';
+            document.getElementById('modal-add-prep-subject').classList.remove('hidden');
+        }
+        function closeAddPrepSubjectModal() { document.getElementById('modal-add-prep-subject').classList.add('hidden'); }
+
+        function savePrepSubject() {
+            const subName = document.getElementById('prep-modal-new-subject').value.trim();
+            if (!subName) return alert("Please enter subject name.");
+            if (!appState.prepCategories[subName]) {
+                appState.prepCategories[subName] = ["General"];
+                saveToStorage();
+                renderPrepSyllabusTree();
+            }
+            closeAddPrepSubjectModal();
+        }
+
+        function renameSubjectPrompt(oldSub) {
+            const newSub = prompt(`Rename ${oldSub} to:`, oldSub);
+            if (newSub && newSub.trim() && newSub.trim() !== oldSub) {
+                const trimmed = newSub.trim();
+                appState.prepCategories[trimmed] = appState.prepCategories[oldSub] || ["General"];
+                delete appState.prepCategories[oldSub];
+
+                ["11", "12"].forEach(cls => {
+                    (appState.prepSyllabus[cls] || []).forEach(item => {
+                        if (item.subject === oldSub) item.subject = trimmed;
+                    });
+                });
+                saveToStorage();
+                renderPrepSyllabusTree();
+            }
         }
 
         function togglePrepChapterCheck(id, btnEl) {
@@ -1486,13 +1648,16 @@
         function openAddPrepChapterModal() {
             document.getElementById('prep-modal-module').value = '';
             document.getElementById('prep-modal-chapter').value = '';
+            populateSubjectAndModuleDropdowns();
             document.getElementById('modal-add-prep-chapter').classList.remove('hidden');
         }
         function closeAddPrepChapterModal() { document.getElementById('modal-add-prep-chapter').classList.add('hidden'); }
 
         function savePrepChapter() {
             const subject = document.getElementById('prep-modal-subject').value;
-            const moduleName = document.getElementById('prep-modal-module').value.trim();
+            const chosenModule = document.getElementById('prep-modal-module-select').value;
+            const customModule = document.getElementById('prep-modal-module').value.trim();
+            const finalModule = customModule || chosenModule || 'General';
             const chapter = document.getElementById('prep-modal-chapter').value.trim();
 
             if (!chapter) return alert("Please enter chapter name.");
@@ -1501,13 +1666,20 @@
                 appState.prepSyllabus[appState.currentClass] = [];
             }
 
+            if (customModule && !appState.prepCategories[subject].includes(customModule)) {
+                appState.prepCategories[subject].push(customModule);
+            }
+
             appState.prepSyllabus[appState.currentClass].push({
                 id: Date.now(),
                 subject,
-                module: moduleName || 'General',
+                module: finalModule,
                 chapter,
                 status: 'To Do'
             });
+
+            // Automatically open the target folder
+            openFoldersState[`${subject}-${finalModule}`] = true;
 
             saveToStorage();
             closeAddPrepChapterModal();
@@ -1532,41 +1704,12 @@
             appState.prepResources.push({ id: Date.now(), scope, title, type, url });
             saveToStorage();
             closeAddPrepResourceModal();
-            renderPrepResourcesList();
+            alert("Resource saved!");
         }
 
         function deletePrepResource(id) {
             appState.prepResources = appState.prepResources.filter(r => r.id !== id);
             saveToStorage();
-            renderPrepResourcesList();
-        }
-
-        function renderPrepResourcesList() {
-            const resList = document.getElementById('prep-resources-list');
-            if (!resList) return;
-            resList.innerHTML = '';
-
-            if (!appState.prepResources.length) {
-                resList.innerHTML = `<span class="text-slate-500 italic block">No resources saved yet.</span>`;
-                return;
-            }
-
-            appState.prepResources.forEach(r => {
-                const item = document.createElement('div');
-                item.className = "p-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-2";
-                item.innerHTML = `
-                    <div class="truncate flex-1">
-                        <span class="block font-bold text-white truncate text-xs">${r.title}</span>
-                        <span class="block text-[10px] text-indigo-400 truncate">${r.scope} • ${r.type}</span>
-                    </div>
-                    <div class="flex items-center gap-1 shrink-0">
-                        ${r.url ? `<a href="${r.url}" target="_blank" class="text-slate-400 hover:text-white p-1"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>` : ''}
-                        <button onclick="deletePrepResource(${r.id})" class="text-slate-500 hover:text-red-400 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                    </div>
-                `;
-                resList.appendChild(item);
-            });
-            lucide.createIcons();
         }
 
         function calculateDurationMinutes(start, end) {
@@ -2288,12 +2431,10 @@
             if (!w.classList.contains('hidden')) updateAllTimerDisplays();
         }
 
-        // --- Start Pomodoro for Specific Task: Auto Sets Status to In Progress ---
         function startTaskPomodoro(taskId) {
             const task = appState.scheduledTasks.find(t => t.id === taskId);
             if (!task) return;
 
-            // Automatically set status to In Progress
             task.status = 'In Progress';
             saveToStorage();
             renderCalendar();
@@ -2379,7 +2520,6 @@
             resetTimer();
         }
 
-        // --- Picture-in-Picture: Interactive Window or Canvas Fallback ---
         async function togglePiP(forceOpen = false) {
             if ('documentPictureInPicture' in window) {
                 if (pipWindowInstance && !pipWindowInstance.closed) {
@@ -2484,13 +2624,11 @@
             ctx.fillStyle = '#020617';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Header line with AIM: IIT restored
             ctx.fillStyle = '#f59e0b';
             ctx.font = 'bold 12px Inter, sans-serif';
             ctx.textAlign = 'left';
             ctx.fillText('AIM: IIT BOMBAY', 16, 26);
 
-            // Live IST Clock
             ctx.fillStyle = '#94a3b8';
             ctx.font = '600 11px monospace';
             ctx.textAlign = 'right';
@@ -2503,20 +2641,17 @@
             ctx.lineTo(canvas.width - 16, 36);
             ctx.stroke();
 
-            // Task Name
             ctx.fillStyle = '#818cf8';
             ctx.font = '600 12px Inter, sans-serif';
             ctx.textAlign = 'center';
             const taskText = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Focus Task') : 'Focus Routine';
             ctx.fillText(taskText.slice(0, 28), canvas.width / 2, 58);
 
-            // Digits in HH:MM:SS
             ctx.fillStyle = isOvertimeMode ? '#fbbf24' : '#ffffff';
             ctx.font = 'bold 40px monospace';
             ctx.textAlign = 'center';
             ctx.fillText(`${h}:${m}:${s}`, canvas.width / 2, 105);
 
-            // Subtitle state
             ctx.font = 'bold 11px Inter, sans-serif';
             if (isOvertimeMode) {
                 ctx.fillStyle = '#f59e0b';
