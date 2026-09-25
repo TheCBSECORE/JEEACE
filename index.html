@@ -688,7 +688,7 @@
                 </section>
             </div>
 
-            <!-- TAB 6: WHOLE PREP SYLLABUS TRACKER (EXPANDABLE FOLDERS AS IN IMAGES) -->
+            <!-- TAB 6: WHOLE PREP SYLLABUS TRACKER -->
             <div id="view-fullprep" class="hidden space-y-6">
                 <!-- Class Selector Pill (11th, 12th, and Combined) -->
                 <div class="flex items-center gap-3">
@@ -702,79 +702,93 @@
                 <!-- Main Layout Container: Left Control Panel + Subjects Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     
-                    <!-- Left Column: Syllabus Progress Card -->
-                    <div class="lg:col-span-4 bg-[#101218] border border-slate-800/80 rounded-[32px] p-6 sm:p-7 space-y-6 shadow-2xl">
-                        <div class="space-y-1">
-                            <h3 class="text-xl font-black text-white tracking-tight">Syllabus Progress</h3>
-                            <div class="flex items-baseline gap-2 pt-2">
-                                <span id="prep-overall-perc" class="text-7xl font-black text-white tracking-tighter leading-none font-mono">0%</span>
-                            </div>
-                            <span class="block text-[11px] font-black tracking-widest text-slate-500 uppercase mt-1">SYLLABUS COVERED</span>
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="w-full bg-[#1b1e28] h-2 rounded-full overflow-hidden">
-                            <div id="prep-overall-bar" class="h-full bg-gradient-to-r from-amber-500 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-
-                        <!-- 4 Stat Counters -->
-                        <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 text-xs font-mono border-t border-slate-800/80 pt-5">
-                            <div class="flex justify-between items-center">
-                                <span class="text-[11px] font-black text-slate-400 uppercase">MASTERED</span>
-                                <span id="prep-count-mastered" class="font-black text-sm text-orange-400">0</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-[11px] font-black text-slate-400 uppercase">DONE</span>
-                                <span id="prep-count-done" class="font-black text-sm text-emerald-400">0</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-[11px] font-black text-slate-400 uppercase">DOING</span>
-                                <span id="prep-count-doing" class="font-black text-sm text-amber-400">0</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-[11px] font-black text-slate-400 uppercase">TO DO</span>
-                                <span id="prep-count-todo" class="font-black text-sm text-white">0</span>
-                            </div>
-                        </div>
-
-                        <!-- Search & Filter -->
-                        <div class="space-y-3 pt-2">
-                            <div class="relative">
-                                <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-4 top-3.5"></i>
-                                <input type="text" id="prep-search-input" oninput="renderPrepSyllabusTree()" placeholder="Search chapters..." class="w-full bg-[#171922] border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition-colors">
+                    <!-- Left Column: Syllabus Progress Card + Resources Shelf -->
+                    <div class="lg:col-span-4 space-y-6">
+                        <div class="bg-[#101218] border border-slate-800/80 rounded-[32px] p-6 sm:p-7 space-y-6 shadow-2xl">
+                            <div class="space-y-1">
+                                <h3 class="text-xl font-black text-white tracking-tight">Syllabus Progress</h3>
+                                <div class="flex items-baseline gap-2 pt-2">
+                                    <span id="prep-overall-perc" class="text-7xl font-black text-white tracking-tighter leading-none font-mono">0%</span>
+                                </div>
+                                <span class="block text-[11px] font-black tracking-widest text-slate-500 uppercase mt-1">SYLLABUS COVERED</span>
                             </div>
 
-                            <div class="relative">
-                                <select id="prep-filter-status" onchange="renderPrepSyllabusTree()" class="w-full bg-[#171922] border border-slate-800 rounded-2xl px-4 py-3 text-xs font-bold text-slate-300 outline-none appearance-none cursor-pointer">
-                                    <option value="all">All Statuses</option>
-                                    <option value="Mastered">Mastered</option>
-                                    <option value="Done">Done</option>
-                                    <option value="Doing">Doing</option>
-                                    <option value="To Do">To Do</option>
-                                </select>
-                                <div class="absolute right-4 top-3.5 flex items-center gap-1.5 pointer-events-none text-slate-400">
-                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
-                                    <i data-lucide="filter" class="w-3.5 h-3.5 ml-1"></i>
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-[#1b1e28] h-2 rounded-full overflow-hidden">
+                                <div id="prep-overall-bar" class="h-full bg-gradient-to-r from-amber-500 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+
+                            <!-- 4 Stat Counters -->
+                            <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 text-xs font-mono border-t border-slate-800/80 pt-5">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[11px] font-black text-slate-400 uppercase">MASTERED</span>
+                                    <span id="prep-count-mastered" class="font-black text-sm text-orange-400">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[11px] font-black text-slate-400 uppercase">DONE</span>
+                                    <span id="prep-count-done" class="font-black text-sm text-emerald-400">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[11px] font-black text-slate-400 uppercase">DOING</span>
+                                    <span id="prep-count-doing" class="font-black text-sm text-amber-400">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[11px] font-black text-slate-400 uppercase">TO DO</span>
+                                    <span id="prep-count-todo" class="font-black text-sm text-white">0</span>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Action Buttons -->
-                        <div class="space-y-2.5 pt-1">
-                            <div class="grid grid-cols-2 gap-2.5">
-                                <button onclick="openAddPrepChapterModal()" class="py-3 px-4 rounded-2xl bg-[#ff6b2b] hover:bg-[#ff5714] text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-orange-500/20">
-                                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Chapter
+                            <!-- Search & Filter -->
+                            <div class="space-y-3 pt-2">
+                                <div class="relative">
+                                    <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-4 top-3.5"></i>
+                                    <input type="text" id="prep-search-input" oninput="renderPrepSyllabusTree()" placeholder="Search chapters..." class="w-full bg-[#171922] border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition-colors">
+                                </div>
+
+                                <div class="relative">
+                                    <select id="prep-filter-status" onchange="renderPrepSyllabusTree()" class="w-full bg-[#171922] border border-slate-800 rounded-2xl px-4 py-3 text-xs font-bold text-slate-300 outline-none appearance-none cursor-pointer">
+                                        <option value="all">All Statuses</option>
+                                        <option value="Mastered">Mastered</option>
+                                        <option value="Done">Done</option>
+                                        <option value="Doing">Doing</option>
+                                        <option value="To Do">To Do</option>
+                                    </select>
+                                    <div class="absolute right-4 top-3.5 flex items-center gap-1.5 pointer-events-none text-slate-400">
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                                        <i data-lucide="filter" class="w-3.5 h-3.5 ml-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="space-y-2.5 pt-1">
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <button onclick="openAddPrepChapterModal()" class="py-3 px-4 rounded-2xl bg-[#ff6b2b] hover:bg-[#ff5714] text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-orange-500/20">
+                                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Chapter
+                                    </button>
+                                    <button onclick="openAddPrepSubjectModal()" class="py-3 px-4 rounded-2xl bg-[#9333ea] hover:bg-[#7e22ce] text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-purple-500/20">
+                                        <i data-lucide="folder-plus" class="w-4 h-4"></i> Add Subject
+                                    </button>
+                                </div>
+                                <button onclick="openAddPrepResourceModal()" class="w-full py-3 px-4 rounded-2xl bg-[#171922] hover:bg-[#1e212d] border border-slate-800 text-slate-200 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-98">
+                                    <i data-lucide="layers" class="w-4 h-4 text-indigo-400"></i> Add Resource (Global/Subject)
                                 </button>
-                                <button onclick="openAddPrepSubjectModal()" class="py-3 px-4 rounded-2xl bg-[#9333ea] hover:bg-[#7e22ce] text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-purple-500/20">
-                                    <i data-lucide="folder-plus" class="w-4 h-4"></i> Add Subject
+                                <button onclick="resetPrepProgress()" class="w-full pt-2 text-[#ff4d6d] hover:text-[#ff3355] text-xs font-black uppercase tracking-wider transition-colors text-center block">
+                                    Reset Progress
                                 </button>
                             </div>
-                            <button onclick="openAddPrepResourceModal()" class="w-full py-3 px-4 rounded-2xl bg-[#171922] hover:bg-[#1e212d] border border-slate-800 text-slate-200 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-98">
-                                <i data-lucide="layers" class="w-4 h-4 text-indigo-400"></i> Add Resource (Global/Subject)
-                            </button>
-                            <button onclick="resetPrepProgress()" class="w-full pt-2 text-[#ff4d6d] hover:text-[#ff3355] text-xs font-black uppercase tracking-wider transition-colors text-center block">
-                                Reset Progress
-                            </button>
+                        </div>
+
+                        <!-- LIVE RESOURCES DRAWER/SHELF -->
+                        <div class="bg-[#101218] border border-slate-800/80 rounded-[32px] p-6 shadow-2xl space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-800/80">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="bookmark" class="w-4 h-4 text-purple-400"></i>
+                                    <h4 class="text-sm font-black text-white uppercase tracking-wider">Study Resources</h4>
+                                </div>
+                                <span id="prep-resource-count" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">0</span>
+                            </div>
+                            <div id="prep-resources-list" class="space-y-2.5 max-h-72 overflow-y-auto custom-scrollbar pr-1"></div>
                         </div>
                     </div>
 
@@ -1426,6 +1440,7 @@
                     : "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
             });
             renderPrepSyllabusTree();
+            renderPrepResourcesList();
         }
 
         function toggleFolder(folderKey) {
@@ -1526,6 +1541,48 @@
             renderPrepSyllabusTree();
         }
 
+        function renderPrepResourcesList() {
+            const container = document.getElementById('prep-resources-list');
+            const countBadge = document.getElementById('prep-resource-count');
+            if (!container) return;
+
+            const resources = appState.prepResources || [];
+            if (countBadge) countBadge.innerText = resources.length;
+            container.innerHTML = '';
+
+            if (resources.length === 0) {
+                container.innerHTML = `<div class="p-3 text-[11px] text-slate-500 italic bg-[#171922] rounded-2xl text-center">No resources added yet. Click "Add Resource" above.</div>`;
+                return;
+            }
+
+            resources.forEach(res => {
+                const item = document.createElement('div');
+                item.className = "p-3 rounded-2xl bg-[#171922] border border-slate-800/80 flex items-center justify-between gap-2.5 group/res hover:border-slate-700 transition-colors";
+                
+                let typeColor = 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+                if (res.type === 'Video Lecture') typeColor = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+                else if (res.type === 'Notes') typeColor = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+
+                item.innerHTML = `
+                    <div class="flex-1 min-w-0 pr-1">
+                        <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold border font-mono ${typeColor}">${res.type}</span>
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-300 border border-slate-700">${res.scope}</span>
+                        </div>
+                        <h5 class="text-xs font-bold text-white truncate">${res.title}</h5>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        ${res.url ? `<a href="${res.url}" target="_blank" rel="noopener noreferrer" title="Open Link" class="p-1.5 rounded-lg bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>` : ''}
+                        <button onclick="deletePrepResource(${res.id})" title="Delete Resource" class="p-1.5 rounded-lg text-slate-600 hover:text-red-400 transition-colors">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
         function renderPrepSyllabusTree() {
             const container = document.getElementById('prep-subjects-container');
             if (!container) return;
@@ -1562,6 +1619,10 @@
                 const predefinedMods = categoriesMap[sub] || [];
                 const existingModsInItems = [...new Set(subItems.map(x => x.module || 'General'))];
                 const allModules = [...new Set([...predefinedMods, ...existingModsInItems])];
+
+                // Subject-scoped resources
+                const subResources = (appState.prepResources || []).filter(r => r.scope === sub);
+                let subResBadge = subResources.length ? `<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold">${subResources.length} res</span>` : '';
 
                 let modulesHtml = allModules.map(modName => {
                     const folderKey = `${appState.currentClass}-${sub}-${modName}`;
@@ -1642,6 +1703,7 @@
                         <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
                             <div class="flex items-center gap-2">
                                 <h4 class="text-2xl font-black text-white tracking-tight">${sub}</h4>
+                                ${subResBadge}
                                 <button onclick="renameSubjectPrompt('${sub}')" title="Rename Subject" class="text-slate-500 hover:text-white p-1 transition-colors">
                                     <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
                                 </button>
@@ -1664,6 +1726,7 @@
             document.getElementById('prep-count-todo').innerText = todoCount;
 
             populateSubjectAndModuleDropdowns();
+            renderPrepResourcesList();
             lucide.createIcons();
         }
 
@@ -1838,12 +1901,15 @@
             appState.prepResources.push({ id: Date.now(), scope, title, type, url });
             saveToStorage();
             closeAddPrepResourceModal();
-            alert("Resource saved!");
+            renderPrepResourcesList();
+            renderPrepSyllabusTree();
         }
 
         function deletePrepResource(id) {
             appState.prepResources = appState.prepResources.filter(r => r.id !== id);
             saveToStorage();
+            renderPrepResourcesList();
+            renderPrepSyllabusTree();
         }
 
         function calculateDurationMinutes(start, end) {
@@ -2376,7 +2442,7 @@
 
             dayTasks.forEach(t => {
                 let mins = Number(t.duration) || 0;
-                if (!mins && t.start && t.end) mins = calculateDurationMinutes(t.start, end);
+                if (!mins && t.start && t.end) mins = calculateDurationMinutes(t.start, t.end);
                 const sub = subjectMap[t.subject] !== undefined ? t.subject : 'General';
                 subjectMap[sub].planned += mins;
                 totalPlanned += mins;
