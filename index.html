@@ -28,8 +28,8 @@
         }
 
         /* ================================
-           COLLAPSED SIDEBAR
-           ================================ */
+            COLLAPSED SIDEBAR
+            ================================ */
         #app-sidebar.collapsed {
             width: 4.5rem !important;
         }
@@ -53,8 +53,8 @@
         }
 
         /* ================================
-           TOP HEADER WHEN COLLAPSED
-           ================================ */
+            TOP HEADER WHEN COLLAPSED
+            ================================ */
         #app-sidebar.collapsed .sidebar-header {
             height: 4.5rem;
             padding: 0 !important;
@@ -3387,13 +3387,17 @@
         async function callGeminiAPI() {
             if (!appState.apiKey) throw new Error("Gemini API Key missing. Add it via the key icon.");
 
+            // FIX: Pulling precise local date/time from the local browser environment so the AI never gets the wrong day/date
             const now = new Date();
             const todayStr = formatLocalDate(now);
-            const currentRealTime = getLiveISTString();
+            const currentRealTime = now.toLocaleTimeString('en-IN', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
             const testHistorySummary = JSON.stringify(appState.tests || []);
-            const syllabusList = JSON.stringify(getActivePrepSyllabusList().map(s => `${s.subject} [${s.module}]: ${s.chapter} (${s.status})`));
+            const wholePrepSummary = JSON.stringify(appState.prepSyllabus || {});
+            const scheduledTasksSummary = JSON.stringify(appState.scheduledTasks || []);
+            const goalsSummary = JSON.stringify(appState.goals || []);
+            const dailyQuotaSummary = JSON.stringify(getStoredQuota());
 
             const systemContext = `You are Laksh's grounded, candid, and disciplined JEE Mentor.
 Goal: IIT Bombay CSE 2028 (AIR < 60).
@@ -3401,12 +3405,16 @@ Daily Routine: Allen Coaching from 7:00 AM to 12:00 PM.
 Current Real Time: ${currentRealTime} | Date: ${currentRealDate} (${todayStr})
 Active Target Milestone: ${appState.nextTest?.name || 'Upcoming Test'} on ${appState.nextTest?.date || 'Configured Date'}
 
-RELEVANT DATA CONTEXT:
-- Past Test Scores & History: ${testHistorySummary}
-- Active Prep Syllabus: ${syllabusList}
+COMPLETE USER DATA CONTEXT:
+- Test Scores & History: ${testHistorySummary}
+- Whole Prep Tracker (Class 11 & 12 Chapters & Statuses): ${wholePrepSummary}
+- Daily Planner Scheduled Tasks / Routines: ${scheduledTasksSummary}
+- Daily Quota Status: ${dailyQuotaSummary}
+- Goals & Targets: ${goalsSummary}
 
 RULES:
-- Be punchy, direct, and actionable. Jump straight into the advice or schedule requested without long winded introductory lecture or repeated stats dumping.
+- Always rely strictly on the Current Real Time and Date provided above (${currentRealDate}). Never assume or guess a different day of the week.
+- Be punchy, direct, and actionable. Jump straight into the advice or schedule requested without long-winded introductory lectures.
 - When generating schedules, format them cleanly day by day with realistic time blocks post-Allen.
 - NEVER cut off mid-sentence. Always finish your thoughts completely.
 - Never output citation placeholders or JSON action blocks.`;
