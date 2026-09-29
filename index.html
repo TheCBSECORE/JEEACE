@@ -752,15 +752,17 @@
 
                     <!-- Center Metrics, Streak & Heatmap -->
                     <div class="lg:col-span-4 space-y-6">
-                        <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                        <!-- Top Next Milestone Card (Replaced HyperionOS) -->
+                        <div class="bg-[#0b0d13] border border-indigo-500/30 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
                             <div class="flex items-center justify-between">
-                                <span class="text-2xl font-black text-rose-500 tracking-tight" id="report-day-number-label">DAY 1</span>
-                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 tracking-wider">ACCOUNTABILITY</span>
+                                <span class="text-xs font-black tracking-widest text-indigo-400 uppercase">NEXT MILESTONE</span>
+                                <span id="report-test-countdown-badge" class="text-xs font-black font-mono px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">0 DAYS LEFT</span>
                             </div>
-                            <h3 class="text-lg font-black text-white mt-1">HyperionOS • Laksh</h3>
-                            <p class="text-xs text-slate-400 font-mono" id="report-full-date-label">...</p>
-                            <div class="text-[11px] text-emerald-400 font-mono mt-2 flex items-center gap-1">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Daily Study Verification Logged
+                            <h3 id="report-next-test-name" class="text-xl font-black text-white mt-2 truncate">Upcoming Test</h3>
+                            <p class="text-xs text-slate-400 font-mono mt-0.5" id="report-next-test-date">-- --- ----</p>
+                            <div class="text-[11px] text-emerald-400 font-mono mt-3 flex items-center gap-1.5 border-t border-slate-800/80 pt-2">
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                                <span>Selected Date: <strong id="report-full-date-label" class="text-white font-mono">...</strong></span>
                             </div>
                         </div>
 
@@ -4330,12 +4332,26 @@ function renderDailyQuestionsChart() {
             const questions = appState.dailyQuestions[reportSelectedDate] || { p: 0, c: 0, m: 0 };
             const totalQ = questions.p + questions.c + questions.m;
 
-            document.getElementById('report-task-date-subtitle').innerText = targetDateObj.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-            document.getElementById('report-full-date-label').innerText = targetDateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            // Update Next Milestone Information
+            const testName = appState.nextTest?.name || 'Upcoming Test';
+            const testDateStr = appState.nextTest?.date || '';
+            document.getElementById('report-next-test-name').innerText = testName;
             
-            const dayNum = Math.max(1, Math.ceil((new Date() - new Date('2026-09-01T00:00:00')) / (1000 * 60 * 60 * 24)));
-            document.getElementById('report-day-number-label').innerText = `DAY ${dayNum}`;
+            if (testDateStr) {
+                const testDate = new Date(testDateStr + 'T00:00:00');
+                const now = new Date();
+                const diffDays = Math.ceil((testDate - now) / (1000 * 60 * 60 * 24));
+                document.getElementById('report-next-test-date').innerText = testDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                document.getElementById('report-test-countdown-badge').innerText = `${Math.max(0, diffDays)} DAYS LEFT`;
+            } else {
+                document.getElementById('report-next-test-date').innerText = 'No Date Configured';
+                document.getElementById('report-test-countdown-badge').innerText = '-- DAYS';
+            }
 
+            document.getElementById('report-task-date-subtitle').innerText = targetDateObj.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+            document.getElementById('report-full-date-label').innerText = targetDateObj.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+            // Tasks List
             const tasksContainer = document.getElementById('report-tasks-container');
             tasksContainer.innerHTML = '';
 
@@ -4376,6 +4392,7 @@ function renderDailyQuestionsChart() {
                 });
             }
 
+            // Study Duration & Question Counts
             let totalFocusMins = 0;
             const subjectMinsMap = { Physics: 0, Chemistry: 0, Maths: 0, Allen: 0, General: 0 };
 
@@ -4390,37 +4407,43 @@ function renderDailyQuestionsChart() {
             document.getElementById('report-sessions-count').innerText = `${dayTasks.length} Sessions logged`;
             document.getElementById('report-questions-count').innerText = `${totalQ} Qs`;
 
+            // Streak
             const streak = calculateStreak();
             document.getElementById('report-streak-badge').innerText = `🔥 ${streak} DAYS STREAK`;
 
+            // Month Heatmap: Starts strictly at Day 1 of the chosen month
             const heatmapGrid = document.getElementById('report-heatmap-grid');
             heatmapGrid.innerHTML = '';
+            
+            const curYear = targetDateObj.getFullYear();
+            const curMonth = targetDateObj.getMonth();
+            const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
             let activeDaysCount = 0;
 
-            for (let i = 27; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                const dStr = formatLocalDate(d);
+            for (let d = 1; d <= daysInMonth; d++) {
+                const thisDate = new Date(curYear, curMonth, d);
+                const dStr = formatLocalDate(thisDate);
 
                 const qCount = (appState.dailyQuestions[dStr]?.p || 0) + (appState.dailyQuestions[dStr]?.c || 0) + (appState.dailyQuestions[dStr]?.m || 0);
                 const tCount = appState.scheduledTasks.filter(t => t.date === dStr && t.status === 'Completed').length;
                 const activityVal = qCount + (tCount * 5);
 
-                let cellColor = 'bg-slate-900 border-slate-800';
-                if (activityVal > 25) { cellColor = 'bg-emerald-400 text-slate-950'; activeDaysCount++; }
-                else if (activityVal > 15) { cellColor = 'bg-emerald-600 text-white'; activeDaysCount++; }
+                let cellColor = 'bg-slate-900 border-slate-800 text-slate-400';
+                if (activityVal > 25) { cellColor = 'bg-emerald-400 text-slate-950 font-bold'; activeDaysCount++; }
+                else if (activityVal > 15) { cellColor = 'bg-emerald-600 text-white font-bold'; activeDaysCount++; }
                 else if (activityVal > 5) { cellColor = 'bg-emerald-800 text-white'; activeDaysCount++; }
                 else if (activityVal > 0) { cellColor = 'bg-emerald-950 text-emerald-400'; activeDaysCount++; }
 
                 const cell = document.createElement('div');
                 cell.className = `w-7 h-7 rounded-lg border text-[10px] font-mono flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${cellColor} ${dStr === reportSelectedDate ? 'ring-2 ring-emerald-400' : ''}`;
-                cell.innerText = d.getDate();
-                cell.title = `${dStr}: ${qCount} Qs, ${tCount} Tasks`;
+                cell.innerText = d;
+                cell.title = `${dStr}: ${qCount} Qs, ${tCount} Completed Tasks`;
                 cell.onclick = () => viewReportForDate(dStr);
                 heatmapGrid.appendChild(cell);
             }
-            document.getElementById('report-active-days-stat').innerText = `${activeDaysCount} Active Days in past 4 weeks`;
+            document.getElementById('report-active-days-stat').innerText = `${activeDaysCount} Active Days in ${targetDateObj.toLocaleDateString('en-GB', { month: 'short' })}`;
 
+            // Donut Chart
             const ctx = document.getElementById('reportSubjectChart');
             if (ctx) {
                 if (reportChartInstance) reportChartInstance.destroy();
@@ -4441,6 +4464,7 @@ function renderDailyQuestionsChart() {
                 });
             }
 
+            // Subject Breakdown Bars
             const barsContainer = document.getElementById('report-subject-bars-container');
             barsContainer.innerHTML = '';
             document.getElementById('report-breakdown-total').innerText = `${formatDuration(totalFocusMins)} Total`;
@@ -4464,6 +4488,37 @@ function renderDailyQuestionsChart() {
                 barsContainer.appendChild(barRow);
             });
             lucide.createIcons();
+        }
+
+        function renderSubtopicsDraft() {
+            const container = document.getElementById('modal-subtopics-list');
+            if (!container) return;
+            container.innerHTML = '';
+            subtopicsDraft.forEach((st, idx) => {
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs";
+                row.innerHTML = `
+                    <span class="text-slate-200 truncate flex-1">${st.title}</span>
+                    <button type="button" onclick="removeSubtopicDraft(${idx})" class="text-slate-500 hover:text-red-400 p-0.5"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                `;
+                container.appendChild(row);
+            });
+            lucide.createIcons();
+        }
+
+        function addSubtopicDraft() {
+            const input = document.getElementById('task-subtopic-input');
+            if (!input) return;
+            const title = input.value.trim();
+            if (!title) return;
+            subtopicsDraft.push({ id: Date.now() + Math.floor(Math.random() * 1000), title: title, done: false });
+            input.value = '';
+            renderSubtopicsDraft();
+        }
+
+        function removeSubtopicDraft(index) {
+            subtopicsDraft.splice(index, 1);
+            renderSubtopicsDraft();
         }
 
         function exportBackup() {
