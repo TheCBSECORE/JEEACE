@@ -218,32 +218,35 @@
         </div>
     </aside>
 
-       <!-- TOP PINNED GLOBAL FOCUS STRIP (Visible across all tabs when active) -->
-<div id="global-timer-strip" class="hidden sticky top-0 z-30 w-full bg-slate-900/95 border-b border-indigo-500/30 backdrop-blur-md px-4 py-2.5 flex items-center justify-between text-xs transition-all shadow-lg select-none">
-    <div class="flex items-center gap-3 min-w-0">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span>
-        <span id="global-strip-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 bg-blue-500/20 text-blue-300 border-blue-500/40">Physics</span>
-        <div class="truncate">
-            <span class="text-slate-400 font-mono text-[10px] mr-1">CURRENT FOCUS:</span>
-            <strong id="global-strip-task-name" class="text-white font-bold truncate">Self Study Session</strong>
+    <!-- RIGHT HAND WORKSPACE COLUMN -->
+    <div class="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
+        
+        <!-- TOP PINNED GLOBAL FOCUS STRIP (Only shows on non-timer tabs) -->
+        <div id="global-timer-strip" class="hidden shrink-0 z-30 w-full bg-slate-900/95 border-b border-indigo-500/30 backdrop-blur-md px-5 py-2.5 flex items-center justify-between text-xs shadow-xl select-none">
+            <div class="flex items-center gap-3 min-w-0">
+                <span id="global-strip-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span>
+                <span id="global-strip-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 bg-blue-500/20 text-blue-300 border-blue-500/40">Physics</span>
+                <div class="truncate">
+                    <span class="text-slate-400 font-mono text-[10px] mr-1">CURRENT FOCUS:</span>
+                    <strong id="global-strip-task-name" class="text-white font-bold truncate">Self Study Session</strong>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 shrink-0">
+                <span id="global-strip-clock" class="font-mono text-base font-black text-indigo-400">00:25:00</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleGlobalTimerRun()" id="global-strip-play-btn" class="p-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-transform active:scale-95" title="Play/Pause">
+                        <i data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>
+                    </button>
+                    <button onclick="switchTab('timer')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-lg text-xs font-bold transition-colors">
+                        View Timer →
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="flex items-center gap-3 shrink-0">
-        <span id="global-strip-clock" class="font-mono text-base font-black text-indigo-400">00:25:00</span>
-        <div class="flex items-center gap-1.5">
-            <button onclick="toggleGlobalTimerRun()" id="global-strip-play-btn" class="p-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-transform active:scale-95" title="Play/Pause">
-                <i data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>
-            </button>
-            <button onclick="switchTab('timer')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-lg text-[11px] font-bold transition-colors">
-                View Timer →
-            </button>
-        </div>
-    </div>
-</div>
-    
-    <!-- MAIN SCROLLABLE CONTENT AREA -->
-    <div class="flex-1 min-w-0 overflow-y-auto">
-        <main id="main-container" class="max-w-7xl mx-auto px-4 py-6 md:py-8">
+
+        <!-- MAIN SCROLLABLE CONTENT AREA -->
+        <div class="flex-1 min-w-0 overflow-y-auto" id="main-scroll-area">
+            <main id="main-container" class="max-w-7xl mx-auto px-4 py-6 md:py-8">
             
             <!-- TAB 1: ANALYTICS -->
             <div id="view-analytics" class="space-y-8">
@@ -3050,6 +3053,7 @@
         // ==========================================
         // --- TIMER TAB & POMODORO LOGIC ---
         // ==========================================
+        let activeCurrentTab = 'analytics';
         let timerRemaining = 25 * 60;
         let timerInterval = null;
         let isTimerRunning = false;
@@ -3058,7 +3062,7 @@
         let activeBoundTaskId = null;
         let pipWindowInstance = null;
         let tabTimerMode = 'pomodoro';
-        let timerSelectedSubject = null; // Default to NONE
+        let timerSelectedSubject = null;
         let dailyQuestionsSolvedCount = 0;
         let timerSessionStartIST = null;
         let currentSessionPlannedMinutes = 25;
@@ -3097,7 +3101,6 @@
         }
 
         function setTimerSubject(sub) {
-            // Toggle selection on/off
             if (timerSelectedSubject === sub) {
                 timerSelectedSubject = null;
             } else {
@@ -3234,44 +3237,55 @@
 
         function updateGlobalTimerStrip() {
             const strip = document.getElementById('global-timer-strip');
-            const badge = document.getElementById('global-strip-badge');
-            const nameEl = document.getElementById('global-strip-task-name');
-            const clockEl = document.getElementById('global-strip-clock');
-            const playBtn = document.getElementById('global-strip-play-btn');
-
             if (!strip) return;
 
-            if (!isTimerRunning && !isOvertimeMode) {
+            // Only show when the timer is active AND user is NOT on the timer tab
+            const isTimerActive = isTimerRunning || isOvertimeMode || (timerSessionStartIST !== null);
+            if (!isTimerActive || activeCurrentTab === 'timer') {
                 strip.classList.add('hidden');
                 return;
             }
 
             strip.classList.remove('hidden');
 
+            const badge = document.getElementById('global-strip-badge');
+            const nameEl = document.getElementById('global-strip-task-name');
+            const clockEl = document.getElementById('global-strip-clock');
+            const playBtn = document.getElementById('global-strip-play-btn');
+            const dot = document.getElementById('global-strip-dot');
+
             const totalSecs = isOvertimeMode ? overtimeElapsed : timerRemaining;
             const h = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
             const m = Math.floor((totalSecs % 3600) / 60).toString().padStart(2, '0');
             const s = (totalSecs % 60).toString().padStart(2, '0');
-            clockEl.innerText = `${h}:${m}:${s}`;
+            if (clockEl) clockEl.innerText = `${h}:${m}:${s}`;
 
             const customTask = document.getElementById('timer-custom-task-input')?.value.trim();
             const activeTaskName = customTask 
                 || (activeBoundTaskId ? appState.scheduledTasks.find(t => t.id === activeBoundTaskId)?.title : '')
                 || (timerSelectedSubject ? `${timerSelectedSubject} Study` : 'Freeform Timer (Unlogged)');
 
-            nameEl.innerText = activeTaskName;
+            if (nameEl) nameEl.innerText = activeTaskName;
 
-            if (timerSelectedSubject) {
+            if (timerSelectedSubject && badge) {
                 badge.innerText = timerSelectedSubject;
                 badge.className = `px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ${getSubjectStyle(timerSelectedSubject)}`;
                 badge.classList.remove('hidden');
-            } else {
+            } else if (badge) {
                 badge.classList.add('hidden');
             }
 
-            playBtn.innerHTML = isTimerRunning 
-                ? `<i data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>` 
-                : `<i data-lucide="play" class="w-3.5 h-3.5 fill-current ml-0.5"></i>`;
+            if (playBtn) {
+                playBtn.innerHTML = isTimerRunning 
+                    ? `<i data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>` 
+                    : `<i data-lucide="play" class="w-3.5 h-3.5 fill-current ml-0.5"></i>`;
+            }
+
+            if (dot) {
+                dot.className = isTimerRunning 
+                    ? "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0" 
+                    : "w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0";
+            }
 
             lucide.createIcons();
         }
@@ -3306,10 +3320,11 @@
             const taskLbl = document.getElementById('active-task-label');
             if (taskLbl) taskLbl.innerText = activeLabel;
 
+            // Keep the big button clean with an icon (never squeeze text into it)
             const startBtn = document.getElementById('timer-start-btn');
             if (startBtn) {
-                startBtn.classList.add('bg-emerald-600');
-                startBtn.innerHTML = `<i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse"></i> Running`;
+                startBtn.className = "w-16 h-16 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-2xl transition-transform active:scale-95";
+                startBtn.innerHTML = `<i data-lucide="play" class="w-7 h-7 fill-current ml-0.5"></i>`;
             }
 
             const dot = document.getElementById('timer-status-dot');
@@ -3343,8 +3358,8 @@
 
             const startBtn = document.getElementById('timer-start-btn');
             if (startBtn) {
-                startBtn.classList.remove('bg-emerald-600');
-                startBtn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume`;
+                startBtn.className = "w-16 h-16 rounded-2xl bg-white hover:bg-slate-200 text-slate-950 flex items-center justify-center shadow-2xl transition-transform active:scale-95";
+                startBtn.innerHTML = `<i data-lucide="play" class="w-7 h-7 fill-current ml-0.5"></i>`;
             }
 
             const dot = document.getElementById('timer-status-dot');
@@ -3371,12 +3386,9 @@
 
             const startBtn = document.getElementById('timer-start-btn');
             if (startBtn) {
-                startBtn.classList.remove('hidden', 'bg-emerald-600');
-                startBtn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Start`;
+                startBtn.className = "w-16 h-16 rounded-2xl bg-white hover:bg-slate-200 text-slate-950 flex items-center justify-center shadow-2xl transition-transform active:scale-95";
+                startBtn.innerHTML = `<i data-lucide="play" class="w-7 h-7 fill-current ml-0.5"></i>`;
             }
-
-            const pauseBtn = document.getElementById('timer-pause-btn');
-            if (pauseBtn) pauseBtn.classList.remove('hidden');
 
             const taskLbl = document.getElementById('active-task-label');
             if (taskLbl) taskLbl.innerText = "Focus Session";
@@ -3475,7 +3487,6 @@
                         task.status = 'Completed';
                     }
                 } else if (timerSelectedSubject) {
-                    // Logs directly even if task description is left blank
                     const finalTaskTitle = customTaskName || `${timerSelectedSubject} Study`;
                     const now = new Date();
                     const endIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -3495,7 +3506,7 @@
                 saveToStorage();
                 renderCalendar();
                 renderDailyReportUI();
-                alert("🎉 Focus session recorded and logged to Daily Planner & Report!");
+                alert("🎉 Focus session logged to Daily Planner & Report!");
                 resetTimer();
                 const taskIn = document.getElementById('timer-custom-task-input');
                 if (taskIn) taskIn.value = '';
@@ -4755,63 +4766,39 @@ function renderDailyQuestionsChart() {
         }
 
         function switchTab(tab) {
-    const tabs = ['analytics', 'planner', 'daily', 'report', 'timer', 'f1hub', 'goals', 'fullprep'];
+            activeCurrentTab = tab; // Track current tab
+            const tabs = ['analytics', 'planner', 'daily', 'report', 'timer', 'f1hub', 'goals', 'fullprep'];
 
             tabs.forEach(name => {
                 const view = document.getElementById(`view-${name}`);
-                if (view) {
-                    view.classList.add('hidden');
-                }
+                if (view) view.classList.add('hidden');
             });
 
             const selectedView = document.getElementById(`view-${tab}`);
-            if (selectedView) {
-                selectedView.classList.remove('hidden');
-            }
+            if (selectedView) selectedView.classList.remove('hidden');
 
             tabs.forEach(name => {
                 const btn = document.getElementById(`nav-btn-${name}`);
                 if (!btn) return;
-
                 btn.classList.remove('sidebar-btn-active');
-
-                if (name === tab) {
-                    btn.classList.add('sidebar-btn-active');
-                }
+                if (name === tab) btn.classList.add('sidebar-btn-active');
             });
 
-            if (tab === 'planner') {
-                renderSyllabus();
-            }
-
+            if (tab === 'planner') renderSyllabus();
             if (tab === 'daily') {
                 renderCalendar();
                 renderDailyQuotaUI();
                 renderWeeklyGoals();
             }
+            if (tab === 'timer') populateTimerTaskDropdown();
+            if (tab === 'goals') renderGoals();
+            if (tab === 'report') renderDailyReportUI();
+            if (tab === 'fullprep') renderPrepSyllabusTree();
 
-            if (tab === 'timer') {
-                populateTimerTaskDropdown();
-            }
-
-            if (tab === 'goals') {
-                renderGoals();
-            }
-
-            if (tab === 'report') {
-                renderDailyReportUI();
-            }    
-
-            if (tab === 'fullprep') {
-                renderPrepSyllabusTree();
-            }
-
+            updateGlobalTimerStrip(); // Automatically shows or hides the strip based on the tab!
             lucide.createIcons();
 
-            document.getElementById('main-container')?.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            document.getElementById('main-container')?.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         window.onload = () => {
