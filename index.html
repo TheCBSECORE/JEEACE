@@ -3818,7 +3818,16 @@
             renderTodayTimelineUI();
         }
 
+function openTodayTimelineModal() {
+            setTimelineFilterDay('today');
+            document.getElementById('today-timeline-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
 
+        function closeTodayTimelineModal() {
+            document.getElementById('today-timeline-modal').classList.add('hidden');
+        }
+        
         function renderTodayTimelineUI() {
             const container = document.getElementById('today-timeline-items');
             if (!container) return;
@@ -4753,45 +4762,6 @@ function setDailySubjectQuestions(subjectKey, val) {
     renderDailyQuestionsTracker();
 }
 
-function openTodayTimelineModal() {
-    const todayStr = formatLocalDate(new Date());
-    document.getElementById('timeline-modal-date').innerText = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
-    
-    const container = document.getElementById('today-timeline-items');
-    const tasks = appState.scheduledTasks.filter(t => t.date === todayStr).sort((a, b) => (a.start || '').localeCompare(b.start || ''));
-    
-    document.getElementById('timeline-modal-count').innerText = `${tasks.length} Routines Today`;
-    container.innerHTML = '';
-
-    if (tasks.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-slate-500 text-xs italic">No timeline entries found for today. Add items via Daily Planner.</div>`;
-    } else {
-        tasks.forEach(t => {
-            const isDone = t.status === 'Completed';
-            const dur = t.duration ? formatDuration(t.duration) : '';
-            const row = document.createElement('div');
-            row.className = "p-3 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-3";
-            row.innerHTML = `
-                <div class="flex items-center gap-3 min-w-0">
-                    <span class="w-2 h-2 rounded-full ${isDone ? 'bg-emerald-400' : 'bg-amber-400'} shrink-0"></span>
-                    <div class="truncate">
-                        <h5 class="text-xs font-bold text-white truncate ${isDone ? 'line-through text-slate-500' : ''}">${t.title}</h5>
-                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">${t.start ? `${t.start} -${t.end}` : 'Flexible'} • <span class="${getSubjectStyle(t.subject)} px-1.5 py-0.2 rounded border text-[9px]">${t.subject}</span></div>
-                    </div>
-                </div>
-                ${dur ? `<span class="text-[10px] font-mono font-bold text-indigo-400 bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-800 shrink-0">${dur}</span>` : ''}
-            `;
-            container.appendChild(row);
-        });
-    }
-
-    document.getElementById('today-timeline-modal').classList.remove('hidden');
-    lucide.createIcons();
-}
-
-function closeTodayTimelineModal() {
-    document.getElementById('today-timeline-modal').classList.add('hidden');
-}        
 
 function renderDailyQuestionsTracker() {
     const dateStr = formatLocalDate(selectedDate);
