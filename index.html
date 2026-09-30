@@ -919,14 +919,12 @@
 </div>
                             
                             <!-- Subject Selector -->
-                            <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-3xl space-y-3">
-                                <h5 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-400"></i> Subject</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    <button onclick="setTimerSubject('Physics')" id="timer-sub-Physics" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 transition-all">Physics</button>
-                                    <button onclick="setTimerSubject('Chemistry')" id="timer-sub-Chemistry" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Chemistry</button>
-                                    <button onclick="setTimerSubject('Maths')" id="timer-sub-Maths" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Maths</button>
-                                    <button onclick="setTimerSubject('MockTest')" id="timer-sub-MockTest" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">MockTest</button>
-                                </div>
+                            <div class="flex flex-wrap gap-2">
+    <button onclick="setTimerSubject('Physics')" id="timer-sub-Physics" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Physics</button>
+    <button onclick="setTimerSubject('Chemistry')" id="timer-sub-Chemistry" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Chemistry</button>
+    <button onclick="setTimerSubject('Maths')" id="timer-sub-Maths" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Maths</button>
+    <button onclick="setTimerSubject('MockTest')" id="timer-sub-MockTest" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">MockTest</button>
+</div>
                             </div>
 
                             <!-- Link Task Selector -->
@@ -3053,8 +3051,10 @@
         let activeBoundTaskId = null;
         let pipWindowInstance = null;
         let tabTimerMode = 'pomodoro';
-        let timerSelectedSubject = 'Physics';
+        let timerSelectedSubject = null; // Default to NONE
         let dailyQuestionsSolvedCount = 0;
+        let timerSessionStartIST = null;
+        let currentSessionPlannedMinutes = 25;
 
         function getLiveISTString() {
             return new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -3090,25 +3090,27 @@
         }
 
         function setTimerSubject(sub) {
-    if (timerSelectedSubject === sub) {
-        timerSelectedSubject = null; // deselect if clicked again
-    } else {
-        timerSelectedSubject = sub;
-    }
+            // Toggle selection on and off
+            if (timerSelectedSubject === sub) {
+                timerSelectedSubject = null;
+            } else {
+                timerSelectedSubject = sub;
+            }
 
-    ['Physics', 'Chemistry', 'Maths', 'MockTest'].forEach(s => {
-        const btn = document.getElementById(`timer-sub-${s}`);
-        if (!btn) return;
-        btn.className = (s === timerSelectedSubject)
-            ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 transition-all shadow-sm"
-            : "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all";
-    });
+            ['Physics', 'Chemistry', 'Maths', 'MockTest'].forEach(s => {
+                const btn = document.getElementById(`timer-sub-${s}`);
+                if (!btn) return;
+                btn.className = (s === timerSelectedSubject)
+                    ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 transition-all shadow-sm"
+                    : "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all";
+            });
 
-    const taskInput = document.getElementById('timer-custom-task-input');
-    if (timerSelectedSubject && taskInput && !taskInput.value) {
-        taskInput.focus();
-    }
-}
+            const taskInput = document.getElementById('timer-custom-task-input');
+            if (timerSelectedSubject && taskInput && !taskInput.value) {
+                taskInput.focus();
+            }
+            updateGlobalTimerStrip();
+        }
 
         function populateTimerTaskDropdown() {
             const select = document.getElementById('timer-link-task-select');
@@ -3220,84 +3222,131 @@
             }
 
             renderPipCanvas();
+            updateGlobalTimerStrip();
         }
 
-        let timerSessionStartIST = null;
-let currentSessionPlannedMinutes = 25;
+        function updateGlobalTimerStrip() {
+            const strip = document.getElementById('global-timer-strip');
+            const badge = document.getElementById('global-strip-badge');
+            const nameEl = document.getElementById('global-strip-task-name');
+            const clockEl = document.getElementById('global-strip-clock');
+            const playBtn = document.getElementById('global-strip-play-btn');
 
-function updateGlobalTimerStrip() {
-    const strip = document.getElementById('global-timer-strip');
-    const badge = document.getElementById('global-strip-badge');
-    const nameEl = document.getElementById('global-strip-task-name');
-    const clockEl = document.getElementById('global-strip-clock');
-    const playBtn = document.getElementById('global-strip-play-btn');
+            if (!strip) return;
 
-    if (!strip) return;
+            if (!isTimerRunning && !isOvertimeMode) {
+                strip.classList.add('hidden');
+                return;
+            }
 
-    if (!isTimerRunning && !isOvertimeMode) {
-        strip.classList.add('hidden');
-        return;
-    }
+            strip.classList.remove('hidden');
 
-    strip.classList.remove('hidden');
+            const totalSecs = isOvertimeMode ? overtimeElapsed : timerRemaining;
+            const h = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
+            const m = Math.floor((totalSecs % 3600) / 60).toString().padStart(2, '0');
+            const s = (totalSecs % 60).toString().padStart(2, '0');
+            clockEl.innerText = `${h}:${m}:${s}`;
 
-    const totalSecs = isOvertimeMode ? overtimeElapsed : timerRemaining;
-    const h = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
-    const m = Math.floor((totalSecs % 3600) / 60).toString().padStart(2, '0');
-    const s = (totalSecs % 60).toString().padStart(2, '0');
-    clockEl.innerText = `${h}:${m}:${s}`;
+            const customTask = document.getElementById('timer-custom-task-input')?.value.trim();
+            const activeTaskName = customTask 
+                || (activeBoundTaskId ? appState.scheduledTasks.find(t => t.id === activeBoundTaskId)?.title : '')
+                || (timerSelectedSubject ? `${timerSelectedSubject} Study` : 'Freeform Timer (Unlogged)');
 
-    const activeTaskName = document.getElementById('timer-custom-task-input')?.value.trim() 
-        || (activeBoundTaskId ? appState.scheduledTasks.find(t => t.id === activeBoundTaskId)?.title : '') 
-        || (timerSelectedSubject ? `${timerSelectedSubject} Focus Session` : 'Freeform Timer (Unlogged)');
+            nameEl.innerText = activeTaskName;
 
-    nameEl.innerText = activeTaskName;
+            if (timerSelectedSubject) {
+                badge.innerText = timerSelectedSubject;
+                badge.className = `px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ${getSubjectStyle(timerSelectedSubject)}`;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
 
-    if (timerSelectedSubject) {
-        badge.innerText = timerSelectedSubject;
-        badge.className = `px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ${getSubjectStyle(timerSelectedSubject)}`;
-        badge.classList.remove('hidden');
-    } else {
-        badge.classList.add('hidden');
-    }
+            playBtn.innerHTML = isTimerRunning 
+                ? `<i data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>` 
+                : `<i data-lucide="play" class="w-3.5 h-3.5 fill-current ml-0.5"></i>`;
 
-    playBtn.innerHTML = isTimerRunning 
-        ? `<i data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>` 
-        : `<i data-lucide="play" class="w-3.5 h-3.5 fill-current ml-0.5"></i>`;
+            lucide.createIcons();
+        }
 
-    lucide.createIcons();
-}
+        function toggleGlobalTimerRun() {
+            if (isTimerRunning) pauseTimer();
+            else startTimer();
+        }
 
-function toggleGlobalTimerRun() {
-    if (isTimerRunning) pauseTimer();
-    else startTimer();
-}
+        function startTimer() {
+            if (isTimerRunning) return;
 
-// Modify startTimer to grab start time and update UI:
-const originalStartTimer = startTimer;
-function startTimer() {
-    if (isTimerRunning) return;
+            // Link dropdown task if selected
+            const linkedSelect = document.getElementById('timer-link-task-select');
+            if (linkedSelect && linkedSelect.value) {
+                activeBoundTaskId = parseInt(linkedSelect.value);
+            }
 
-    if (!timerSessionStartIST) {
-        const now = new Date();
-        timerSessionStartIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        currentSessionPlannedMinutes = Math.max(1, Math.round(timerRemaining / 60));
-    }
+            if (!timerSessionStartIST) {
+                const now = new Date();
+                timerSessionStartIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                currentSessionPlannedMinutes = Math.max(1, Math.round(timerRemaining / 60));
+            }
 
-    const customTaskName = document.getElementById('timer-custom-task-input')?.value.trim();
-    const activeLabel = customTaskName || (timerSelectedSubject ? `${timerSelectedSubject} Study` : "Focus Session");
-    const taskLbl = document.getElementById('active-task-label');
-    if (taskLbl) taskLbl.innerText = activeLabel;
+            if (!isOvertimeMode && timerRemaining <= 0) {
+                timerRemaining = getDirectConfiguredSeconds();
+            }
 
-    originalStartTimer();
-    updateGlobalTimerStrip();
-}
+            isTimerRunning = true;
 
-const originalPauseTimer = pauseTimer;
-function pauseTimer() {
-    originalPauseTimer();
-    updateGlobalTimerStrip();
-}
+            const customTaskName = document.getElementById('timer-custom-task-input')?.value.trim();
+            const activeLabel = customTaskName || (timerSelectedSubject ? `${timerSelectedSubject} Study` : "Focus Session");
+            const taskLbl = document.getElementById('active-task-label');
+            if (taskLbl) taskLbl.innerText = activeLabel;
+
+            const startBtn = document.getElementById('timer-start-btn');
+            if (startBtn) {
+                startBtn.classList.add('bg-emerald-600');
+                startBtn.innerHTML = `<i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse"></i> Running`;
+            }
+
+            const dot = document.getElementById('timer-status-dot');
+            if (dot) dot.className = isOvertimeMode ? "w-2 h-2 rounded-full bg-amber-400 animate-ping" : "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+
+            lucide.createIcons();
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (!isOvertimeMode) {
+                    if (timerRemaining > 0) {
+                        timerRemaining--;
+                        updateAllTimerDisplays();
+                    } else {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        onCountdownEnded();
+                    }
+                } else {
+                    overtimeElapsed++;
+                    updateAllTimerDisplays();
+                }
+            }, 1000);
+
+            updateAllTimerDisplays();
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+
+            const startBtn = document.getElementById('timer-start-btn');
+            if (startBtn) {
+                startBtn.classList.remove('bg-emerald-600');
+                startBtn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume`;
+            }
+
+            const dot = document.getElementById('timer-status-dot');
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-400";
+
+            lucide.createIcons();
+            updateAllTimerDisplays();
+        }
 
         function resetTimer() {
             clearInterval(timerInterval);
@@ -3305,6 +3354,7 @@ function pauseTimer() {
             isOvertimeMode = false;
             overtimeElapsed = 0;
             activeBoundTaskId = null;
+            timerSessionStartIST = null;
 
             const subContainer = document.getElementById('pomo-subject-container');
             if (subContainer) subContainer.classList.add('hidden');
@@ -3312,17 +3362,22 @@ function pauseTimer() {
             if (presets) presets.classList.remove('hidden');
             const saveOvertime = document.getElementById('timer-save-overtime-btn');
             if (saveOvertime) saveOvertime.classList.add('hidden');
+
             const startBtn = document.getElementById('timer-start-btn');
             if (startBtn) {
                 startBtn.classList.remove('hidden', 'bg-emerald-600');
                 startBtn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Start`;
             }
+
             const pauseBtn = document.getElementById('timer-pause-btn');
             if (pauseBtn) pauseBtn.classList.remove('hidden');
+
             const taskLbl = document.getElementById('active-task-label');
             if (taskLbl) taskLbl.innerText = "Focus Session";
+
             const dot = document.getElementById('timer-status-dot');
             if (dot) dot.className = "w-2 h-2 rounded-full bg-slate-500";
+
             const hint = document.getElementById('timer-hint-text');
             if (hint) {
                 hint.innerText = "Tap HH:MM:SS directly to configure";
@@ -3350,6 +3405,7 @@ function pauseTimer() {
 
             resetTimer();
             activeBoundTaskId = taskId;
+            timerSelectedSubject = task.subject || null;
 
             let mins = Number(task.duration) || 0;
             if (!mins && task.start && task.end) mins = calculateDurationMinutes(task.start, task.end);
@@ -3360,13 +3416,16 @@ function pauseTimer() {
 
             const taskLbl = document.getElementById('active-task-label');
             if (taskLbl) taskLbl.innerText = task.title;
+
             const subBadge = document.getElementById('pomo-subject-badge');
-            if (subBadge) {
-                subBadge.innerText = task.subject || 'Routine';
+            if (subBadge && task.subject) {
+                subBadge.innerText = task.subject;
                 subBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold border ${getSubjectStyle(task.subject)}`;
             }
+
             const subCont = document.getElementById('pomo-subject-container');
             if (subCont) subCont.classList.remove('hidden');
+
             const modeBadge = document.getElementById('pomo-mode-badge');
             if (modeBadge) {
                 modeBadge.innerText = "COUNTDOWN";
@@ -3375,72 +3434,79 @@ function pauseTimer() {
 
             const widget = document.getElementById('focus-timer-widget');
             if (widget) widget.classList.remove('hidden');
+
             setTimerDirect(h, m, 0);
             startTimer();
-
             togglePiP(true);
         }
 
         function onCountdownEnded() {
             const dot = document.getElementById('timer-status-dot');
             if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-400";
+
+            const customTask = document.getElementById('timer-custom-task-input')?.value.trim();
+            const fallbackTitle = customTask || (timerSelectedSubject ? `${timerSelectedSubject} Study` : "Focus Session");
             const task = activeBoundTaskId ? appState.scheduledTasks.find(t => t.id === activeBoundTaskId) : null;
             const compTitle = document.getElementById('modal-task-completed-title');
-            if (compTitle) compTitle.innerText = task ? `Did you complete "${task.title}"?` : "Did you complete this focus session?";
+            if (compTitle) compTitle.innerText = task ? `Did you complete "${task.title}"?` : `Did you complete "${fallbackTitle}"?`;
+
             const modal = document.getElementById('task-completed-modal');
             if (modal) modal.classList.remove('hidden');
             lucide.createIcons();
         }
 
         function handleTaskCompletedResponse(isCompleted) {
-    const modal = document.getElementById('task-completed-modal');
-    if (modal) modal.classList.add('hidden');
+            const modal = document.getElementById('task-completed-modal');
+            if (modal) modal.classList.add('hidden');
 
-    const customTaskName = document.getElementById('timer-custom-task-input')?.value.trim();
-    const todayStr = formatLocalDate(new Date());
+            const customTaskName = document.getElementById('timer-custom-task-input')?.value.trim();
+            const todayStr = formatLocalDate(new Date());
 
-    if (isCompleted) {
-        if (activeBoundTaskId) {
-            const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
-            if (task) {
-                task.status = 'Completed';
+            if (isCompleted) {
+                if (activeBoundTaskId) {
+                    const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
+                    if (task) {
+                        task.status = 'Completed';
+                    }
+                } else if (timerSelectedSubject) {
+                    // Logs even if custom task input was left empty! (Defaults to subject name)
+                    const finalTaskTitle = customTaskName || `${timerSelectedSubject} Study`;
+                    const now = new Date();
+                    const endIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                    appState.scheduledTasks.push({
+                        id: Date.now(),
+                        date: todayStr,
+                        title: finalTaskTitle,
+                        subject: timerSelectedSubject,
+                        start: timerSessionStartIST || endIST,
+                        end: endIST,
+                        duration: currentSessionPlannedMinutes,
+                        status: 'Completed',
+                        subtopics: []
+                    });
+                }
+
+                saveToStorage();
+                renderCalendar();
+                renderDailyReportUI();
+                alert("🎉 Focus session logged to Daily Planner & Report!");
+                resetTimer();
+                const taskIn = document.getElementById('timer-custom-task-input');
+                if (taskIn) taskIn.value = '';
+            } else {
+                isOvertimeMode = true;
+                overtimeElapsed = 0;
+                updateAllTimerDisplays();
+                startTimer();
             }
-        } else if (timerSelectedSubject && customTaskName) {
-            // Auto-log new completed routine into Daily Planner & Daily Report
-            const now = new Date();
-            const endIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            appState.scheduledTasks.push({
-                id: Date.now(),
-                date: todayStr,
-                title: customTaskName,
-                subject: timerSelectedSubject,
-                start: timerSessionStartIST || endIST,
-                end: endIST,
-                duration: currentSessionPlannedMinutes,
-                status: 'Completed',
-                subtopics: []
-            });
+            updateGlobalTimerStrip();
         }
-
-        saveToStorage();
-        renderCalendar();
-        renderDailyReportUI();
-        alert("🎉 Focus session recorded and logged in Daily Planner & Report!");
-        resetTimer();
-        timerSessionStartIST = null;
-        document.getElementById('timer-custom-task-input').value = '';
-    } else {
-        isOvertimeMode = true;
-        overtimeElapsed = 0;
-        updateAllTimerDisplays();
-        startTimer();
-    }
-    updateGlobalTimerStrip();
-}
 
         function finishOvertime() {
             pauseTimer();
             const extraMins = Math.ceil(overtimeElapsed / 60);
+            const todayStr = formatLocalDate(new Date());
+            const customTaskName = document.getElementById('timer-custom-task-input')?.value.trim();
 
             if (activeBoundTaskId) {
                 const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
@@ -3448,15 +3514,33 @@ function pauseTimer() {
                     const origMins = Number(task.duration) || 0;
                     task.duration = origMins + extraMins;
                     task.status = 'Completed';
-                    saveToStorage();
-                    renderCalendar();
                 }
+            } else if (timerSelectedSubject) {
+                const finalTaskTitle = customTaskName || `${timerSelectedSubject} Study`;
+                const now = new Date();
+                const endIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                appState.scheduledTasks.push({
+                    id: Date.now(),
+                    date: todayStr,
+                    title: finalTaskTitle,
+                    subject: timerSelectedSubject,
+                    start: timerSessionStartIST || endIST,
+                    end: endIST,
+                    duration: currentSessionPlannedMinutes + extraMins,
+                    status: 'Completed',
+                    subtopics: []
+                });
             }
 
+            saveToStorage();
+            renderCalendar();
+            renderDailyReportUI();
             alert(`✅ Session saved! Total duration recorded with +${extraMins} mins overtime.`);
             resetTimer();
+            const taskIn = document.getElementById('timer-custom-task-input');
+            if (taskIn) taskIn.value = '';
         }
-
+        
         async function togglePiP(forceOpen = false) {
             if ('documentPictureInPicture' in window) {
                 if (pipWindowInstance && !pipWindowInstance.closed) {
@@ -3580,7 +3664,10 @@ function pauseTimer() {
             ctx.fillStyle = '#818cf8';
             ctx.font = '600 12px Inter, sans-serif';
             ctx.textAlign = 'center';
-            const taskText = activeBoundTaskId ? (document.getElementById('active-task-label')?.innerText || 'Focus Task') : 'Focus Routine';
+            const customTask = document.getElementById('timer-custom-task-input')?.value.trim();
+const taskText = customTask 
+    || (activeBoundTaskId ? document.getElementById('active-task-label')?.innerText : '') 
+    || (timerSelectedSubject ? `${timerSelectedSubject} Study` : 'Focus Routine');
             ctx.fillText(taskText.slice(0, 28), canvas.width / 2, 58);
 
             ctx.fillStyle = isOvertimeMode ? '#fbbf24' : '#ffffff';
