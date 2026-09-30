@@ -3818,15 +3818,6 @@
             renderTodayTimelineUI();
         }
 
-        function openTodayTimelineModal() {
-            setTimelineFilterDay('today');
-            document.getElementById('today-timeline-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeTodayTimelineModal() {
-            document.getElementById('today-timeline-modal').classList.add('hidden');
-        }
 
         function renderTodayTimelineUI() {
             const container = document.getElementById('today-timeline-items');
