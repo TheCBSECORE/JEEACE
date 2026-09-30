@@ -218,6 +218,29 @@
         </div>
     </aside>
 
+       <!-- TOP PINNED GLOBAL FOCUS STRIP (Visible across all tabs when active) -->
+<div id="global-timer-strip" class="hidden sticky top-0 z-30 w-full bg-slate-900/95 border-b border-indigo-500/30 backdrop-blur-md px-4 py-2.5 flex items-center justify-between text-xs transition-all shadow-lg select-none">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span>
+        <span id="global-strip-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 bg-blue-500/20 text-blue-300 border-blue-500/40">Physics</span>
+        <div class="truncate">
+            <span class="text-slate-400 font-mono text-[10px] mr-1">CURRENT FOCUS:</span>
+            <strong id="global-strip-task-name" class="text-white font-bold truncate">Self Study Session</strong>
+        </div>
+    </div>
+    <div class="flex items-center gap-3 shrink-0">
+        <span id="global-strip-clock" class="font-mono text-base font-black text-indigo-400">00:25:00</span>
+        <div class="flex items-center gap-1.5">
+            <button onclick="toggleGlobalTimerRun()" id="global-strip-play-btn" class="p-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-transform active:scale-95" title="Play/Pause">
+                <i data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>
+            </button>
+            <button onclick="switchTab('timer')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-lg text-[11px] font-bold transition-colors">
+                View Timer →
+            </button>
+        </div>
+    </div>
+</div>
+    
     <!-- MAIN SCROLLABLE CONTENT AREA -->
     <div class="flex-1 min-w-0 overflow-y-auto">
         <main id="main-container" class="max-w-7xl mx-auto px-4 py-6 md:py-8">
@@ -885,6 +908,16 @@
 
                         <!-- Right Controls (Subject, Link Task, Daily Questions) -->
                         <div class="lg:col-span-5 space-y-5">
+
+                            <!-- Custom Task Input for Selected Subject -->
+<div id="timer-custom-task-box" class="bg-slate-900/80 border border-slate-800 p-5 rounded-3xl space-y-2 mt-4">
+    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+        <i data-lucide="edit-3" class="w-3.5 h-3.5 text-indigo-400"></i> What are you working on?
+    </label>
+    <input type="text" id="timer-custom-task-input" placeholder="e.g. Solving 20 PYQs, Class Notes Revision..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500">
+    <p class="text-[10px] text-slate-500">Leaving this empty runs a freeform session without logging to reports or routines.</p>
+</div>
+                            
                             <!-- Subject Selector -->
                             <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-3xl space-y-3">
                                 <h5 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-400"></i> Subject</h5>
@@ -936,18 +969,18 @@
                     </div>
 
                     <!-- Today's Timeline Footer Button Banner -->
-                    <div onclick="switchTab('daily')" role="button" tabindex="0" class="cursor-pointer bg-slate-900/90 border border-slate-800 p-6 rounded-3xl flex items-center justify-between group hover:border-indigo-500/40 transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-indigo-600/20 p-2.5 rounded-2xl text-indigo-400 border border-indigo-500/30">
-                                <i data-lucide="list-todo" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white text-base">Today's Timeline</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">View your sessions, add manual logs, and track daily progress.</p>
-                            </div>
-                        </div>
-                        <span class="text-xs font-bold text-indigo-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">View Timeline →</span>
-                    </div>
+                    <div onclick="openTodayTimelineModal()" role="button" tabindex="0" class="cursor-pointer bg-slate-900/90 border border-slate-800 p-6 rounded-3xl flex items-center justify-between group hover:border-indigo-500/40 transition-all">
+    <div class="flex items-center gap-3">
+        <div class="bg-indigo-600/20 p-2.5 rounded-2xl text-indigo-400 border border-indigo-500/30">
+            <i data-lucide="list-todo" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <h4 class="font-bold text-white text-base">Today's Timeline</h4>
+            <p class="text-xs text-slate-400 mt-0.5">Live view of completed & upcoming blocks from your daily planner.</p>
+        </div>
+    </div>
+    <span class="text-xs font-bold text-indigo-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Timeline View →</span>
+</div>
                 </div>
             </div>
 
@@ -1650,6 +1683,34 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL: TODAY'S TIMELINE SLIDE-UP CARD -->
+<div id="today-timeline-modal" class="fixed inset-0 z-[75] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#0e1118] border border-slate-800 w-full max-w-lg rounded-[28px] p-6 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="calendar-clock" class="w-5 h-5 text-indigo-400"></i>
+                <div>
+                    <h3 class="font-bold text-white text-sm">Today's Timeline Schedule</h3>
+                    <p id="timeline-modal-date" class="text-[11px] text-slate-500 font-mono">--</p>
+                </div>
+            </div>
+            <button onclick="closeTodayTimelineModal()" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        
+        <!-- Live Chronological List -->
+        <div id="today-timeline-items" class="space-y-2.5 max-h-[360px] overflow-y-auto custom-scrollbar pr-1">
+            <!-- Dynamic task blocks render here -->
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <span id="timeline-modal-count">0 Sessions Scheduled</span>
+            <button onclick="closeTodayTimelineModal(); switchTab('daily')" class="text-indigo-400 font-bold hover:underline">Go to Planner →</button>
+        </div>
+    </div>
+</div>
 
     <!-- AUDIO ELEMENT FOR SPECIAL.MP3 -->
     <audio id="special-audio" src="special.mp3" preload="auto"></audio>
@@ -3029,15 +3090,25 @@
         }
 
         function setTimerSubject(sub) {
-            timerSelectedSubject = sub;
-            ['Physics', 'Chemistry', 'Maths', 'MockTest'].forEach(s => {
-                const btn = document.getElementById(`timer-sub-${s}`);
-                if (!btn) return;
-                btn.className = (s === sub)
-                    ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 transition-all"
-                    : "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all";
-            });
-        }
+    if (timerSelectedSubject === sub) {
+        timerSelectedSubject = null; // deselect if clicked again
+    } else {
+        timerSelectedSubject = sub;
+    }
+
+    ['Physics', 'Chemistry', 'Maths', 'MockTest'].forEach(s => {
+        const btn = document.getElementById(`timer-sub-${s}`);
+        if (!btn) return;
+        btn.className = (s === timerSelectedSubject)
+            ? "px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 transition-all shadow-sm"
+            : "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all";
+    });
+
+    const taskInput = document.getElementById('timer-custom-task-input');
+    if (timerSelectedSubject && taskInput && !taskInput.value) {
+        taskInput.focus();
+    }
+}
 
         function populateTimerTaskDropdown() {
             const select = document.getElementById('timer-link-task-select');
@@ -3151,56 +3222,82 @@
             renderPipCanvas();
         }
 
-        function startTimer() {
-            if (isTimerRunning) return;
-            const linkedSelect = document.getElementById('timer-link-task-select');
-            if (linkedSelect && linkedSelect.value) {
-                activeBoundTaskId = parseInt(linkedSelect.value);
-            }
+        let timerSessionStartIST = null;
+let currentSessionPlannedMinutes = 25;
 
-            if (!isOvertimeMode && timerRemaining <= 0) timerRemaining = getDirectConfiguredSeconds();
-            isTimerRunning = true;
+function updateGlobalTimerStrip() {
+    const strip = document.getElementById('global-timer-strip');
+    const badge = document.getElementById('global-strip-badge');
+    const nameEl = document.getElementById('global-strip-task-name');
+    const clockEl = document.getElementById('global-strip-clock');
+    const playBtn = document.getElementById('global-strip-play-btn');
 
-            const startBtn = document.getElementById('timer-start-btn');
-            if (startBtn) {
-                startBtn.classList.add('bg-emerald-600');
-                startBtn.innerHTML = `<i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse"></i> Running`;
-            }
-            const dot = document.getElementById('timer-status-dot');
-            if (dot) dot.className = isOvertimeMode ? "w-2 h-2 rounded-full bg-amber-400 animate-ping" : "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
-            lucide.createIcons();
+    if (!strip) return;
 
-            timerInterval = setInterval(() => {
-                if (!isOvertimeMode) {
-                    if (timerRemaining > 0) {
-                        timerRemaining--;
-                        updateAllTimerDisplays();
-                    } else {
-                        clearInterval(timerInterval);
-                        isTimerRunning = false;
-                        onCountdownEnded();
-                    }
-                } else {
-                    overtimeElapsed++;
-                    updateAllTimerDisplays();
-                }
-            }, 1000);
-            updateAllTimerDisplays();
-        }
+    if (!isTimerRunning && !isOvertimeMode) {
+        strip.classList.add('hidden');
+        return;
+    }
 
-        function pauseTimer() {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            const startBtn = document.getElementById('timer-start-btn');
-            if (startBtn) {
-                startBtn.classList.remove('bg-emerald-600');
-                startBtn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i> Resume`;
-            }
-            const dot = document.getElementById('timer-status-dot');
-            if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-400";
-            lucide.createIcons();
-            updateAllTimerDisplays();
-        }
+    strip.classList.remove('hidden');
+
+    const totalSecs = isOvertimeMode ? overtimeElapsed : timerRemaining;
+    const h = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
+    const m = Math.floor((totalSecs % 3600) / 60).toString().padStart(2, '0');
+    const s = (totalSecs % 60).toString().padStart(2, '0');
+    clockEl.innerText = `${h}:${m}:${s}`;
+
+    const activeTaskName = document.getElementById('timer-custom-task-input')?.value.trim() 
+        || (activeBoundTaskId ? appState.scheduledTasks.find(t => t.id === activeBoundTaskId)?.title : '') 
+        || (timerSelectedSubject ? `${timerSelectedSubject} Focus Session` : 'Freeform Timer (Unlogged)');
+
+    nameEl.innerText = activeTaskName;
+
+    if (timerSelectedSubject) {
+        badge.innerText = timerSelectedSubject;
+        badge.className = `px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ${getSubjectStyle(timerSelectedSubject)}`;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+
+    playBtn.innerHTML = isTimerRunning 
+        ? `<i data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>` 
+        : `<i data-lucide="play" class="w-3.5 h-3.5 fill-current ml-0.5"></i>`;
+
+    lucide.createIcons();
+}
+
+function toggleGlobalTimerRun() {
+    if (isTimerRunning) pauseTimer();
+    else startTimer();
+}
+
+// Modify startTimer to grab start time and update UI:
+const originalStartTimer = startTimer;
+function startTimer() {
+    if (isTimerRunning) return;
+
+    if (!timerSessionStartIST) {
+        const now = new Date();
+        timerSessionStartIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        currentSessionPlannedMinutes = Math.max(1, Math.round(timerRemaining / 60));
+    }
+
+    const customTaskName = document.getElementById('timer-custom-task-input')?.value.trim();
+    const activeLabel = customTaskName || (timerSelectedSubject ? `${timerSelectedSubject} Study` : "Focus Session");
+    const taskLbl = document.getElementById('active-task-label');
+    if (taskLbl) taskLbl.innerText = activeLabel;
+
+    originalStartTimer();
+    updateGlobalTimerStrip();
+}
+
+const originalPauseTimer = pauseTimer;
+function pauseTimer() {
+    originalPauseTimer();
+    updateGlobalTimerStrip();
+}
 
         function resetTimer() {
             clearInterval(timerInterval);
@@ -3296,42 +3393,50 @@
         }
 
         function handleTaskCompletedResponse(isCompleted) {
-            const modal = document.getElementById('task-completed-modal');
-            if (modal) modal.classList.add('hidden');
+    const modal = document.getElementById('task-completed-modal');
+    if (modal) modal.classList.add('hidden');
 
-            if (isCompleted) {
-                if (activeBoundTaskId) {
-                    const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
-                    if (task) {
-                        task.status = 'Completed';
-                        saveToStorage();
-                        renderCalendar();
-                    }
-                }
-                alert("🎉 Great job Laksh! Task marked as completed.");
-                resetTimer();
-            } else {
-                isOvertimeMode = true;
-                overtimeElapsed = 0;
-                const presets = document.getElementById('pomo-presets-row');
-                if (presets) presets.classList.add('hidden');
-                const modeBadge = document.getElementById('pomo-mode-badge');
-                if (modeBadge) {
-                    modeBadge.innerText = "OVERTIME STOPWATCH";
-                    modeBadge.className = "text-[10px] font-mono text-amber-400 font-bold animate-pulse";
-                }
-                const saveOvertime = document.getElementById('timer-save-overtime-btn');
-                if (saveOvertime) saveOvertime.classList.remove('hidden');
-                const hint = document.getElementById('timer-hint-text');
-                if (hint) {
-                    hint.innerText = "Tracking overtime. Click 'Save & Complete' when done.";
-                    hint.className = "text-[10px] text-amber-400 font-bold mt-1";
-                }
+    const customTaskName = document.getElementById('timer-custom-task-input')?.value.trim();
+    const todayStr = formatLocalDate(new Date());
 
-                updateAllTimerDisplays();
-                startTimer();
+    if (isCompleted) {
+        if (activeBoundTaskId) {
+            const task = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
+            if (task) {
+                task.status = 'Completed';
             }
+        } else if (timerSelectedSubject && customTaskName) {
+            // Auto-log new completed routine into Daily Planner & Daily Report
+            const now = new Date();
+            const endIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            appState.scheduledTasks.push({
+                id: Date.now(),
+                date: todayStr,
+                title: customTaskName,
+                subject: timerSelectedSubject,
+                start: timerSessionStartIST || endIST,
+                end: endIST,
+                duration: currentSessionPlannedMinutes,
+                status: 'Completed',
+                subtopics: []
+            });
         }
+
+        saveToStorage();
+        renderCalendar();
+        renderDailyReportUI();
+        alert("🎉 Focus session recorded and logged in Daily Planner & Report!");
+        resetTimer();
+        timerSessionStartIST = null;
+        document.getElementById('timer-custom-task-input').value = '';
+    } else {
+        isOvertimeMode = true;
+        overtimeElapsed = 0;
+        updateAllTimerDisplays();
+        startTimer();
+    }
+    updateGlobalTimerStrip();
+}
 
         function finishOvertime() {
             pauseTimer();
@@ -4129,6 +4234,46 @@ function setDailySubjectQuestions(subjectKey, val) {
     saveToStorage();
     renderDailyQuestionsTracker();
 }
+
+function openTodayTimelineModal() {
+    const todayStr = formatLocalDate(new Date());
+    document.getElementById('timeline-modal-date').innerText = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+    
+    const container = document.getElementById('today-timeline-items');
+    const tasks = appState.scheduledTasks.filter(t => t.date === todayStr).sort((a, b) => (a.start || '').localeCompare(b.start || ''));
+    
+    document.getElementById('timeline-modal-count').innerText = `${tasks.length} Routines Today`;
+    container.innerHTML = '';
+
+    if (tasks.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-slate-500 text-xs italic">No timeline entries found for today. Add items via Daily Planner.</div>`;
+    } else {
+        tasks.forEach(t => {
+            const isDone = t.status === 'Completed';
+            const dur = t.duration ? formatDuration(t.duration) : '';
+            const row = document.createElement('div');
+            row.className = "p-3 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-3";
+            row.innerHTML = `
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="w-2 h-2 rounded-full ${isDone ? 'bg-emerald-400' : 'bg-amber-400'} shrink-0"></span>
+                    <div class="truncate">
+                        <h5 class="text-xs font-bold text-white truncate ${isDone ? 'line-through text-slate-500' : ''}">${t.title}</h5>
+                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">${t.start ? `${t.start} -${t.end}` : 'Flexible'} • <span class="${getSubjectStyle(t.subject)} px-1.5 py-0.2 rounded border text-[9px]">${t.subject}</span></div>
+                    </div>
+                </div>
+                ${dur ? `<span class="text-[10px] font-mono font-bold text-indigo-400 bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-800 shrink-0">${dur}</span>` : ''}
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    document.getElementById('today-timeline-modal').classList.remove('hidden');
+    lucide.createIcons();
+}
+
+function closeTodayTimelineModal() {
+    document.getElementById('today-timeline-modal').classList.add('hidden');
+}        
 
 function renderDailyQuestionsTracker() {
     const dateStr = formatLocalDate(selectedDate);
