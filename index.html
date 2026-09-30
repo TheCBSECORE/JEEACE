@@ -3143,21 +3143,33 @@
             if (customTask) return customTask;
             if (activeBoundTaskId) {
                 const bound = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
-                if (bound) return bound.title;
+                if (bound && bound.title) return bound.title;
             }
             if (timerSelectedSubject) return `${timerSelectedSubject} Study`;
-            return "Freeform Session";
+            return "Focus Session";
         }
 
         function onCustomTaskInput(val) {
+            const activeTitle = getActiveTaskName();
             const taskLbl = document.getElementById('active-task-label');
-            if (taskLbl) taskLbl.innerText = getActiveTaskName();
+            if (taskLbl) taskLbl.innerText = activeTitle;
+
+            // Immediately update the live In-Progress task in Daily Planner & Report
             if (activeLiveTaskId) {
                 const liveTask = appState.scheduledTasks.find(t => t.id === activeLiveTaskId);
-                if (liveTask) liveTask.title = getActiveTaskName();
-                saveToStorage();
-                renderDailyReportUI();
+                if (liveTask) {
+                    liveTask.title = activeTitle;
+                    saveToStorage();
+                    renderDailyReportUI();
+                }
             }
+
+            // Immediately update PiP window while typing
+            if (pipWindowInstance && !pipWindowInstance.closed) {
+                const pipTitle = pipWindowInstance.document.getElementById('pip-task-label');
+                if (pipTitle) pipTitle.innerText = activeTitle;
+            }
+
             updateAllTimerDisplays();
         }
 
@@ -3310,15 +3322,18 @@
 
             const taskLabel = getActiveTaskName();
 
-            // Synchronize Picture-in-Picture window live
+            // Synchronize Picture-in-Picture window
             if (pipWindowInstance && !pipWindowInstance.closed) {
                 const pipDoc = pipWindowInstance.document;
                 const timeEl = pipDoc.getElementById('pip-time');
                 if (timeEl) timeEl.innerText = `${h}:${m}:${s}`;
                 const istEl = pipDoc.getElementById('pip-ist');
                 if (istEl) istEl.innerText = `IST ${getLiveISTString()}`;
+                
+                // Live title update
                 const taskEl = pipDoc.getElementById('pip-task-label');
                 if (taskEl) taskEl.innerText = taskLabel;
+
                 const statusEl = pipDoc.getElementById('pip-status');
                 if (statusEl) {
                     statusEl.innerText = isOvertimeMode ? "OVERTIME STOPWATCH" : (isTimerRunning ? "FOCUS RUNNING" : "PAUSED");
@@ -3397,20 +3412,22 @@
             }
 
             const todayStr = formatLocalDate(new Date());
+            const currentTitle = getActiveTaskName();
+            const currentSub = timerSelectedSubject || 'General';
 
             if (!timerSessionStartIST) {
                 const now = new Date();
                 timerSessionStartIST = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
                 currentSessionPlannedMinutes = Math.max(1, Math.round(timerRemaining / 60));
 
-                // If subject selected and not bound to a pre-existing planner task, create live In-Progress log
-                if (timerSelectedSubject && !activeBoundTaskId) {
+                // Always create live In-Progress log in Daily Planner & Daily Report
+                if (!activeBoundTaskId) {
                     activeLiveTaskId = Date.now();
                     appState.scheduledTasks.push({
                         id: activeLiveTaskId,
                         date: todayStr,
-                        title: getActiveTaskName(),
-                        subject: timerSelectedSubject,
+                        title: currentTitle,
+                        subject: currentSub,
                         start: timerSessionStartIST,
                         end: timerSessionStartIST,
                         duration: currentSessionPlannedMinutes,
@@ -3419,6 +3436,13 @@
                     });
                     saveToStorage();
                     renderDailyReportUI();
+                } else {
+                    const boundTask = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
+                    if (boundTask) {
+                        boundTask.status = 'In Progress';
+                        saveToStorage();
+                        renderDailyReportUI();
+                    }
                 }
             }
 
@@ -3429,7 +3453,7 @@
             isTimerRunning = true;
 
             const taskLbl = document.getElementById('active-task-label');
-            if (taskLbl) taskLbl.innerText = getActiveTaskName();
+            if (taskLbl) taskLbl.innerText = currentTitle;
 
             const startBtn = document.getElementById('timer-start-btn');
             if (startBtn) {
@@ -3486,12 +3510,19 @@
             overtimeElapsed = 0;
             timerSessionStartIST = null;
 
-            // Remove uncompleted live session from daily tasks/reports
+            // Automatically clean up and remove any uncompleted session from Daily Reports
             if (activeLiveTaskId) {
                 appState.scheduledTasks = appState.scheduledTasks.filter(t => t.id !== activeLiveTaskId);
                 activeLiveTaskId = null;
                 saveToStorage();
                 renderDailyReportUI();
+            } else if (activeBoundTaskId) {
+                const bound = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
+                if (bound && bound.status === 'In Progress') {
+                    bound.status = 'Not Started';
+                    saveToStorage();
+                    renderDailyReportUI();
+                }
             }
 
             activeBoundTaskId = null;
@@ -3525,7 +3556,6 @@
             updateAllTimerDisplays();
             lucide.createIcons();
         }
-
         function toggleFocusTimer() {
             const w = document.getElementById('focus-timer-widget');
             if (w) w.classList.toggle('hidden');
@@ -3988,7 +4018,7 @@
                         }
                     });
 
-                    const taskLabel = activeBoundTaskId ? (document.getElementById('active-task-label').innerText || 'Task') : 'Focus Session';
+                    const currentLabel = getActiveTaskName();
 
                     pipWindowInstance.document.body.className = "bg-slate-950 text-slate-200 flex flex-col justify-between p-3 select-none h-screen";
                     pipWindowInstance.document.body.innerHTML = `
@@ -3997,7 +4027,7 @@
                             <span id="pip-ist" class="font-mono text-slate-400 text-[10px]">IST ${getLiveISTString()}</span>
                         </div>
                         <div class="text-center my-auto">
-                            <div class="text-[11px] text-indigo-300 font-semibold truncate px-2 mb-1">${taskLabel}</div>
+                            <div id="pip-task-label" class="text-[12px] text-indigo-300 font-black truncate px-2 mb-1">${currentLabel}</div>
                             <div id="pip-time" class="font-mono text-3xl font-black text-white tracking-tight">00:00:00</div>
                             <div id="pip-status" class="text-[10px] font-bold text-slate-400 mt-1 uppercase">ACTIVE</div>
                         </div>
@@ -4036,11 +4066,6 @@
                         await video.play();
                     }
                     await video.requestPictureInPicture();
-
-                    if ('mediaSession' in navigator) {
-                        navigator.mediaSession.setActionHandler('play', () => startTimer());
-                        navigator.mediaSession.setActionHandler('pause', () => pauseTimer());
-                    }
                 }
             } catch (err) {}
         }
