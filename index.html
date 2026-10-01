@@ -4657,32 +4657,79 @@ const taskText = customTask
             const currentRealTime = now.toLocaleTimeString('en-IN', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const currentRealDate = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-            const testHistorySummary = JSON.stringify(appState.tests || []);
-            const wholePrepSummary = JSON.stringify(appState.prepSyllabus || {});
-            const scheduledTasksSummary = JSON.stringify(appState.scheduledTasks || []);
-            const goalsSummary = JSON.stringify(appState.goals || []);
-            const dailyQuotaSummary = JSON.stringify(getStoredQuota());
-            const dailyQuestionsLog = JSON.stringify(appState.dailyQuestions || {});
+            // Comprehensive live data extraction
+            const testHistory = JSON.stringify(appState.tests || []);
+            const wholePrepTracker = JSON.stringify(appState.prepSyllabus || {});
+            const prepCategories = JSON.stringify(appState.prepCategories || {});
+            const studyResources = JSON.stringify(appState.prepResources || []);
+            const testSyllabusChecklist = JSON.stringify(appState.syllabus || []);
+            const scheduledTasks = JSON.stringify(appState.scheduledTasks || []);
+            const longAndShortGoals = JSON.stringify(appState.goals || []);
+            const weeklyGoals = JSON.stringify(appState.weeklyGoals || []);
+            const dailyQuota = JSON.stringify(getStoredQuota());
+            const dailyQuestionsTelemetry = JSON.stringify(appState.dailyQuestions || {});
 
-            const systemContext = `You are Laksh's grounded, candid, and disciplined JEE Mentor.
-Goal: IIT Bombay CSE 2028 (AIR < 60).
-Daily Routine: Allen Coaching from 7:00 AM to 12:00 PM.
-Current Real Time: ${currentRealTime} | Date: ${currentRealDate} (${todayStr})
-Active Target Milestone: ${appState.nextTest?.name || 'Upcoming Test'} on ${appState.nextTest?.date || 'Configured Date'}
+            // Calculate overall syllabus stats for fast AI reasoning
+            const list11 = appState.prepSyllabus["11"] || [];
+            const list12 = appState.prepSyllabus["12"] || [];
+            const allChapters = [...list11, ...list12];
+            const masteredCount = allChapters.filter(c => c.status === 'Mastered').length;
+            const doneCount = allChapters.filter(c => c.status === 'Done').length;
+            const doingCount = allChapters.filter(c => c.status === 'Doing').length;
+            const todoCount = allChapters.filter(c => c.status === 'To Do').length;
 
-COMPLETE USER DATA CONTEXT:
-- Test Scores & History: ${testHistorySummary}
-- Whole Prep Tracker (Class 11 & 12 Chapters & Statuses): ${wholePrepSummary}
-- Daily Planner Scheduled Tasks / Routines: ${scheduledTasksSummary}
-- Daily Quota Status: ${dailyQuotaSummary}
-- Goals & Targets: ${goalsSummary}
+            const timerState = {
+                isRunning: isTimerRunning,
+                isOvertime: isOvertimeMode,
+                activeTask: getActiveTaskName(),
+                selectedSubject: timerSelectedSubject || 'None',
+                timeRemainingSeconds: timerRemaining,
+                overtimeSeconds: overtimeElapsed,
+                mode: tabTimerMode,
+                sessionStartIST: timerSessionStartIST
+            };
 
-RULES:
-- Always rely strictly on the Current Real Time and Date provided above (${currentRealDate}). Never assume or guess a different day of the week.
-- Be punchy, direct, and actionable. Jump straight into the advice or schedule requested without long-winded introductory lectures.
-- When generating schedules, format them cleanly day by day with realistic time blocks post-Allen.
-- NEVER cut off mid-sentence. Always finish your thoughts completely.
-- Never output citation placeholders or JSON action blocks.`;
+            const systemContext = `You are Laksh's dedicated, highly disciplined, and candid JEE Mentor & Coach.
+Target: IIT Bombay CSE 2028 (AIR < 60).
+Routine: Allen Coaching from 7:00 AM to 12:00 PM.
+Real-Time: ${currentRealTime} IST | Real-Date: ${currentRealDate} (${todayStr})
+Next Configured Test: ${appState.nextTest?.name || 'Upcoming Test'} on ${appState.nextTest?.date || 'Undated'}
+
+COMPLETE APP STATE & TELEMETRY ACCESS:
+1. LIVE TIMER & FOCUS SESSION:
+${JSON.stringify(timerState, null, 2)}
+
+2. ALL TEST SCORES & TELEMETRY:
+${testHistory}
+
+3. WHOLE PREP TRACKER (Class 11 & 12 Chapters & Completion):
+- Total Mastered: ${masteredCount}, Done: ${doneCount}, In-Progress: ${doingCount}, To-Do: ${todoCount}
+- Full Chapters Detail: ${wholePrepTracker}
+- Subject Categories/Modules: ${prepCategories}
+
+4. STUDY RESOURCES SHELF (Books, PDFs, Notes, Video Lectures):
+${studyResources}
+
+5. SYLLABUS CHECKLIST (Active Test Specific Topics):
+${testSyllabusChecklist}
+
+6. DAILY PLANNER SCHEDULED ROUTINES & SUBTOPICS:
+${scheduledTasks}
+
+7. TODAY'S DAILY QUOTA STATUS:
+${dailyQuota}
+
+8. 14-DAY QUESTION SOLVING VELOCITY (P / C / M):
+${dailyQuestionsTelemetry}
+
+9. GOALS:
+- Long & Short Term Goals: ${longAndShortGoals}
+- Weekly Goals: ${weeklyGoals}
+
+COACHING DIRECTIVES:
+- You have full, transparent access to every single data point listed above. Use exact chapter names, test score numbers, and routine timings whenever giving advice or analyzing progress.
+- Always be concise, actionable, and encouraging with zero generic fluff.
+- If Laksh asks what he should study next, examine his uncompleted routines, 'To Do' chapters, upcoming test date, and question counts, and formulate a clear strategy.`;
 
             let formattedContents = [];
             let lastRole = null;
@@ -5119,10 +5166,18 @@ if (dayTasks.length === 0) {
 
 
         function exportBackup() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            // Bundle every single piece of user data into one comprehensive backup
+            const completeBackupData = {
+                ...appState,
+                dailyQuota: getStoredQuota(),
+                exportedAt: new Date().toISOString(),
+                version: "2.0"
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(completeBackupData, null, 2));
             const dl = document.createElement('a');
             dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", `jee_ace_complete_backup_${formatLocalDate(new Date())}.json`);
+            dl.setAttribute("download", `jee_ace_complete_master_backup_${formatLocalDate(new Date())}.json`);
             document.body.appendChild(dl);
             dl.click();
             dl.remove();
@@ -5135,10 +5190,22 @@ if (dayTasks.length === 0) {
             reader.onload = (e) => {
                 try {
                     const parsed = JSON.parse(e.target.result);
+
+                    // Restore daily quota if present
+                    if (parsed.dailyQuota) {
+                        localStorage.setItem(QUOTA_KEY, JSON.stringify(parsed.dailyQuota));
+                        delete parsed.dailyQuota;
+                    }
+                    delete parsed.exportedAt;
+                    delete parsed.version;
+
                     appState = { ...appState, ...parsed };
                     saveToStorage();
+                    alert('✅ All data successfully restored!');
                     location.reload();
-                } catch (err) { alert('Invalid backup file format'); }
+                } catch (err) {
+                    alert('Invalid backup file format');
+                }
             };
             reader.readAsText(file);
         }
