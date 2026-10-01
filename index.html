@@ -755,6 +755,13 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     <!-- Tasks & Subtopics Column -->
                     <div class="lg:col-span-4 space-y-4">
+                        <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-3">
+    <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
+        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">FOCUS SESSIONS (SELF-STUDY)</h4>
+        <span id="report-focus-sessions-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">0 Sessions</span>
+    </div>
+    <div id="report-focus-sessions-container" class="space-y-2.5 max-h-52 overflow-y-auto custom-scrollbar"></div>
+</div>
                         <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
                             <div class="flex items-center justify-between pb-3 border-b border-slate-800/80">
                                 <div>
@@ -799,33 +806,60 @@
                                 <div class="text-[10px] text-slate-500 font-mono mt-1" id="report-sessions-count">0 Sessions</div>
                             </div>
                             <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl">
-                                <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">QUESTIONS SOLVED</span>
-                                <div id="report-questions-count" class="text-3xl font-black text-emerald-400 font-mono mt-1">0 Qs</div>
-                                <div class="text-[10px] text-slate-500 font-mono mt-1">Target: 50 Qs</div>
-                            </div>
+    <div class="flex items-center justify-between">
+        <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">QUESTIONS SOLVED</span>
+        <span class="text-[10px] text-slate-500 font-mono">Target: 50</span>
+    </div>
+    <div id="report-questions-count" class="text-3xl font-black text-emerald-400 font-mono mt-1">0 Qs</div>
+    <!-- Subject-colored question breakdown badges -->
+    <div id="report-questions-breakdown-pills" class="flex items-center gap-1.5 mt-2 flex-wrap">
+        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">P: 0</span>
+        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">C: 0</span>
+        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30">M: 0</span>
+    </div>
+</div>
                         </div>
 
                         <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-black text-white uppercase tracking-wider">30-DAY ACTIVITY TELEMETRY</h4>
-                                    <p class="text-[10px] text-slate-400 font-mono" id="report-active-days-stat">0 Active Days</p>
-                                </div>
-                                <span id="report-streak-badge" class="px-2.5 py-1 rounded-xl text-xs font-black font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">🔥 0 DAYS STREAK</span>
-                            </div>
-                            <div id="report-heatmap-grid" class="grid grid-cols-7 gap-2 pt-2"></div>
-                            <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-2 border-t border-slate-800/60">
-                                <span>Less active</span>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="w-2.5 h-2.5 rounded bg-slate-900 border border-slate-800"></span>
-                                    <span class="w-2.5 h-2.5 rounded bg-emerald-950"></span>
-                                    <span class="w-2.5 h-2.5 rounded bg-emerald-800"></span>
-                                    <span class="w-2.5 h-2.5 rounded bg-emerald-600"></span>
-                                    <span class="w-2.5 h-2.5 rounded bg-emerald-400"></span>
-                                </div>
-                                <span>High focus</span>
-                            </div>
-                        </div>
+    <div class="flex items-center justify-between">
+        <div>
+            <h4 class="text-xs font-black text-white uppercase tracking-wider">30-DAY ACTIVITY</h4>
+            <p class="text-[10px] text-slate-400 font-mono" id="report-active-days-stat">0 Active Days • 0h Studied</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span id="report-avg-per-day-badge" class="px-2.5 py-1 rounded-xl text-[10px] font-black font-mono bg-rose-500/20 text-rose-300 border border-rose-500/30">0h 0m/d</span>
+            <span id="report-streak-badge" class="px-2.5 py-1 rounded-xl text-xs font-black font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">🔥 0 DAYS STREAK</span>
+        </div>
+    </div>
+
+    <!-- Top 30-Day Velocity Bar Graph -->
+    <div class="w-full h-14 relative pt-1">
+        <canvas id="report30DayBarChart"></canvas>
+    </div>
+    <div class="flex justify-between text-[9px] font-mono text-slate-500 -mt-2">
+        <span>30d ago</span>
+        <span>Today</span>
+    </div>
+
+    <!-- Month-Column Calendar Grid matching reference -->
+    <div id="report-heatmap-custom-container" class="pt-2 overflow-x-auto custom-scrollbar">
+        <!-- Rendered dynamically -->
+    </div>
+
+    <!-- Legend -->
+    <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-3 border-t border-slate-800/60">
+        <span>Level:</span>
+        <div class="flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded-md bg-slate-900 border border-slate-800" title="0h"></span>
+            <span class="w-3.5 h-3.5 rounded-md bg-rose-950/60 border border-rose-900/40" title="<1h"></span>
+            <span class="w-3.5 h-3.5 rounded-md bg-rose-800/80" title="1-2h"></span>
+            <span class="w-3.5 h-3.5 rounded-md bg-rose-600" title="2-4h"></span>
+            <span class="w-3.5 h-3.5 rounded-md bg-[#be123c]" title="4-5h"></span>
+            <span class="w-3.5 h-3.5 rounded-md bg-[#881337]" title="5h+"></span>
+        </div>
+        <span>0h → 5h+</span>
+    </div>
+</div>
                     </div>
 
                     <!-- Subject Breakdown & Doughnut -->
@@ -836,8 +870,13 @@
                                 <span id="report-total-sessions" class="text-[11px] font-mono text-slate-500">0 Logs</span>
                             </div>
                             <div class="w-full h-44 relative flex items-center justify-center">
-                                <canvas id="reportSubjectChart"></canvas>
-                            </div>
+    <canvas id="reportSubjectChart"></canvas>
+    <!-- Center text overlay -->
+    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
+        <span id="report-doughnut-center-time" class="text-xl font-black font-mono text-white leading-tight">0h 0m</span>
+        <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Total Today</span>
+    </div>
+</div>
                         </div>
 
                         <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
@@ -1790,6 +1829,7 @@
 
     <script>
         const JEE_2028_DATE = new Date('2028-01-22T00:00:00');
+        let report30DayBarChartInstance = null;
 
         function formatLocalDate(d) {
             const year = d.getFullYear();
@@ -3421,21 +3461,25 @@
                 currentSessionPlannedMinutes = Math.max(1, Math.round(timerRemaining / 60));
 
                 // Always create live In-Progress log in Daily Planner & Daily Report
-                if (!activeBoundTaskId) {
-                    activeLiveTaskId = Date.now();
-                    appState.scheduledTasks.push({
-                        id: activeLiveTaskId,
-                        date: todayStr,
-                        title: currentTitle,
-                        subject: currentSub,
-                        start: timerSessionStartIST,
-                        end: timerSessionStartIST,
-                        duration: currentSessionPlannedMinutes,
-                        status: 'In Progress',
-                        subtopics: []
-                    });
-                    saveToStorage();
-                    renderDailyReportUI();
+                // If no subject is chosen, it is just a plain pomodoro timer: do not log to reports/tasks
+if (!timerSelectedSubject && !activeBoundTaskId) {
+    // Normal timer mode: runs without saving any task records
+} else if (!activeBoundTaskId && timerSelectedSubject) {
+    activeLiveTaskId = Date.now();
+    appState.scheduledTasks.push({
+        id: activeLiveTaskId,
+        date: todayStr,
+        title: currentTitle,
+        subject: timerSelectedSubject,
+        start: timerSessionStartIST,
+        end: timerSessionStartIST,
+        duration: currentSessionPlannedMinutes,
+        status: 'In Progress',
+        subtopics: [],
+        isFocusSessionOnly: true // Flag to separate from scheduled planner tasks
+    });
+    saveToStorage();
+    renderDailyReportUI();
                 } else {
                     const boundTask = appState.scheduledTasks.find(t => t.id === activeBoundTaskId);
                     if (boundTask) {
@@ -3637,7 +3681,7 @@
                         live.title = getActiveTaskName();
                     }
                     activeLiveTaskId = null;
-                } else if (timerSelectedSubject) {
+                } else if (timerSelectedSubject && !activeBoundTaskId && !activeLiveTaskId) {
                     appState.scheduledTasks.push({
                         id: Date.now(),
                         date: todayStr,
@@ -3648,6 +3692,7 @@
                         duration: currentSessionPlannedMinutes,
                         status: 'Completed',
                         subtopics: []
+                        isFocusSessionOnly: true
                     });
                 }
 
@@ -5033,39 +5078,39 @@ function renderDailyQuestionsChart() {
 
             // Tasks List
             // Tasks List in renderDailyReportUI
-const tasksContainer = document.getElementById('report-tasks-container');
-tasksContainer.innerHTML = '';
+// Filter scheduled tasks vs stand-alone focus sessions
+const scheduledPlannerTasks = dayTasks.filter(t => !t.isFocusSessionOnly);
+const focusOnlySessions = dayTasks.filter(t => t.isFocusSessionOnly);
 
-const doneTasks = dayTasks.filter(t => t.status === 'Completed').length;
-document.getElementById('report-task-completion-badge').innerText = `${doneTasks}/${dayTasks.length} DONE`;
-
-const rate = dayTasks.length > 0 ? Math.round((doneTasks / dayTasks.length) * 100) : 0;
+// Tasks Checklist (only scheduled planner routines)
+const doneTasks = scheduledPlannerTasks.filter(t => t.status === 'Completed').length;
+document.getElementById('report-task-completion-badge').innerText = `${doneTasks}/${scheduledPlannerTasks.length} DONE`;
+const rate = scheduledPlannerTasks.length > 0 ? Math.round((doneTasks / scheduledPlannerTasks.length) * 100) : 0;
 document.getElementById('report-rate-text').innerText = `${rate}%`;
 document.getElementById('report-rate-bar').style.width = `${rate}%`;
 
-if (dayTasks.length === 0) {
-    tasksContainer.innerHTML = `<div class="p-8 text-center text-slate-500 text-xs italic">No scheduled tasks logged for this date.</div>`;
-} else {
-    dayTasks.forEach(t => {
-        const isDone = t.status === 'Completed';
-        const isInProgress = t.status === 'In Progress';
-        const subs = t.subtopics || [];
-
-        const item = document.createElement('div');
-        item.className = "p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2";
-        item.innerHTML = `
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold ${isDone ? 'line-through text-slate-500' : 'text-white'}">${t.title}</span>
-                <div class="flex items-center gap-1.5">
-                    ${isInProgress ? '<span class="text-[9px] font-mono px-2 py-0.5 rounded border border-amber-500/40 bg-amber-500/20 text-amber-300 font-bold animate-pulse">In Progress</span>' : ''}
-                    <span class="text-[9px] font-mono px-2 py-0.5 rounded border ${getSubjectStyle(t.subject)}">${t.subject}</span>
+// Render Focus Sessions separately
+const focusContainer = document.getElementById('report-focus-sessions-container');
+const focusBadge = document.getElementById('report-focus-sessions-badge');
+if (focusContainer) {
+    focusContainer.innerHTML = '';
+    if (focusBadge) focusBadge.innerText = `${focusOnlySessions.length} Sessions`;
+    if (focusOnlySessions.length === 0) {
+        focusContainer.innerHTML = `<div class="p-3 text-[11px] text-slate-500 italic text-center">No unlinked focus sessions.</div>`;
+    } else {
+        focusOnlySessions.forEach(fs => {
+            focusContainer.innerHTML += `
+                <div class="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 flex items-center justify-between text-xs">
+                    <span class="font-bold text-slate-200">${fs.title}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="font-mono text-indigo-400 font-bold">${formatDuration(fs.duration)}</span>
+                        <span class="text-[9px] font-mono px-2 py-0.5 rounded border ${getSubjectStyle(fs.subject)}">${fs.subject}</span>
+                    </div>
                 </div>
-            </div>
-        `;
-        tasksContainer.appendChild(item);
-    });
+            `;
+        });
+    }
 }
-
             // Study Duration & Question Counts
             let totalFocusMins = 0;
             const subjectMinsMap = { Physics: 0, Chemistry: 0, Maths: 0, Allen: 0, General: 0 };
@@ -5081,41 +5126,129 @@ if (dayTasks.length === 0) {
             document.getElementById('report-sessions-count').innerText = `${dayTasks.length} Sessions logged`;
             document.getElementById('report-questions-count').innerText = `${totalQ} Qs`;
 
+            const qPillsEl = document.getElementById('report-questions-breakdown-pills');
+if (qPillsEl) {
+    qPillsEl.innerHTML = `
+        <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">P: ${questions.p || 0}</span>
+        <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">C: ${questions.c || 0}</span>
+        <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30">M: ${questions.m || 0}</span>
+    `;
+}
+
             // Streak
             const streak = calculateStreak();
             document.getElementById('report-streak-badge').innerText = `🔥 ${streak} DAYS STREAK`;
 
-            // Month Heatmap: Starts strictly at Day 1 of the chosen month
-            const heatmapGrid = document.getElementById('report-heatmap-grid');
-            heatmapGrid.innerHTML = '';
-            
-            const curYear = targetDateObj.getFullYear();
-            const curMonth = targetDateObj.getMonth();
-            const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
-            let activeDaysCount = 0;
+            // ----------------------------------------------------
+// 30-Day Activity & Calendar Grid (Reference Matched)
+// ----------------------------------------------------
+const past30Days = [];
+let total30dMinutes = 0;
+let active30dCount = 0;
 
-            for (let d = 1; d <= daysInMonth; d++) {
-                const thisDate = new Date(curYear, curMonth, d);
-                const dStr = formatLocalDate(thisDate);
+for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dStr = formatLocalDate(d);
 
-                const qCount = (appState.dailyQuestions[dStr]?.p || 0) + (appState.dailyQuestions[dStr]?.c || 0) + (appState.dailyQuestions[dStr]?.m || 0);
-                const tCount = appState.scheduledTasks.filter(t => t.date === dStr && t.status === 'Completed').length;
-                const activityVal = qCount + (tCount * 5);
+    const dayTasksForD = appState.scheduledTasks.filter(t => t.date === dStr && t.status === 'Completed');
+    let dayMins = dayTasksForD.reduce((acc, t) => acc + (Number(t.duration) || 0), 0);
+    const q = appState.dailyQuestions[dStr];
+    const qCount = q ? (q.p + q.c + q.m) : 0;
 
-                let cellColor = 'bg-slate-900 border-slate-800 text-slate-400';
-                if (activityVal > 25) { cellColor = 'bg-emerald-400 text-slate-950 font-bold'; activeDaysCount++; }
-                else if (activityVal > 15) { cellColor = 'bg-emerald-600 text-white font-bold'; activeDaysCount++; }
-                else if (activityVal > 5) { cellColor = 'bg-emerald-800 text-white'; activeDaysCount++; }
-                else if (activityVal > 0) { cellColor = 'bg-emerald-950 text-emerald-400'; activeDaysCount++; }
+    if (dayMins > 0 || qCount > 0) active30dCount++;
+    total30dMinutes += dayMins;
 
-                const cell = document.createElement('div');
-                cell.className = `w-7 h-7 rounded-lg border text-[10px] font-mono flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${cellColor} ${dStr === reportSelectedDate ? 'ring-2 ring-emerald-400' : ''}`;
-                cell.innerText = d;
-                cell.title = `${dStr}: ${qCount} Qs, ${tCount} Completed Tasks`;
-                cell.onclick = () => viewReportForDate(dStr);
-                heatmapGrid.appendChild(cell);
+    past30Days.push({ date: d, dateStr: dStr, minutes: dayMins, questions: qCount });
+}
+
+// Stats Subtitle
+const total30dHours = Math.round(total30dMinutes / 60);
+const avgMinsPerDay = Math.round(total30dMinutes / 30);
+document.getElementById('report-active-days-stat').innerText = `${active30dCount} Active Days • ${total30dHours}h Studied`;
+const avgBadge = document.getElementById('report-avg-per-day-badge');
+if (avgBadge) avgBadge.innerText = `${formatDuration(avgMinsPerDay) || '0m'}/d`;
+
+// Top 30-Day Bar Velocity Chart
+const barCtx = document.getElementById('report30DayBarChart');
+if (barCtx) {
+    if (report30DayBarChartInstance) report30DayBarChartInstance.destroy();
+    report30DayBarChartInstance = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: past30Days.map(x => x.date.getDate()),
+            datasets: [{
+                data: past30Days.map(x => x.minutes / 60),
+                backgroundColor: past30Days.map(x => (x.minutes >= 240 ? '#be123c' : (x.minutes > 60 ? '#f43f5e' : (x.minutes > 0 ? '#fda4af' : '#1e293b')))),
+                borderRadius: 3,
+                barPercentage: 0.65
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: true } },
+            scales: { x: { display: false }, y: { display: false, beginAtZero: true } }
+        }
+    });
+}
+
+// Bottom Calendar Grid (7 weekday rows x weekly columns)
+const gridContainer = document.getElementById('report-heatmap-custom-container');
+if (gridContainer) {
+    gridContainer.innerHTML = '';
+    const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    // Group the 30 days into weeks
+    const weeks = [];
+    let currentWeek = new Array(7).fill(null);
+
+    past30Days.forEach(dayItem => {
+        const dayOfWeek = dayItem.date.getDay();
+        currentWeek[dayOfWeek] = dayItem;
+        if (dayOfWeek === 6 || dayItem === past30Days[past30Days.length - 1]) {
+            weeks.push([...currentWeek]);
+            currentWeek = new Array(7).fill(null);
+        }
+    });
+
+    let tableHtml = `<table class="w-full border-collapse"><thead><tr><th class="w-8"></th>`;
+    weeks.forEach(wk => {
+        const firstDay = wk.find(d => d !== null);
+        const monthName = firstDay ? firstDay.date.toLocaleDateString('en-GB', { month: 'short' }) : '';
+        tableHtml += `<th class="text-[10px] font-mono text-slate-400 font-bold text-center pb-2 px-1">${monthName}</th>`;
+    });
+    tableHtml += `</tr></thead><tbody>`;
+
+    for (let dayRow = 0; dayRow < 7; dayRow++) {
+        tableHtml += `<tr><td class="text-[10px] font-mono text-slate-500 font-bold text-right pr-2 py-1">${dayLabels[dayRow]}</td>`;
+        weeks.forEach(wk => {
+            const dayData = wk[dayRow];
+            if (!dayData) {
+                tableHtml += `<td class="p-1"><div class="w-8 h-8 rounded-xl bg-slate-900/30 border border-slate-800/40"></div></td>`;
+            } else {
+                const hrs = dayData.minutes / 60;
+                let bg = 'bg-slate-900 border-slate-800 text-slate-500';
+                if (hrs >= 5) bg = 'bg-[#881337] border-rose-900 text-white font-bold';
+                else if (hrs >= 4) bg = 'bg-[#be123c] border-rose-700 text-white font-bold';
+                else if (hrs >= 2) bg = 'bg-[#e11d48] border-rose-600 text-white font-bold';
+                else if (hrs >= 1) bg = 'bg-[#fb7185] border-rose-400 text-slate-950 font-black';
+                else if (hrs > 0) bg = 'bg-[#fecdd3] border-rose-300 text-slate-950 font-black';
+
+                const isSelected = dayData.dateStr === reportSelectedDate;
+                tableHtml += `
+                    <td class="p-1">
+                        <button onclick="viewReportForDate('${dayData.dateStr}')" title="${dayData.dateStr}: ${formatDuration(dayData.minutes) || '0m'} focus" class="w-8 h-8 rounded-xl border flex items-center justify-center text-xs font-mono transition-transform hover:scale-105 ${bg} ${isSelected ? 'ring-2 ring-white shadow-lg' : ''}">
+                            ${dayData.date.getDate()}
+                        </button>
+                    </td>`;
             }
-            document.getElementById('report-active-days-stat').innerText = `${activeDaysCount} Active Days in ${targetDateObj.toLocaleDateString('en-GB', { month: 'short' })}`;
+        });
+        tableHtml += `</tr>`;
+    }
+    tableHtml += `</tbody></table>`;
+    gridContainer.innerHTML = tableHtml;
+}
 
             // Donut Chart
             const ctx = document.getElementById('reportSubjectChart');
@@ -5123,6 +5256,8 @@ if (dayTasks.length === 0) {
                 if (reportChartInstance) reportChartInstance.destroy();
                 const distData = [subjectMinsMap.Physics, subjectMinsMap.Chemistry, subjectMinsMap.Maths];
                 const hasAnyData = distData.some(v => v > 0);
+                const centerTimeEl = document.getElementById('report-doughnut-center-time');
+                if (centerTimeEl) centerTimeEl.innerText = formatDuration(totalFocusMins) || '0h 0m';
 
                 reportChartInstance = new Chart(ctx, {
                     type: 'doughnut',
