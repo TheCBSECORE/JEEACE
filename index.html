@@ -730,166 +730,252 @@
             </div>
 
             <!-- TAB: DAILY REPORT (CHAOSPREP STYLE) -->
-    <div id="view-report" class="hidden space-y-6">
-        <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-emerald-500/20">
-            <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <h2 class="text-2xl font-black text-white">Daily Performance Telemetry</h2>
-                </div>
-                <p class="text-xs text-slate-400">Verified study metrics, 30-day activity, subtopic execution, and subject distribution</p>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-2xl">
-                    <span class="text-xs font-bold text-slate-400 uppercase">Select Date:</span>
-                    <input type="date" id="report-date-picker" onchange="onReportDatePicked(this.value)" class="bg-transparent text-xs font-mono font-bold text-emerald-400 outline-none cursor-pointer">
-                </div>
-                <select id="report-range-select" onchange="renderDailyReportUI()" class="bg-slate-900 border border-slate-800 px-3 py-2 rounded-2xl text-xs font-bold text-slate-300 outline-none cursor-pointer">
-                    <option value="today">Today</option>
-                    <option value="7days">Last 7 Days</option>
-                    <option value="30days">Last 30 Days</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            <!-- COLUMN 1: TODAY'S TASKS -->
-            <div class="space-y-4">
-                <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/80">
-                        <div>
-                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">TODAY'S TASKS</h4>
-                            <p class="text-[10px] text-slate-500 mt-0.5" id="report-task-date-subtitle">...</p>
-                        </div>
-                        <span id="report-task-completion-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">0/0 DONE</span>
-                    </div>
-                    <div id="report-tasks-container" class="space-y-3 max-h-[580px] overflow-y-auto custom-scrollbar pr-1"></div>
-                    <div class="pt-3 border-t border-slate-800/80">
-                        <div class="flex justify-between text-xs font-mono mb-1.5">
-                            <span class="text-slate-400">COMPLETION RATE</span>
-                            <span id="report-rate-text" class="text-emerald-400 font-bold">0%</span>
-                        </div>
-                        <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                            <div id="report-rate-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- COLUMN 2: FOCUS, QUESTIONS, STREAK & 30-DAY ACTIVITY -->
-            <div class="space-y-6">
-                <!-- Streak Card -->
-                <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-3">
-                    <div class="flex items-center gap-2 text-amber-400 font-black text-xs uppercase tracking-widest">
-                        <span>🔥</span> STREAK
-                    </div>
-                    <div class="flex items-baseline gap-2">
-                        <div id="report-streak-big-days" class="text-5xl font-black text-white font-mono tracking-tighter">0 DAYS</div>
-                    </div>
-                    <p id="report-active-days-stat" class="text-xs text-slate-400 font-mono">0/30 Days Active (0%)</p>
-                    <div class="pt-2 border-t border-slate-800/80 text-xs font-mono text-slate-300 flex justify-between">
-                        <span class="text-slate-500">WEEKLY DAILY AVG</span>
-                        <span id="report-weekly-daily-avg" class="font-bold text-white">0h 0m / day</span>
-                    </div>
-                </div>
-
-                <!-- Study Focus & Questions Practiced -->
-                <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl space-y-4">
+            <div id="view-report" class="hidden space-y-6">
+                <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-emerald-500/20">
                     <div>
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">TODAY'S STUDY FOCUS</span>
-                        <div id="report-focus-hours" class="text-3xl font-black text-white font-mono mt-1">0h 0m</div>
-                        <div class="flex items-center gap-3 mt-3 pt-3 border-t border-slate-800/80 text-xs font-mono">
-                            <span id="report-sessions-count" class="px-2.5 py-1 rounded-xl bg-slate-900 text-slate-300 border border-slate-800">0 Sessions</span>
-                            <span id="report-avg-session-duration" class="px-2.5 py-1 rounded-xl bg-slate-900 text-slate-300 border border-slate-800">Avg: 0m</span>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <h2 class="text-2xl font-black text-white">Daily Performance Telemetry</h2>
                         </div>
+                        <p class="text-xs text-slate-400">Verified study metrics, 30-day activity, subtopic execution, and subject distribution</p>
                     </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-2xl">
+                            <span class="text-xs font-bold text-slate-400 uppercase">Select Date:</span>
+                            <input type="date" id="report-date-picker" onchange="onReportDatePicked(this.value)" class="bg-transparent text-xs font-mono font-bold text-emerald-400 outline-none cursor-pointer">
+                        </div>
+                        <select id="report-range-select" onchange="renderDailyReportUI()" class="bg-slate-900 border border-slate-800 px-3 py-2 rounded-2xl text-xs font-bold text-slate-300 outline-none cursor-pointer">
+                            <option value="today">Today</option>
+                            <option value="7days">Last 7 Days</option>
+                            <option value="30days">Last 30 Days</option>
+                        </select>
+                    </div>
+                </div>
 
-                    <div class="pt-3 border-t border-slate-800/80 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">QUESTIONS PRACTICED</span>
-                                <div id="report-questions-count" class="text-3xl font-black text-emerald-400 font-mono mt-1">0 Qs</div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- Tasks & Subtopics Column -->
+                    <div class="lg:col-span-4 space-y-4">
+                        <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-800/80">
+                                <div>
+                                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">TASKS & SUBTOPICS</h4>
+                                    <p class="text-[10px] text-slate-500 mt-0.5" id="report-task-date-subtitle">...</p>
+                                </div>
+                                <span id="report-task-completion-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">0/0 DONE</span>
                             </div>
-                            <span class="text-[11px] text-slate-500 font-mono">Target: 60 Qs</span>
-                        </div>
-                        <div id="report-questions-subject-breakdown" class="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs font-mono">
-                            <div class="flex items-center justify-between"><span class="text-blue-400">● Physics</span><span id="q-breakdown-p" class="text-white font-bold">0 Qs</span></div>
-                            <div class="flex items-center justify-between"><span class="text-emerald-400">● Chemistry</span><span id="q-breakdown-c" class="text-white font-bold">0 Qs</span></div>
-                            <div class="flex items-center justify-between"><span class="text-orange-400">● Maths</span><span id="q-breakdown-m" class="text-white font-bold">0 Qs</span></div>
+                            <div id="report-tasks-container" class="space-y-3 max-h-[580px] overflow-y-auto custom-scrollbar pr-1"></div>
+                            <div class="pt-3 border-t border-slate-800/80">
+                                <div class="flex justify-between text-xs font-mono mb-1.5">
+                                    <span class="text-slate-400">COMPLETION RATE</span>
+                                    <span id="report-rate-text" class="text-emerald-400 font-bold">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                                    <div id="report-rate-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 30-Day Activity with Bar Chart & Calendar Grid -->
-                <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h4 class="text-xs font-black text-white uppercase tracking-wider">30-DAY ACTIVITY</h4>
-                            <p class="text-[10px] text-slate-400 font-mono" id="report-activity-subtitle">0 Active Days • 0h Studied</p>
+                    <!-- Center Metrics, Streak & Heatmap -->
+                    <div class="lg:col-span-4 space-y-6">
+                        <!-- Top Next Milestone Card (Replaced HyperionOS) -->
+                        <div class="bg-[#0b0d13] border border-indigo-500/30 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black tracking-widest text-indigo-400 uppercase">NEXT MILESTONE</span>
+                                <span id="report-test-countdown-badge" class="text-xs font-black font-mono px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">0 DAYS LEFT</span>
+                            </div>
+                            <h3 id="report-next-test-name" class="text-xl font-black text-white mt-2 truncate">Upcoming Test</h3>
+                            <p class="text-xs text-slate-400 font-mono mt-0.5" id="report-next-test-date">-- --- ----</p>
+                            <div class="text-[11px] text-emerald-400 font-mono mt-3 flex items-center gap-1.5 border-t border-slate-800/80 pt-2">
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                                <span>Selected Date: <strong id="report-full-date-label" class="text-white font-mono">...</strong></span>
+                            </div>
                         </div>
-                        <span id="report-activity-rate" class="text-[11px] font-mono font-bold text-indigo-400">0h 0m/d</span>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">STUDY FOCUS</span>
+                                <div id="report-focus-hours" class="text-3xl font-black text-white font-mono mt-1">0h 0m</div>
+                                <div class="text-[10px] text-slate-500 font-mono mt-1" id="report-sessions-count">0 Sessions</div>
+                            </div>
+                            <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl">
+                                <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">QUESTIONS SOLVED</span>
+                                <div id="report-questions-count" class="text-3xl font-black text-emerald-400 font-mono mt-1">0 Qs</div>
+                                <div class="text-[10px] text-slate-500 font-mono mt-1">Target: 50 Qs</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-black text-white uppercase tracking-wider">30-DAY ACTIVITY TELEMETRY</h4>
+                                    <p class="text-[10px] text-slate-400 font-mono" id="report-active-days-stat">0 Active Days</p>
+                                </div>
+                                <span id="report-streak-badge" class="px-2.5 py-1 rounded-xl text-xs font-black font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">🔥 0 DAYS STREAK</span>
+                            </div>
+                            <div id="report-heatmap-grid" class="grid grid-cols-7 gap-2 pt-2"></div>
+                            <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-2 border-t border-slate-800/60">
+                                <span>Less active</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded bg-slate-900 border border-slate-800"></span>
+                                    <span class="w-2.5 h-2.5 rounded bg-emerald-950"></span>
+                                    <span class="w-2.5 h-2.5 rounded bg-emerald-800"></span>
+                                    <span class="w-2.5 h-2.5 rounded bg-emerald-600"></span>
+                                    <span class="w-2.5 h-2.5 rounded bg-emerald-400"></span>
+                                </div>
+                                <span>High focus</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- 30-Day Bar Histogram -->
-                    <div class="w-full h-16 relative pt-2">
-                        <canvas id="thirtyDayBarChart"></canvas>
-                    </div>
-
-                    <div id="report-heatmap-grid" class="grid grid-cols-7 gap-2 pt-2"></div>
-                    <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-2 border-t border-slate-800/60">
-                        <span>Level:</span>
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-2.5 h-2.5 rounded bg-slate-900 border border-slate-800"></span>
-                            <span class="w-2.5 h-2.5 rounded bg-cyan-950"></span>
-                            <span class="w-2.5 h-2.5 rounded bg-cyan-800"></span>
-                            <span class="w-2.5 h-2.5 rounded bg-cyan-600"></span>
-                            <span class="w-2.5 h-2.5 rounded bg-cyan-400"></span>
+                    <!-- Subject Breakdown & Doughnut -->
+                    <div class="lg:col-span-4 space-y-6">
+                        <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
+                            <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                                <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">SUBJECT DISTRIBUTION</h4>
+                                <span id="report-total-sessions" class="text-[11px] font-mono text-slate-500">0 Logs</span>
+                            </div>
+                            <div class="w-full h-44 relative flex items-center justify-center">
+                                <canvas id="reportSubjectChart"></canvas>
+                            </div>
                         </div>
-                        <span>0h → 5h+</span>
+
+                        <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
+                            <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                                <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">SUBJECT BREAKDOWN</h4>
+                                <span id="report-breakdown-total" class="text-[11px] font-mono text-slate-400">0h 0m Total</span>
+                            </div>
+                            <div id="report-subject-bars-container" class="space-y-3.5 pt-1"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- COLUMN 3: SUBJECT DISTRIBUTION & BREAKDOWN -->
-            <div class="space-y-6">
-                <!-- Subject Distribution Donut -->
-                <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
-                    <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">SUBJECT DISTRIBUTION</h4>
-                        <span id="report-total-sessions" class="text-[11px] font-mono text-slate-400 px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-800">0 Sessions</span>
-                    </div>
-                    <div class="w-full h-52 relative flex items-center justify-center">
-                        <canvas id="reportSubjectChart"></canvas>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-                            <span id="report-center-hours" class="text-xl font-black text-white font-mono tracking-tight leading-none">0h 0m</span>
-                            <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1">STUDIED</span>
+            <!-- TAB 4: TIMER (DEDICATED FULL VIEW) -->
+            <div id="view-timer" class="hidden space-y-6">
+                <div class="glass-card p-6 sm:p-10 rounded-[32px] border border-slate-800 shadow-2xl space-y-8">
+                    <!-- Mode Pills & Actions Header -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+                        <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+                            <button onclick="setTabTimerMode('flow')" id="tab-timer-mode-flow" class="px-6 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Flow</button>
+                            <button onclick="setTabTimerMode('pomodoro')" id="tab-timer-mode-pomodoro" class="px-6 py-2 rounded-xl text-xs font-black bg-indigo-600 text-white shadow-md transition-all">Pomodoro</button>
+                            <button onclick="setTabTimerMode('custom')" id="tab-timer-mode-custom" class="px-6 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Custom</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="togglePiP(true)" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" title="Picture-in-Picture"><i data-lucide="picture-in-picture-2" class="w-4 h-4"></i></button>
+                            <button onclick="exportBackup()" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" title="Export Backup"><i data-lucide="upload" class="w-4 h-4"></i></button>
+                            <button onclick="resetTimer()" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" title="Settings / Reset"><i data-lucide="sliders" class="w-4 h-4"></i></button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Subject Breakdown Progress Bars -->
-                <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
-                    <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">SUBJECT BREAKDOWN</h4>
-                        <span id="report-breakdown-total" class="text-[11px] font-mono text-slate-400">0h 0m Total</span>
-                    </div>
-                    <div id="report-subject-bars-container" class="space-y-4 pt-1"></div>
-                </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <!-- Left Big Timer Box -->
+                        <div class="lg:col-span-7 flex flex-col items-center justify-center bg-slate-950/70 border border-slate-800/80 rounded-3xl p-8 shadow-inner relative" style="min-height: 420px;">
+                            <div class="absolute top-4 left-6 text-xs font-mono font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span id="tab-timer-tag-label">POMODORO (25M) #1</span>
+                            </div>
 
-                <!-- Milestone Countdown Card -->
-                <div class="bg-[#0b0d13] border border-indigo-500/30 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-                    <div class="flex items-center justify-between">
-                        <span id="report-next-test-name" class="text-xs font-black tracking-wider text-indigo-400 uppercase">JEE ADVANCED</span>
-                        <span id="report-test-countdown-badge" class="text-xs font-black font-mono px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">0 DAYS LEFT</span>
+                            <!-- Big Countdown Display -->
+                            <div class="font-mono text-6xl sm:text-7xl font-black text-white tracking-tighter my-auto py-8" id="tab-timer-clock-display">
+                                00:25:00
+                            </div>
+
+                            <!-- Study / Break Adjusters -->
+                            <div class="flex items-center justify-center gap-6 bg-slate-900/90 border border-slate-800 px-6 py-3 rounded-2xl mb-6">
+                                <div class="text-center font-mono">
+                                    <div class="text-[10px] text-slate-400 uppercase font-bold">STUDY</div>
+                                    <div class="text-base font-black text-white flex items-center gap-1">
+                                        <input type="number" id="tab-study-mins" value="25" min="1" max="180" onchange="updateCustomTimerDuration()" class="w-10 bg-transparent text-center font-mono text-indigo-400 outline-none border-b border-indigo-500/40"> m
+                                    </div>
+                                </div>
+                                <div class="w-px h-8 bg-slate-800"></div>
+                                <div class="text-center font-mono">
+                                    <div class="text-[10px] text-slate-400 uppercase font-bold">BREAK</div>
+                                    <div class="text-base font-black text-white flex items-center gap-1">
+                                        <input type="number" id="tab-break-mins" value="5" min="1" max="60" class="w-10 bg-transparent text-center font-mono text-slate-400 outline-none border-b border-slate-700"> m
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Play / Pause Buttons -->
+                            <div class="flex items-center gap-4">
+                                <button onclick="startTimer()" id="timer-start-btn" class="w-16 h-16 rounded-2xl bg-white hover:bg-slate-200 text-slate-950 flex items-center justify-center shadow-2xl transition-transform active:scale-95">
+                                    <i data-lucide="play" class="w-7 h-7 fill-current ml-0.5"></i>
+                                </button>
+                                <button onclick="pauseTimer()" id="timer-pause-btn" class="w-14 h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-center transition-transform active:scale-95">
+                                    <i data-lucide="square" class="w-5 h-5 fill-current"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right Controls Column -->
+                        <div class="lg:col-span-5 space-y-4">
+                            <!-- Custom Task Input -->
+                            <div id="timer-custom-task-box" class="bg-slate-900/80 border border-slate-800 p-4 rounded-3xl space-y-2">
+                                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-indigo-400"></i> What are you working on?
+                                </label>
+                                <input type="text" id="timer-custom-task-input" oninput="onCustomTaskInput(this.value)" placeholder="e.g. Solving 20 PYQs, Notes Revision..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500">
+                                <p class="text-[10px] text-slate-500">If empty, session logs under the selected subject name.</p>
+                            </div>
+
+                            <!-- Subject Selector -->
+                            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-3xl space-y-2.5">
+                                <h5 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-400"></i> Subject
+                                </h5>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" onclick="setTimerSubject('Physics')" id="timer-sub-Physics" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Physics</button>
+                                    <button type="button" onclick="setTimerSubject('Chemistry')" id="timer-sub-Chemistry" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Chemistry</button>
+                                    <button type="button" onclick="setTimerSubject('Maths')" id="timer-sub-Maths" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Maths</button>
+                                    <button type="button" onclick="setTimerSubject('MockTest')" id="timer-sub-MockTest" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">MockTest</button>
+                                </div>
+                            </div>
+
+                            <!-- Link Task Selector -->
+                            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-3xl space-y-3">
+                                <h5 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <i data-lucide="link" class="w-3.5 h-3.5 text-indigo-400"></i> Link Task (from Daily Planner)
+                                </h5>
+                                <select id="timer-link-task-select" onchange="onTimerTaskSelected(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-slate-200 outline-none cursor-pointer">
+                                    <option value="">+ No pending tasks today</option>
+                                </select>
+                                <div id="timer-linked-task-card" class="hidden p-3 rounded-2xl bg-slate-950 border border-indigo-500/30 flex items-center justify-between gap-3">
+                                    <div class="min-w-0 pr-1">
+                                        <div class="flex items-center gap-2 mb-0.5">
+                                            <span id="linked-box-subject" class="text-[9px] font-bold px-2 py-0.5 rounded border">Physics</span>
+                                            <span id="linked-box-status" class="text-[9px] font-mono text-slate-400">Not Started</span>
+                                        </div>
+                                        <h6 id="linked-box-title" class="text-xs font-bold text-white truncate">Task Title</h6>
+                                    </div>
+                                    <button onclick="startLinkedTaskFromBox()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 shrink-0 shadow-md">
+                                        <i data-lucide="play" class="w-3 h-3 fill-current"></i> Start Focus
+                                    </button>
+                                </div>
+                                <div id="timer-linked-subtopics-list" class="space-y-1.5 pt-2 border-t border-slate-800/60 w-full"></div>
+                            </div>
+
+                            <!-- Daily Questions Tracker -->
+                            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-3xl space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <h5 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                        <i data-lucide="help-circle" class="w-3.5 h-3.5 text-indigo-400"></i> Daily Questions
+                                    </h5>
+                                    <span class="px-2 py-0.5 rounded-lg bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono font-bold">Target: 50</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
+                                    <button onclick="adjustQuestionsCount(-1)" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-sm transition-transform active:scale-95">-</button>
+                                    <div class="text-center font-mono">
+                                        <span id="daily-questions-solved" class="text-xl font-black text-white">0</span>
+                                        <span class="text-[10px] text-slate-500 block uppercase">/ 50 Solved</span>
+                                    </div>
+                                    <button onclick="adjustQuestionsCount(1)" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-sm transition-transform active:scale-95">+</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-[11px] text-slate-400 font-mono mt-3 flex items-center gap-1.5 border-t border-slate-800/80 pt-2">
-                        <i data-lucide="check-circle" class="w-3.5 h-3.5 text-indigo-400"></i>
-                        <span>Selected Date: <strong id="report-full-date-label" class="text-white font-mono">...</strong></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
                     <!-- Today's Timeline Footer Button Banner -->
                     <div onclick="openTodayTimelineModal()" role="button" tabindex="0" class="cursor-pointer bg-slate-900/90 border border-slate-800 p-6 rounded-3xl flex items-center justify-between group hover:border-indigo-500/40 transition-all">
                         <div class="flex items-center gap-3">
@@ -905,58 +991,6 @@
                     </div>
                 </div>
             </div>
-
-    <!-- TAB 4: TIMER (DEDICATED FULL VIEW) -->
-    <div id="view-timer" class="hidden space-y-6">
-        <div class="glass-card p-6 sm:p-10 rounded-[32px] border border-slate-800 shadow-2xl space-y-8">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
-                <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
-                    <button onclick="setTabTimerMode('flow')" id="tab-timer-mode-flow" class="px-6 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Flow</button>
-                    <button onclick="setTabTimerMode('pomodoro')" id="tab-timer-mode-pomodoro" class="px-6 py-2 rounded-xl text-xs font-black bg-indigo-600 text-white shadow-md transition-all">Pomodoro</button>
-                    <button onclick="setTabTimerMode('custom')" id="tab-timer-mode-custom" class="px-6 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Custom</button>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="togglePiP(true)" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" title="Picture-in-Picture"><i data-lucide="picture-in-picture-2" class="w-4 h-4"></i></button>
-                    <button onclick="resetTimer()" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" title="Reset"><i data-lucide="sliders" class="w-4 h-4"></i></button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <div class="lg:col-span-7 flex flex-col items-center justify-center bg-slate-950/70 border border-slate-800/80 rounded-3xl p-8 shadow-inner relative" style="min-height: 420px;">
-                    <div class="absolute top-4 left-6 text-xs font-mono font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span id="tab-timer-tag-label">POMODORO (25M)</span>
-                    </div>
-                    <div class="font-mono text-6xl sm:text-7xl font-black text-white tracking-tighter my-auto py-8" id="tab-timer-clock-display">
-                        00:25:00
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <button onclick="startTimer()" id="timer-start-btn" class="w-16 h-16 rounded-2xl bg-white hover:bg-slate-200 text-slate-950 flex items-center justify-center shadow-2xl transition-transform active:scale-95">
-                            <i data-lucide="play" class="w-7 h-7 fill-current ml-0.5"></i>
-                        </button>
-                        <button onclick="pauseTimer()" id="timer-pause-btn" class="w-14 h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-center transition-transform active:scale-95">
-                            <i data-lucide="square" class="w-5 h-5 fill-current"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-5 space-y-4">
-                    <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-3xl space-y-2">
-                        <label class="block text-xs font-black text-slate-400 uppercase tracking-widest">What are you working on?</label>
-                        <input type="text" id="timer-custom-task-input" oninput="onCustomTaskInput(this.value)" placeholder="e.g. Solving PYQs..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none">
-                    </div>
-                    <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-3xl space-y-2.5">
-                        <h5 class="text-xs font-black text-slate-400 uppercase tracking-widest">Subject</h5>
-                        <div class="flex flex-wrap gap-2">
-                            <button type="button" onclick="setTimerSubject('Physics')" id="timer-sub-Physics" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Physics</button>
-                            <button type="button" onclick="setTimerSubject('Chemistry')" id="timer-sub-Chemistry" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Chemistry</button>
-                            <button type="button" onclick="setTimerSubject('Maths')" id="timer-sub-Maths" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Maths</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
             <!-- TAB 5: GOALS GALLERY -->
             <div id="view-goals" class="hidden space-y-12">
@@ -5054,49 +5088,6 @@ if (dayTasks.length === 0) {
                     tasksContainer.appendChild(item);
                 });
             }
-
-            let thirtyDayBarChartInstance = null;
-
-// Add this snippet inside your renderDailyReportUI function or right below it:
-function renderThirtyDayBarChart() {
-    const ctx = document.getElementById('thirtyDayBarChart');
-    if (!ctx) return;
-
-    const days = [];
-    for (let i = 29; i >= 0; i--) {
-        const d = new Date(targetDateObj);
-        d.setDate(d.getDate() - i);
-        days.push(formatLocalDate(d));
-    }
-
-    const dataVals = days.map(dStr => {
-        const tCount = appState.scheduledTasks.filter(t => t.date === dStr && t.status === 'Completed').length;
-        const qCount = (appState.dailyQuestions[dStr]?.p || 0) + (appState.dailyQuestions[dStr]?.c || 0) + (appState.dailyQuestions[dStr]?.m || 0);
-        return qCount + (tCount * 2);
-    });
-
-    if (thirtyDayBarChartInstance) thirtyDayBarChartInstance.destroy();
-    thirtyDayBarChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: days.map(d => d.slice(5)),
-            datasets: [{
-                data: dataVals,
-                backgroundColor: '#10b981',
-                borderRadius: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false }, tooltip: { enabled: false } },
-            scales: {
-                x: { display: false },
-                y: { display: false, beginAtZero: true }
-            }
-        }
-    });
-}
 
             // Study Duration & Question Counts
             let totalFocusMins = 0;
