@@ -752,9 +752,9 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <!-- Tasks & Subtopics Column -->
-            <div class="lg:col-span-4 space-y-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <!-- COLUMN 1: TODAY'S TASKS -->
+            <div class="space-y-4">
                 <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-800/80">
                         <div>
@@ -776,8 +776,8 @@
                 </div>
             </div>
 
-            <!-- Center Metrics, Streak & Calendar Heatmap -->
-            <div class="lg:col-span-4 space-y-6">
+            <!-- COLUMN 2: FOCUS, QUESTIONS, STREAK & 30-DAY ACTIVITY -->
+            <div class="space-y-6">
                 <!-- Streak Card -->
                 <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-3">
                     <div class="flex items-center gap-2 text-amber-400 font-black text-xs uppercase tracking-widest">
@@ -793,9 +793,9 @@
                     </div>
                 </div>
 
-                <!-- Today's Study Focus & Questions Practiced -->
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl">
+                <!-- Study Focus & Questions Practiced -->
+                <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl space-y-4">
+                    <div>
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">TODAY'S STUDY FOCUS</span>
                         <div id="report-focus-hours" class="text-3xl font-black text-white font-mono mt-1">0h 0m</div>
                         <div class="flex items-center gap-3 mt-3 pt-3 border-t border-slate-800/80 text-xs font-mono">
@@ -804,7 +804,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl space-y-3">
+                    <div class="pt-3 border-t border-slate-800/80 space-y-3">
                         <div class="flex items-center justify-between">
                             <div>
                                 <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">QUESTIONS PRACTICED</span>
@@ -812,24 +812,15 @@
                             </div>
                             <span class="text-[11px] text-slate-500 font-mono">Target: 60 Qs</span>
                         </div>
-                        <div id="report-questions-subject-breakdown" class="space-y-2 pt-2 border-t border-slate-800/80">
-                            <div class="flex items-center justify-between text-xs font-mono">
-                                <span class="text-blue-400">● Physics</span>
-                                <span id="q-breakdown-p" class="text-white font-bold">0 Qs</span>
-                            </div>
-                            <div class="flex items-center justify-between text-xs font-mono">
-                                <span class="text-emerald-400">● Chemistry</span>
-                                <span id="q-breakdown-c" class="text-white font-bold">0 Qs</span>
-                            </div>
-                            <div class="flex items-center justify-between text-xs font-mono">
-                                <span class="text-orange-400">● Maths</span>
-                                <span id="q-breakdown-m" class="text-white font-bold">0 Qs</span>
-                            </div>
+                        <div id="report-questions-subject-breakdown" class="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs font-mono">
+                            <div class="flex items-center justify-between"><span class="text-blue-400">● Physics</span><span id="q-breakdown-p" class="text-white font-bold">0 Qs</span></div>
+                            <div class="flex items-center justify-between"><span class="text-emerald-400">● Chemistry</span><span id="q-breakdown-c" class="text-white font-bold">0 Qs</span></div>
+                            <div class="flex items-center justify-between"><span class="text-orange-400">● Maths</span><span id="q-breakdown-m" class="text-white font-bold">0 Qs</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 30-Day Calendar Activity Grid -->
+                <!-- 30-Day Activity with Bar Chart & Calendar Grid -->
                 <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
@@ -838,6 +829,12 @@
                         </div>
                         <span id="report-activity-rate" class="text-[11px] font-mono font-bold text-indigo-400">0h 0m/d</span>
                     </div>
+
+                    <!-- 30-Day Bar Histogram -->
+                    <div class="w-full h-16 relative pt-2">
+                        <canvas id="thirtyDayBarChart"></canvas>
+                    </div>
+
                     <div id="report-heatmap-grid" class="grid grid-cols-7 gap-2 pt-2"></div>
                     <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-2 border-t border-slate-800/60">
                         <span>Level:</span>
@@ -853,9 +850,9 @@
                 </div>
             </div>
 
-            <!-- Subject Distribution & Breakdown Column -->
-            <div class="lg:col-span-4 space-y-6">
-                <!-- Subject Distribution with Central Study Hours -->
+            <!-- COLUMN 3: SUBJECT DISTRIBUTION & BREAKDOWN -->
+            <div class="space-y-6">
+                <!-- Subject Distribution Donut -->
                 <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
                     <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
                         <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">SUBJECT DISTRIBUTION</h4>
@@ -879,7 +876,7 @@
                     <div id="report-subject-bars-container" class="space-y-4 pt-1"></div>
                 </div>
 
-                <!-- Next Milestone / Exam Countdown card -->
+                <!-- Milestone Countdown Card -->
                 <div class="bg-[#0b0d13] border border-indigo-500/30 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
                     <div class="flex items-center justify-between">
                         <span id="report-next-test-name" class="text-xs font-black tracking-wider text-indigo-400 uppercase">JEE ADVANCED</span>
@@ -5069,6 +5066,8 @@ function renderDailyQuestionsChart() {
             return streak;
         }
 
+        let thirtyDayBarChartInstance = null;
+
         function renderDailyReportUI() {
             const picker = document.getElementById('report-date-picker');
             if (picker && !picker.value) picker.value = reportSelectedDate;
@@ -5163,7 +5162,7 @@ function renderDailyQuestionsChart() {
             });
 
             document.getElementById('report-focus-hours').innerText = formatDuration(totalFocusMins);
-            document.getElementById('report-sessions-count').innerText = `${dayTasks.length} Sessions`;
+            document.getElementById('report-sessions-count').innerText = `${dayTasks.length} Sessions logged`;
             document.getElementById('report-avg-session-duration').innerText = `Avg: ${dayTasks.length ? Math.round(totalFocusMins / dayTasks.length) : 0}m`;
             document.getElementById('report-questions-count').innerText = `${totalQ} Qs`;
 
@@ -5176,7 +5175,7 @@ function renderDailyQuestionsChart() {
             const streak = calculateStreak();
             document.getElementById('report-streak-big-days').innerText = `${streak} DAYS`;
 
-            // Month Heatmap (30-Day Activity)
+            // Month Heatmap & 30-Day Histogram Bar Chart
             const heatmapGrid = document.getElementById('report-heatmap-grid');
             heatmapGrid.innerHTML = '';
             
@@ -5185,6 +5184,8 @@ function renderDailyQuestionsChart() {
             const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
             let activeDaysCount = 0;
             let totalMonthMins = 0;
+            let barChartLabels = [];
+            let barChartData = [];
 
             for (let d = 1; d <= daysInMonth; d++) {
                 const thisDate = new Date(curYear, curMonth, d);
@@ -5193,6 +5194,9 @@ function renderDailyQuestionsChart() {
                 const dayList = appState.scheduledTasks.filter(t => t.date === dStr);
                 const dayMins = dayList.reduce((sum, t) => sum + Number(t.duration || 0), 0);
                 totalMonthMins += dayMins;
+
+                barChartLabels.push(d);
+                barChartData.push(Math.round(dayMins / 60 * 10) / 10); // Hours format
 
                 const qCount = (appState.dailyQuestions[dStr]?.p || 0) + (appState.dailyQuestions[dStr]?.c || 0) + (appState.dailyQuestions[dStr]?.m || 0);
                 const tCount = dayList.filter(t => t.status === 'Completed').length;
@@ -5214,8 +5218,35 @@ function renderDailyQuestionsChart() {
 
             document.getElementById('report-active-days-stat').innerText = `${activeDaysCount}/${daysInMonth} Days Active (${Math.round((activeDaysCount/daysInMonth)*100)}%)`;
             document.getElementById('report-activity-subtitle').innerText = `${activeDaysCount} Active Days • ${formatDuration(totalMonthMins)} Studied`;
-            document.getElementById('report-activity-rate').innerText = `${formatDuration(Math.round(totalMonthMins / Math.max(1, daysInMonth)))}/d`;
+            document.getElementById('report-activity-rate').innerText = `${formatDuration(Math.round(totalMonthMins / Math.max(1, activeDaysCount || 1)))}/d`;
             document.getElementById('report-weekly-daily-avg').innerText = `${formatDuration(Math.round(totalMonthMins / Math.max(1, daysInMonth)))} / day`;
+
+            // Render 30-Day Activity Bar Histogram
+            const barCtx = document.getElementById('thirtyDayBarChart');
+            if (barCtx) {
+                if (thirtyDayBarChartInstance) thirtyDayBarChartInstance.destroy();
+                thirtyDayBarChartInstance = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: barChartLabels,
+                        datasets: [{
+                            data: barChartData,
+                            backgroundColor: '#22d3ee',
+                            borderRadius: 2,
+                            barPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false, beginAtZero: true }
+                        }
+                    }
+                });
+            }
 
             // Center Study Hours in Donut Graph
             document.getElementById('report-center-hours').innerText = formatDuration(totalFocusMins);
