@@ -890,7 +890,6 @@
             </div>
         </div>
     </div>
-
                     <!-- Today's Timeline Footer Button Banner -->
                     <div onclick="openTodayTimelineModal()" role="button" tabindex="0" class="cursor-pointer bg-slate-900/90 border border-slate-800 p-6 rounded-3xl flex items-center justify-between group hover:border-indigo-500/40 transition-all">
                         <div class="flex items-center gap-3">
@@ -906,6 +905,58 @@
                     </div>
                 </div>
             </div>
+
+    <!-- TAB 4: TIMER (DEDICATED FULL VIEW) -->
+    <div id="view-timer" class="hidden space-y-6">
+        <div class="glass-card p-6 sm:p-10 rounded-[32px] border border-slate-800 shadow-2xl space-y-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+                <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+                    <button onclick="setTabTimerMode('flow')" id="tab-timer-mode-flow" class="px-6 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Flow</button>
+                    <button onclick="setTabTimerMode('pomodoro')" id="tab-timer-mode-pomodoro" class="px-6 py-2 rounded-xl text-xs font-black bg-indigo-600 text-white shadow-md transition-all">Pomodoro</button>
+                    <button onclick="setTabTimerMode('custom')" id="tab-timer-mode-custom" class="px-6 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">Custom</button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="togglePiP(true)" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" title="Picture-in-Picture"><i data-lucide="picture-in-picture-2" class="w-4 h-4"></i></button>
+                    <button onclick="resetTimer()" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" title="Reset"><i data-lucide="sliders" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div class="lg:col-span-7 flex flex-col items-center justify-center bg-slate-950/70 border border-slate-800/80 rounded-3xl p-8 shadow-inner relative" style="min-height: 420px;">
+                    <div class="absolute top-4 left-6 text-xs font-mono font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="tab-timer-tag-label">POMODORO (25M)</span>
+                    </div>
+                    <div class="font-mono text-6xl sm:text-7xl font-black text-white tracking-tighter my-auto py-8" id="tab-timer-clock-display">
+                        00:25:00
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="startTimer()" id="timer-start-btn" class="w-16 h-16 rounded-2xl bg-white hover:bg-slate-200 text-slate-950 flex items-center justify-center shadow-2xl transition-transform active:scale-95">
+                            <i data-lucide="play" class="w-7 h-7 fill-current ml-0.5"></i>
+                        </button>
+                        <button onclick="pauseTimer()" id="timer-pause-btn" class="w-14 h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-center transition-transform active:scale-95">
+                            <i data-lucide="square" class="w-5 h-5 fill-current"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-3xl space-y-2">
+                        <label class="block text-xs font-black text-slate-400 uppercase tracking-widest">What are you working on?</label>
+                        <input type="text" id="timer-custom-task-input" oninput="onCustomTaskInput(this.value)" placeholder="e.g. Solving PYQs..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none">
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-3xl space-y-2.5">
+                        <h5 class="text-xs font-black text-slate-400 uppercase tracking-widest">Subject</h5>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="setTimerSubject('Physics')" id="timer-sub-Physics" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Physics</button>
+                            <button type="button" onclick="setTimerSubject('Chemistry')" id="timer-sub-Chemistry" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Chemistry</button>
+                            <button type="button" onclick="setTimerSubject('Maths')" id="timer-sub-Maths" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700 transition-all">Maths</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
             <!-- TAB 5: GOALS GALLERY -->
             <div id="view-goals" class="hidden space-y-12">
@@ -5003,6 +5054,49 @@ if (dayTasks.length === 0) {
                     tasksContainer.appendChild(item);
                 });
             }
+
+            let thirtyDayBarChartInstance = null;
+
+// Add this snippet inside your renderDailyReportUI function or right below it:
+function renderThirtyDayBarChart() {
+    const ctx = document.getElementById('thirtyDayBarChart');
+    if (!ctx) return;
+
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(targetDateObj);
+        d.setDate(d.getDate() - i);
+        days.push(formatLocalDate(d));
+    }
+
+    const dataVals = days.map(dStr => {
+        const tCount = appState.scheduledTasks.filter(t => t.date === dStr && t.status === 'Completed').length;
+        const qCount = (appState.dailyQuestions[dStr]?.p || 0) + (appState.dailyQuestions[dStr]?.c || 0) + (appState.dailyQuestions[dStr]?.m || 0);
+        return qCount + (tCount * 2);
+    });
+
+    if (thirtyDayBarChartInstance) thirtyDayBarChartInstance.destroy();
+    thirtyDayBarChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: days.map(d => d.slice(5)),
+            datasets: [{
+                data: dataVals,
+                backgroundColor: '#10b981',
+                borderRadius: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: {
+                x: { display: false },
+                y: { display: false, beginAtZero: true }
+            }
+        }
+    });
+}
 
             // Study Duration & Question Counts
             let totalFocusMins = 0;
