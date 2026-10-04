@@ -806,14 +806,29 @@
                             <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl">
                                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">STUDY FOCUS</span>
                                 <div id="report-focus-hours" class="text-3xl font-black text-white font-mono mt-1">0h 0m</div>
-                                <div class="text-[10px] text-slate-500 font-mono mt-1" id="report-sessions-count">0 Sessions</div>
+                             <div class="text-[10px] text-slate-500 font-mono mt-1" id="report-sessions-count">0 Sessions</div>
                             </div>
-                            <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl">
-                                <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">QUESTIONS SOLVED</span>
-                                <div id="report-questions-count" class="text-3xl font-black text-emerald-400 font-mono mt-1">0 Qs</div>
-                                <div class="text-[10px] text-slate-500 font-mono mt-1">Target: 50 Qs</div>
+                            <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-5 shadow-2xl space-y-3">
+                                <div>
+                                    <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">QUESTIONS PRACTICED</span>
+                                    <div id="report-questions-count" class="text-3xl font-black text-white font-mono mt-1">0 Qs</div>
+                                    <div class="text-[10px] text-slate-500 font-mono mt-0.5">Target: 50 Qs</div>
+                                </div>
+                                <div class="space-y-1.5 pt-2 border-t border-slate-800/80">
+                                    <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl px-2.5 py-1.5 flex items-center justify-between text-[11px]">
+                                        <span class="text-slate-300 flex items-center gap-1.5 font-semibold"><span class="w-2 h-2 rounded-full bg-orange-500"></span> Chem</span>
+                                        <span id="report-q-chem" class="font-black font-mono text-orange-400">0 Qs</span>
+                                    </div>
+                                    <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl px-2.5 py-1.5 flex items-center justify-between text-[11px]">
+                                        <span class="text-slate-300 flex items-center gap-1.5 font-semibold"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Maths</span>
+                                        <span id="report-q-maths" class="font-black font-mono text-blue-400">0 Qs</span>
+                                    </div>
+                                    <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl px-2.5 py-1.5 flex items-center justify-between text-[11px]">
+                                        <span class="text-slate-300 flex items-center gap-1.5 font-semibold"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Physics</span>
+                                        <span id="report-q-physics" class="font-black font-mono text-rose-400">0 Qs</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
                         <div class="bg-[#0b0d13] border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-4">
                         <div class="flex items-center justify-between">
@@ -5307,51 +5322,170 @@ if (dayTasks.length === 0) {
         heatmapGrid.appendChild(row);
     });
 
-            // Subject Distribution Doughnut Chart & Center Text
-    const ctx = document.getElementById('reportSubjectChart');
-    if (ctx) {
-        if (reportChartInstance) reportChartInstance.destroy();
-        const distData = [subjectMinsMap.Physics, subjectMinsMap.Chemistry, subjectMinsMap.Maths];
-        const hasAnyData = distData.some(v => v > 0);
+            // Update question breakdown counters
+        document.getElementById('report-questions-count').innerText = `${totalQ} Qs`;
+        document.getElementById('report-q-chem').innerText = `${questions.c} Qs`;
+        document.getElementById('report-q-maths').innerText = `${questions.m} Qs`;
+        document.getElementById('report-q-physics').innerText = `${questions.p} Qs`;
 
-        // Custom Plugin to render total hours in the middle of the doughnut
-        const centerTextPlugin = {
-            id: 'centerText',
-            beforeDraw(chart) {
-                const { width, height, ctx } = chart;
-                ctx.restore();
-                const fontSize = (height / 110).toFixed(2);
-                ctx.font = `bold ${fontSize}rem Inter, sans-serif`;
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#ffffff';
+        // Streak
+        const streak = calculateStreak();
+        document.getElementById('report-streak-badge').innerText = `🔥 ${streak} DAYS STREAK`;
 
-                const text = formatDuration(totalFocusMins) || '0h';
-                const textX = Math.round((width - ctx.measureText(text).width) / 2);
-                const textY = height / 2;
+        // 30-Day Matrix & Mini Bars Renderer (Clean Month Calendar Style)
+        const heatmapGrid = document.getElementById('report-heatmap-grid');
+        const miniBarsEl = document.getElementById('report-mini-bars');
+        const matrixHeader = document.getElementById('report-matrix-header');
+        if (heatmapGrid) heatmapGrid.innerHTML = '';
+        if (miniBarsEl) miniBarsEl.innerHTML = '';
 
-                ctx.fillText(text, textX, textY);
-                ctx.save();
+        const endDateObj = new Date(reportSelectedDate + 'T00:00:00');
+        const daysList = [];
+        let total30dMins = 0;
+        let activeDaysCount = 0;
+
+        for (let i = 29; i >= -1; i--) {
+            const d = new Date(endDateObj);
+            d.setDate(d.getDate() - i);
+            const dStr = formatLocalDate(d);
+
+            const dayT = appState.scheduledTasks.filter(t => t.date === dStr);
+            let dayMins = 0;
+            dayT.forEach(t => dayMins += (Number(t.duration) || 0));
+
+            if (i >= 0 && dayMins > 0) activeDaysCount++;
+            if (i >= 0) total30dMins += dayMins;
+
+            daysList.push({ dateStr: dStr, dateObj: d, mins: dayMins, isFuture: i < 0 });
+        }
+
+        document.getElementById('report-active-days-stat').innerText = `${activeDaysCount} Active Days • ${formatDuration(total30dMins) || '0h'} Studied`;
+        const avgBadge = document.getElementById('report-avg-daily-badge');
+        if (avgBadge) avgBadge.style.display = 'none';
+
+        if (miniBarsEl) {
+            daysList.filter(x => !x.isFuture).forEach(item => {
+                const barPct = Math.min(100, Math.max(8, Math.round((item.mins / 300) * 100)));
+                const bar = document.createElement('div');
+                bar.className = `w-full rounded-t transition-all ${item.mins > 0 ? 'bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.4)]' : 'bg-slate-800/60'}`;
+                bar.style.height = `${barPct}%`;
+                bar.title = `${item.dateStr}: ${formatDuration(item.mins) || '0m'}`;
+                miniBarsEl.appendChild(bar);
+            });
+        }
+
+        const weeks = [];
+        let currentWeek = new Array(7).fill(null);
+
+        daysList.forEach((item, index) => {
+            const dayOfWeek = item.dateObj.getDay(); 
+            currentWeek[dayOfWeek] = item;
+            if (dayOfWeek === 6 || index === daysList.length - 1) {
+                weeks.push(currentWeek);
+                currentWeek = new Array(7).fill(null);
             }
-        };
-
-        reportChartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Physics', 'Chemistry', 'Maths'],
-                datasets: [{
-                    data: hasAnyData ? distData : [1, 1, 1],
-                    backgroundColor: hasAnyData ? ['#3b82f6', '#10b981', '#f97316'] : ['#1e293b', '#1e293b', '#1e293b'],
-                    borderWidth: 0, cutout: '74%'
-                }]
-            },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { legend: { display: false } } 
-            },
-            plugins: [centerTextPlugin]
         });
-    }
+
+        const numCols = weeks.length;
+        const gridTemplateColsVal = `40px repeat(${numCols}, minmax(0, 1fr))`;
+
+        if (matrixHeader) {
+            matrixHeader.style.gridTemplateColumns = gridTemplateColsVal;
+            matrixHeader.innerHTML = `<div></div>` + weeks.map(w => {
+                const validDay = w.find(x => x !== null);
+                const mLabel = validDay ? validDay.dateObj.toLocaleDateString('en-GB', { month: 'short' }) : '';
+                return `<div class="text-center text-[10px] font-bold text-slate-400">${mLabel}</div>`;
+            }).join('');
+        }
+
+        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        weekdays.forEach((dayName, dayIdx) => {
+            const row = document.createElement('div');
+            row.style.gridTemplateColumns = gridTemplateColsVal;
+            row.className = "grid gap-1.5 items-center";
+
+            const labelDiv = document.createElement('div');
+            labelDiv.className = "text-[10px] font-mono text-slate-500 font-bold text-left";
+            labelDiv.innerText = dayName;
+            row.appendChild(labelDiv);
+
+            weeks.forEach(week => {
+                const item = week[dayIdx];
+                const cell = document.createElement('div');
+                
+                if (!item) {
+                    cell.className = "h-8 rounded-xl bg-transparent";
+                } else {
+                    const m = item.mins;
+                    let bgStyle = "bg-transparent text-slate-500 border-slate-800/40";
+                    
+                    if (item.isFuture) {
+                        bgStyle = "bg-slate-900/40 text-slate-600 border-dashed border-slate-800 opacity-50";
+                    } else if (m >= 240) {
+                        bgStyle = "bg-cyan-400 text-slate-950 font-black shadow-[0_0_10px_rgba(34,211,238,0.5)] border-cyan-300";
+                    } else if (m >= 120) {
+                        bgStyle = "bg-cyan-500 text-slate-950 font-bold border-cyan-400";
+                    } else if (m >= 60) {
+                        bgStyle = "bg-cyan-700 text-white font-bold border-cyan-600";
+                    } else if (m > 0) {
+                        bgStyle = "bg-cyan-950 text-cyan-300 border-cyan-900";
+                    }
+
+                    const isSelected = item.dateStr === reportSelectedDate;
+                    cell.className = `h-8 rounded-xl border text-[11px] font-mono flex items-center justify-center ${bgStyle} ${isSelected ? 'ring-2 ring-white' : ''}`;
+                    cell.innerText = item.dateObj.getDate();
+                    cell.title = item.isFuture ? `${item.dateStr}: Upcoming Preview` : `${item.dateStr}: ${formatDuration(m) || '0m'} studied`;
+                }
+                row.appendChild(cell);
+            });
+            heatmapGrid.appendChild(row);
+        });
+
+        // Subject Distribution Doughnut Chart with Center Text Plugin
+        const ctx = document.getElementById('reportSubjectChart');
+        if (ctx) {
+            if (reportChartInstance) reportChartInstance.destroy();
+            const distData = [subjectMinsMap.Physics, subjectMinsMap.Chemistry, subjectMinsMap.Maths];
+            const hasAnyData = distData.some(v => v > 0);
+
+            const centerTextPlugin = {
+                id: 'centerText',
+                beforeDraw(chart) {
+                    const { width, height, ctx } = chart;
+                    ctx.restore();
+                    const fontSize = (height / 100).toFixed(2);
+                    ctx.font = `bold ${fontSize}rem Inter, sans-serif`;
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#ffffff';
+
+                    const text = formatDuration(totalFocusMins) || '0h';
+                    const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                    const textY = height / 2;
+
+                    ctx.fillText(text, textX, textY);
+                    ctx.save();
+                }
+            };
+
+            reportChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Physics', 'Chemistry', 'Maths'],
+                    datasets: [{
+                        data: hasAnyData ? distData : [1, 1, 1],
+                        backgroundColor: hasAnyData ? ['#3b82f6', '#10b981', '#f97316'] : ['#1e293b', '#1e293b', '#1e293b'],
+                        borderWidth: 0, cutout: '74%'
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } } 
+                },
+                plugins: [centerTextPlugin]
+            });
+        }
 
             // Subject Breakdown Bars
             const barsContainer = document.getElementById('report-subject-bars-container');
