@@ -5245,7 +5245,7 @@ if (dayTasks.length === 0) {
     let currentWeek = new Array(7).fill(null);
 
     daysList.forEach(item => {
-        const dayOfWeek = item.dateObj.getDay();
+        const dayOfWeek = item.dateObj.getDay(); // 0 = Sun, ..., 6 = Sat
         currentWeek[dayOfWeek] = item;
         if (dayOfWeek === 6 || item === daysList[daysList.length - 1]) {
             weeks.push(currentWeek);
@@ -5257,7 +5257,7 @@ if (dayTasks.length === 0) {
 
     // Render Month Headers for Columns
     if (matrixHeader) {
-        matrixHeader.className = `grid grid-cols-${numCols + 1} gap-1.5 mb-2 text-[11px] font-bold text-slate-400 font-mono text-center`;
+        matrixHeader.style.gridTemplateColumns = `40px repeat(${numCols}, minmax(0, 1fr))`;
         matrixHeader.innerHTML = `<div></div>` + weeks.map(w => {
             const validDay = w.find(x => x !== null);
             const mLabel = validDay ? validDay.dateObj.toLocaleDateString('en-GB', { month: 'short' }) : '';
@@ -5269,7 +5269,8 @@ if (dayTasks.length === 0) {
 
     weekdays.forEach((dayName, dayIdx) => {
         const row = document.createElement('div');
-        row.className = `grid grid-cols-${numCols + 1} gap-1.5 items-center`;
+        row.style.gridTemplateColumns = `40px repeat(${numCols}, minmax(0, 1fr))`;
+        row.className = `grid gap-1.5 items-center`;
 
         const labelDiv = document.createElement('div');
         labelDiv.className = "text-[10px] font-mono text-slate-500 font-bold text-left";
@@ -5281,7 +5282,7 @@ if (dayTasks.length === 0) {
             const cell = document.createElement('div');
             
             if (!item) {
-                cell.className = "h-7 rounded-xl bg-transparent";
+                cell.className = "h-8 rounded-xl bg-transparent";
             } else {
                 const m = item.mins;
                 let bgStyle = "bg-slate-900/90 text-slate-400 border-slate-800/80";
@@ -5291,10 +5292,10 @@ if (dayTasks.length === 0) {
                 else if (m > 0) bgStyle = "bg-cyan-950 text-cyan-300 border-cyan-900";
 
                 const isSelected = item.dateStr === reportSelectedDate;
-                cell.className = `h-7 rounded-xl border text-[11px] font-mono flex items-center justify-center cursor-pointer transition-transform hover:scale-105 ${bgStyle} ${isSelected ? 'ring-2 ring-white' : ''}`;
+                // Non-clickable tiles (removed cursor-pointer & click handler)
+                cell.className = `h-8 rounded-xl border text-[11px] font-mono flex items-center justify-center ${bgStyle} ${isSelected ? 'ring-2 ring-white' : ''}`;
                 cell.innerText = item.dateObj.getDate();
                 cell.title = `${item.dateStr}: ${formatDuration(m) || '0m'} studied`;
-                cell.onclick = () => viewReportForDate(item.dateStr);
             }
             row.appendChild(cell);
         });
