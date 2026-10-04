@@ -5184,6 +5184,9 @@ if (dayTasks.length === 0) {
             document.getElementById('report-focus-hours').innerText = formatDuration(totalFocusMins);
             document.getElementById('report-sessions-count').innerText = `${dayTasks.length} Sessions logged`;
             document.getElementById('report-questions-count').innerText = `${totalQ} Qs`;
+            document.getElementById('report-q-chem').innerText = `${questions.c} Qs`;
+            document.getElementById('report-q-maths').innerText = `${questions.m} Qs`;
+            document.getElementById('report-q-physics').innerText = `${questions.p} Qs`;
 
             // Streak
             const streak = calculateStreak();
@@ -5304,26 +5307,51 @@ if (dayTasks.length === 0) {
         heatmapGrid.appendChild(row);
     });
 
-            // Donut Chart
-            const ctx = document.getElementById('reportSubjectChart');
-            if (ctx) {
-                if (reportChartInstance) reportChartInstance.destroy();
-                const distData = [subjectMinsMap.Physics, subjectMinsMap.Chemistry, subjectMinsMap.Maths];
-                const hasAnyData = distData.some(v => v > 0);
+            // Subject Distribution Doughnut Chart & Center Text
+    const ctx = document.getElementById('reportSubjectChart');
+    if (ctx) {
+        if (reportChartInstance) reportChartInstance.destroy();
+        const distData = [subjectMinsMap.Physics, subjectMinsMap.Chemistry, subjectMinsMap.Maths];
+        const hasAnyData = distData.some(v => v > 0);
 
-                reportChartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Physics', 'Chemistry', 'Maths'],
-                        datasets: [{
-                            data: hasAnyData ? distData : [1, 1, 1],
-                            backgroundColor: hasAnyData ? ['#3b82f6', '#10b981', '#f97316'] : ['#1e293b', '#1e293b', '#1e293b'],
-                            borderWidth: 0, cutout: '74%'
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-                });
+        // Custom Plugin to render total hours in the middle of the doughnut
+        const centerTextPlugin = {
+            id: 'centerText',
+            beforeDraw(chart) {
+                const { width, height, ctx } = chart;
+                ctx.restore();
+                const fontSize = (height / 110).toFixed(2);
+                ctx.font = `bold ${fontSize}rem Inter, sans-serif`;
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#ffffff';
+
+                const text = formatDuration(totalFocusMins) || '0h';
+                const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                const textY = height / 2;
+
+                ctx.fillText(text, textX, textY);
+                ctx.save();
             }
+        };
+
+        reportChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Physics', 'Chemistry', 'Maths'],
+                datasets: [{
+                    data: hasAnyData ? distData : [1, 1, 1],
+                    backgroundColor: hasAnyData ? ['#3b82f6', '#10b981', '#f97316'] : ['#1e293b', '#1e293b', '#1e293b'],
+                    borderWidth: 0, cutout: '74%'
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { legend: { display: false } } 
+            },
+            plugins: [centerTextPlugin]
+        });
+    }
 
             // Subject Breakdown Bars
             const barsContainer = document.getElementById('report-subject-bars-container');
