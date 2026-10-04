@@ -5189,19 +5189,21 @@ if (dayTasks.length === 0) {
             const streak = calculateStreak();
             document.getElementById('report-streak-badge').innerText = `🔥 ${streak} DAYS STREAK`;
 
-           // 30-Day Matrix & Mini Bars Renderer
+           // 30-Day Matrix & Mini Bars Renderer (Clean Month Calendar Style)
     const heatmapGrid = document.getElementById('report-heatmap-grid');
     const miniBarsEl = document.getElementById('report-mini-bars');
     const matrixHeader = document.getElementById('report-matrix-header');
     if (heatmapGrid) heatmapGrid.innerHTML = '';
     if (miniBarsEl) miniBarsEl.innerHTML = '';
 
+    // Collect past 30 days + 1 extra future block for tomorrow
     const endDateObj = new Date(reportSelectedDate + 'T00:00:00');
     const daysList = [];
     let total30dMins = 0;
     let activeDaysCount = 0;
 
-    for (let i = 29; i >= 0; i--) {
+    // Loop from 29 days ago up to +1 day ahead (total 31 blocks: 30 days history + 1 future placeholder)
+    for (let i = 29; i >= -1; i--) {
         const d = new Date(endDateObj);
         d.setDate(d.getDate() - i);
         const dStr = formatLocalDate(d);
@@ -5210,19 +5212,19 @@ if (dayTasks.length === 0) {
         let dayMins = 0;
         dayT.forEach(t => dayMins += (Number(t.duration) || 0));
 
-        if (dayMins > 0) activeDaysCount++;
-        total30dMins += dayMins;
+        if (i >= 0 && dayMins > 0) activeDaysCount++;
+        if (i >= 0) total30dMins += dayMins;
 
-        daysList.push({ dateStr: dStr, dateObj: d, mins: dayMins });
+        daysList.push({ dateStr: dStr, dateObj: d, mins: dayMins, isFuture: i < 0 });
     }
 
     document.getElementById('report-active-days-stat').innerText = `${activeDaysCount} Active Days • ${formatDuration(total30dMins) || '0h'} Studied`;
     const avgBadge = document.getElementById('report-avg-daily-badge');
-    if (avgBadge) avgBadge.style.display = 'none'; // Removes average badge completely
+    if (avgBadge) avgBadge.style.display = 'none'; // Completely hidden as requested
 
-    // Render Mini Frequency Bars
+    // Render Mini Frequency Bars (excluding the future preview block)
     if (miniBarsEl) {
-        daysList.forEach(item => {
+        daysList.filter(x => !x.isFuture).forEach(item => {
             const barPct = Math.min(100, Math.max(8, Math.round((item.mins / 300) * 100)));
             const bar = document.createElement('div');
             bar.className = `w-full rounded-t transition-all ${item.mins > 0 ? 'bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.4)]' : 'bg-slate-800/60'}`;
@@ -5232,7 +5234,7 @@ if (dayTasks.length === 0) {
         });
     }
 
-    // Align days into weekly columns based on Sunday start
+    // Group into standard Sunday-to-Saturday weekly columns
     const weeks = [];
     let currentWeek = new Array(7).fill(null);
 
@@ -5248,6 +5250,7 @@ if (dayTasks.length === 0) {
     const numCols = weeks.length;
     const gridTemplateColsVal = `40px repeat(${numCols}, minmax(0, 1fr))`;
 
+    // Render Month Headers
     if (matrixHeader) {
         matrixHeader.style.gridTemplateColumns = gridTemplateColsVal;
         matrixHeader.innerHTML = `<div></div>` + weeks.map(w => {
@@ -5277,16 +5280,24 @@ if (dayTasks.length === 0) {
                 cell.className = "h-8 rounded-xl bg-transparent";
             } else {
                 const m = item.mins;
-                let bgStyle = "bg-slate-900/90 text-slate-400 border-slate-800/80";
-                if (m >= 240) bgStyle = "bg-cyan-400 text-slate-950 font-black shadow-[0_0_10px_rgba(34,211,238,0.5)] border-cyan-300";
-                else if (m >= 120) bgStyle = "bg-cyan-500 text-slate-950 font-bold border-cyan-400";
-                else if (m >= 60) bgStyle = "bg-cyan-700 text-white font-bold border-cyan-600";
-                else if (m > 0) bgStyle = "bg-cyan-950 text-cyan-300 border-cyan-900";
+                let bgStyle = "bg-transparent text-slate-500 border-slate-800/40"; // No color / clean calendar look for inactive days
+                
+                if (item.isFuture) {
+                    bgStyle = "bg-slate-900/40 text-slate-600 border-dashed border-slate-800 opacity-50";
+                } else if (m >= 240) {
+                    bgStyle = "bg-cyan-400 text-slate-950 font-black shadow-[0_0_10px_rgba(34,211,238,0.5)] border-cyan-300";
+                } else if (m >= 120) {
+                    bgStyle = "bg-cyan-500 text-slate-950 font-bold border-cyan-400";
+                } else if (m >= 60) {
+                    bgStyle = "bg-cyan-700 text-white font-bold border-cyan-600";
+                } else if (m > 0) {
+                    bgStyle = "bg-cyan-950 text-cyan-300 border-cyan-900";
+                }
 
                 const isSelected = item.dateStr === reportSelectedDate;
                 cell.className = `h-8 rounded-xl border text-[11px] font-mono flex items-center justify-center ${bgStyle} ${isSelected ? 'ring-2 ring-white' : ''}`;
                 cell.innerText = item.dateObj.getDate();
-                cell.title = `${item.dateStr}: ${formatDuration(m) || '0m'} studied`;
+                cell.title = item.isFuture ? `${item.dateStr}: Upcoming Preview` : `${item.dateStr}: ${formatDuration(m) || '0m'} studied`;
             }
             row.appendChild(cell);
         });
