@@ -4272,10 +4272,14 @@ const taskText = customTask
         function renderTestTable() {
     const tbody = document.getElementById('test-table-body');
     const filteredTests = getFilteredExamsList();
-    document.getElementById('test-count').innerText = `${filteredTests.length} Tests Recorded`;
+    
+    // Sort tests by date (newest first or oldest first; here sorted by date descending)
+    const sortedTests = [...filteredTests].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    document.getElementById('test-count').innerText = `${sortedTests.length} Tests Recorded`;
     tbody.innerHTML = '';
 
-    [...filteredTests].reverse().forEach((test, originalIndex) => {
+    sortedTests.forEach((test) => {
         const actualIdx = appState.tests.findIndex(x => x === test);
         const perc = (test.students && test.rank) ? ((test.students - test.rank) / test.students * 100).toFixed(1) : 'N/A';
         const typeBadge = `<span class="px-2 py-0.5 rounded text-[9px] font-bold ${(test.type || 'Mains') === 'Advanced' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}">${test.type || 'Mains'}</span>`;
