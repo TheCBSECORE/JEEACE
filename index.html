@@ -855,6 +855,7 @@
                             <span>0h → 5h+</span>
                         </div>
                     </div>
+                 </div>      
 
                     <!-- Subject Breakdown & Doughnut -->
                     <div class="lg:col-span-4 space-y-6">
@@ -5235,14 +5236,16 @@ if (dayTasks.length === 0) {
         });
     }
 
-    // Group 30 days into Sun-Sat matrix columns (weeks)
+    // Organize 30 days into standard Sunday-to-Saturday columns (weeks)
     const weeks = [];
     let currentWeek = new Array(7).fill(null);
 
-    daysList.forEach(item => {
+    daysList.forEach((item, index) => {
         const dayOfWeek = item.dateObj.getDay(); // 0 = Sun, ..., 6 = Sat
         currentWeek[dayOfWeek] = item;
-        if (dayOfWeek === 6 || item === daysList[daysList.length - 1]) {
+
+        // Push week if it hits Saturday or if it's the last item in the 30-day list
+        if (dayOfWeek === 6 || index === daysList.length - 1) {
             weeks.push(currentWeek);
             currentWeek = new Array(7).fill(null);
         }
@@ -5266,7 +5269,7 @@ if (dayTasks.length === 0) {
     weekdays.forEach((dayName, dayIdx) => {
         const row = document.createElement('div');
         row.style.gridTemplateColumns = gridTemplateColsVal;
-        row.className = "grid gap-1 items-center";
+        row.className = `grid gap-1.5 items-center`;
 
         const labelDiv = document.createElement('div');
         labelDiv.className = "text-[10px] font-mono text-slate-500 font-bold text-left";
@@ -5288,7 +5291,6 @@ if (dayTasks.length === 0) {
                 else if (m > 0) bgStyle = "bg-cyan-950 text-cyan-300 border-cyan-900";
 
                 const isSelected = item.dateStr === reportSelectedDate;
-                // Non-clickable tiles (no click handlers assigned)
                 cell.className = `h-8 rounded-xl border text-[11px] font-mono flex items-center justify-center ${bgStyle} ${isSelected ? 'ring-2 ring-white' : ''}`;
                 cell.innerText = item.dateObj.getDate();
                 cell.title = `${item.dateStr}: ${formatDuration(m) || '0m'} studied`;
