@@ -856,8 +856,6 @@
         </div>
         <span>0h → 5h+</span>
     </div>
-</div>
-  <div>                      
 
                     <!-- Subject Breakdown & Doughnut -->
                     <div class="lg:col-span-4 space-y-6">
@@ -5193,6 +5191,7 @@ if (dayTasks.length === 0) {
 
             // Month Heatmap: Starts strictly at Day 1 of the chosen month
 // 30-Day Matrix & Mini Bars Renderer
+    // 30-Day Matrix & Mini Bars Renderer
     const heatmapGrid = document.getElementById('report-heatmap-grid');
     const miniBarsEl = document.getElementById('report-mini-bars');
     const matrixHeader = document.getElementById('report-matrix-header');
@@ -5210,7 +5209,6 @@ if (dayTasks.length === 0) {
         d.setDate(d.getDate() - i);
         const dStr = formatLocalDate(d);
 
-        // Calculate total study minutes for this day
         const dayT = appState.scheduledTasks.filter(t => t.date === dStr);
         let dayMins = 0;
         dayT.forEach(t => dayMins += (Number(t.duration) || 0));
@@ -5228,7 +5226,7 @@ if (dayTasks.length === 0) {
     const avgBadge = document.getElementById('report-avg-daily-badge');
     if (avgBadge) avgBadge.innerText = `${avgH}h ${avgM}m/d`;
 
-    // Render Mini Frequency Bars (Top Bar Graph)
+    // Render Mini Frequency Bars
     if (miniBarsEl) {
         daysList.forEach(item => {
             const barPct = Math.min(100, Math.max(8, Math.round((item.mins / 300) * 100)));
@@ -5245,7 +5243,7 @@ if (dayTasks.length === 0) {
     let currentWeek = new Array(7).fill(null);
 
     daysList.forEach(item => {
-        const dayOfWeek = item.dateObj.getDay(); // 0 = Sun, ..., 6 = Sat
+        const dayOfWeek = item.dateObj.getDay();
         currentWeek[dayOfWeek] = item;
         if (dayOfWeek === 6 || item === daysList[daysList.length - 1]) {
             weeks.push(currentWeek);
@@ -5253,9 +5251,12 @@ if (dayTasks.length === 0) {
         }
     });
 
+    const numCols = weeks.length;
+
     // Render Month Headers for Columns
     if (matrixHeader) {
-        matrixHeader.innerHTML = `<div class="text-left text-[10px] text-slate-500"></div>` + weeks.map(w => {
+        matrixHeader.className = `grid grid-cols-${numCols + 1} gap-1.5 mb-2 text-[11px] font-bold text-slate-400 font-mono text-center`;
+        matrixHeader.innerHTML = `<div></div>` + weeks.map(w => {
             const validDay = w.find(x => x !== null);
             const mLabel = validDay ? validDay.dateObj.toLocaleDateString('en-GB', { month: 'short' }) : '';
             return `<div class="text-center text-[10px] font-bold text-slate-400">${mLabel}</div>`;
@@ -5266,15 +5267,13 @@ if (dayTasks.length === 0) {
 
     weekdays.forEach((dayName, dayIdx) => {
         const row = document.createElement('div');
-        row.className = "grid grid-cols-6 gap-1.5 items-center";
+        row.className = `grid grid-cols-${numCols + 1} gap-1.5 items-center`;
 
-        // Day label column
         const labelDiv = document.createElement('div');
         labelDiv.className = "text-[10px] font-mono text-slate-500 font-bold text-left";
         labelDiv.innerText = dayName;
         row.appendChild(labelDiv);
 
-        // Week columns
         weeks.forEach(week => {
             const item = week[dayIdx];
             const cell = document.createElement('div');
