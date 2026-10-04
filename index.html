@@ -5189,9 +5189,7 @@ if (dayTasks.length === 0) {
             const streak = calculateStreak();
             document.getElementById('report-streak-badge').innerText = `🔥 ${streak} DAYS STREAK`;
 
-            // Month Heatmap: Starts strictly at Day 1 of the chosen month
-// 30-Day Matrix & Mini Bars Renderer
-    // 30-Day Matrix & Mini Bars Renderer
+            // 30-Day Matrix & Mini Bars Renderer
     const heatmapGrid = document.getElementById('report-heatmap-grid');
     const miniBarsEl = document.getElementById('report-mini-bars');
     const matrixHeader = document.getElementById('report-matrix-header');
@@ -5252,10 +5250,11 @@ if (dayTasks.length === 0) {
     });
 
     const numCols = weeks.length;
+    const gridTemplateColsVal = `40px repeat(${numCols}, minmax(0, 1fr))`;
 
     // Render Month Headers for Columns
     if (matrixHeader) {
-        matrixHeader.style.gridTemplateColumns = `40px repeat(${numCols}, minmax(0, 1fr))`;
+        matrixHeader.style.gridTemplateColumns = gridTemplateColsVal;
         matrixHeader.innerHTML = `<div></div>` + weeks.map(w => {
             const validDay = w.find(x => x !== null);
             const mLabel = validDay ? validDay.dateObj.toLocaleDateString('en-GB', { month: 'short' }) : '';
@@ -5267,8 +5266,8 @@ if (dayTasks.length === 0) {
 
     weekdays.forEach((dayName, dayIdx) => {
         const row = document.createElement('div');
-        row.style.gridTemplateColumns = `40px repeat(${numCols}, minmax(0, 1fr))`;
-        row.className = `grid gap-1.5 items-center`;
+        row.style.gridTemplateColumns = gridTemplateColsVal;
+        row.className = "grid gap-1 items-center";
 
         const labelDiv = document.createElement('div');
         labelDiv.className = "text-[10px] font-mono text-slate-500 font-bold text-left";
@@ -5290,7 +5289,7 @@ if (dayTasks.length === 0) {
                 else if (m > 0) bgStyle = "bg-cyan-950 text-cyan-300 border-cyan-900";
 
                 const isSelected = item.dateStr === reportSelectedDate;
-                // Non-clickable tiles (removed cursor-pointer & click handler)
+                // Non-clickable tiles (no click handlers assigned)
                 cell.className = `h-8 rounded-xl border text-[11px] font-mono flex items-center justify-center ${bgStyle} ${isSelected ? 'ring-2 ring-white' : ''}`;
                 cell.innerText = item.dateObj.getDate();
                 cell.title = `${item.dateStr}: ${formatDuration(m) || '0m'} studied`;
