@@ -5189,14 +5189,13 @@ if (dayTasks.length === 0) {
             const streak = calculateStreak();
             document.getElementById('report-streak-badge').innerText = `🔥 ${streak} DAYS STREAK`;
 
-            // 30-Day Matrix & Mini Bars Renderer
+           // 30-Day Matrix & Mini Bars Renderer
     const heatmapGrid = document.getElementById('report-heatmap-grid');
     const miniBarsEl = document.getElementById('report-mini-bars');
     const matrixHeader = document.getElementById('report-matrix-header');
     if (heatmapGrid) heatmapGrid.innerHTML = '';
     if (miniBarsEl) miniBarsEl.innerHTML = '';
 
-    // Collect last 30 days ending at reportSelectedDate
     const endDateObj = new Date(reportSelectedDate + 'T00:00:00');
     const daysList = [];
     let total30dMins = 0;
@@ -5217,12 +5216,9 @@ if (dayTasks.length === 0) {
         daysList.push({ dateStr: dStr, dateObj: d, mins: dayMins });
     }
 
-    const avgDailyMins = Math.round(total30dMins / 30);
-    const avgH = Math.floor(avgDailyMins / 60);
-    const avgM = avgDailyMins % 60;
     document.getElementById('report-active-days-stat').innerText = `${activeDaysCount} Active Days • ${formatDuration(total30dMins) || '0h'} Studied`;
     const avgBadge = document.getElementById('report-avg-daily-badge');
-    if (avgBadge) avgBadge.innerText = `${avgH}h ${avgM}m/d`;
+    if (avgBadge) avgBadge.style.display = 'none'; // Removes average badge completely
 
     // Render Mini Frequency Bars
     if (miniBarsEl) {
@@ -5236,15 +5232,13 @@ if (dayTasks.length === 0) {
         });
     }
 
-    // Organize 30 days into standard Sunday-to-Saturday columns (weeks)
+    // Align days into weekly columns based on Sunday start
     const weeks = [];
     let currentWeek = new Array(7).fill(null);
 
     daysList.forEach((item, index) => {
-        const dayOfWeek = item.dateObj.getDay(); // 0 = Sun, ..., 6 = Sat
+        const dayOfWeek = item.dateObj.getDay(); 
         currentWeek[dayOfWeek] = item;
-
-        // Push week if it hits Saturday or if it's the last item in the 30-day list
         if (dayOfWeek === 6 || index === daysList.length - 1) {
             weeks.push(currentWeek);
             currentWeek = new Array(7).fill(null);
@@ -5254,7 +5248,6 @@ if (dayTasks.length === 0) {
     const numCols = weeks.length;
     const gridTemplateColsVal = `40px repeat(${numCols}, minmax(0, 1fr))`;
 
-    // Render Month Headers for Columns
     if (matrixHeader) {
         matrixHeader.style.gridTemplateColumns = gridTemplateColsVal;
         matrixHeader.innerHTML = `<div></div>` + weeks.map(w => {
@@ -5269,7 +5262,7 @@ if (dayTasks.length === 0) {
     weekdays.forEach((dayName, dayIdx) => {
         const row = document.createElement('div');
         row.style.gridTemplateColumns = gridTemplateColsVal;
-        row.className = `grid gap-1.5 items-center`;
+        row.className = "grid gap-1.5 items-center";
 
         const labelDiv = document.createElement('div');
         labelDiv.className = "text-[10px] font-mono text-slate-500 font-bold text-left";
