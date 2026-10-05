@@ -179,6 +179,13 @@
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse sidebar-full-only shrink-0"></span>
                 </button>
             </div>
+            <!-- Find this in your sidebar nav -->
+<div class="rail-btn">
+    <button onclick="switchTab('dailylog')" id="nav-btn-dailylog" title="Daily Log" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 transition-all">
+        <i data-lucide="calendar-check" class="w-4 h-4 shrink-0 text-cyan-400"></i>
+        <span class="sidebar-full-only truncate">Daily Log</span>
+    </button>
+</div>
             <!-- Daily Report Sidebar Button -->
             <div class="rail-btn">
                 <button onclick="switchTab('report')" id="nav-btn-report" title="Daily Report" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-emerald-400 hover:bg-slate-900/60 transition-all">
@@ -738,6 +745,32 @@
                     <iframe src="https://thecbsecore.github.io/jhcnb-JBCFEA" class="w-full h-[540px] border-0" loading="lazy"></iframe>
                 </div>
             </div>
+
+                <!-- TAB: DAILY LOG (FULL PAGE MONTHLY CALENDAR) -->
+<div id="view-dailylog" class="hidden space-y-6">
+    <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                <h2 class="text-2xl font-black text-white" id="dailylog-month-title">Daily Log Calendar</h2>
+            </div>
+            <p class="text-slate-400 text-xs">Track your attendance and daily homework for Maths, Physics, and Chemistry.</p>
+        </div>
+        <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+            <button onclick="navDailyLogMonth(-1)" class="p-2 hover:text-cyan-400 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+            <button onclick="navDailyLogMonth(0)" class="px-3 py-1 text-xs font-bold hover:text-cyan-400 transition-colors">This Month</button>
+            <button onclick="navDailyLogMonth(1)" class="p-2 hover:text-cyan-400 transition-colors"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+        </div>
+    </div>
+
+    <!-- Big Monthly Calendar View -->
+    <div class="glass-card rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
+        <div class="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80 font-mono text-[11px] font-black text-slate-400 uppercase tracking-widest text-center py-3">
+            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        </div>
+        <div id="dailylog-month-grid" class="calendar-grid divide-x divide-y divide-slate-800 bg-slate-950/40"></div>
+    </div>
+</div>
 
             <!-- TAB: DAILY REPORT (CHAOSPREP STYLE) -->
             <div id="view-report" class="hidden space-y-6">
@@ -1929,6 +1962,7 @@
             apiKey: localStorage.getItem('jee_api_key') || '',
             chatHistory: JSON.parse(localStorage.getItem('jee_ai_chats')) || [],
             isSidebarCollapsed: JSON.parse(localStorage.getItem('jee_sidebar_collapsed')) || false
+            dailyLogs: JSON.parse(localStorage.getItem('jee_daily_logs')) || {}, // Format: { "YYYY-MM-DD": { attendance: "Present", maths: true, physics: false, chemistry: false } }
         };
 
         if (!appState.prepCategories["11"] || !appState.prepCategories["11"]["Physics"]) {
@@ -1957,6 +1991,7 @@
             localStorage.setItem('jee_api_key', appState.apiKey);
             localStorage.setItem('jee_ai_chats', JSON.stringify(appState.chatHistory));
             localStorage.setItem('jee_sidebar_collapsed', JSON.stringify(appState.isSidebarCollapsed));
+            localStorage.setItem('jee_daily_logs', JSON.stringify(appState.dailyLogs));
         };
 
         function toggleSidebarRail() {
@@ -4812,6 +4847,9 @@ ${dailyQuestionsTelemetry}
 - Long & Short Term Goals: ${longAndShortGoals}
 - Weekly Goals: ${weeklyGoals}
 
+10. DAILY LOGS (Attendance & Homework Tracker):
+${dailyLogsData}
+
 COACHING DIRECTIVES:
 - You have full, transparent access to every single data point listed above. Use exact chapter names, test score numbers, and routine timings whenever giving advice or analyzing progress.
 - Always be concise, actionable, and encouraging with zero generic fluff.
@@ -5370,6 +5408,94 @@ if (dqBreakdownEl) {
             lucide.createIcons();
         }
 
+        let dailyLogCurrentDate = new Date();
+
+function navDailyLogMonth(delta) {
+    if (delta === 0) {
+        dailyLogCurrentDate = new Date();
+    } else {
+        dailyLogCurrentDate.setMonth(dailyLogCurrentDate.getMonth() + delta);
+    }
+    renderDailyLogCalendar();
+}
+
+function getDailyLogData(dateStr) {
+    if (!appState.dailyLogs[dateStr]) {
+        appState.dailyLogs[dateStr] = { attendance: 'Not Set', maths: false, physics: false, chemistry: false };
+    }
+    return appState.dailyLogs[dateStr];
+}
+
+function updateDailyLogField(dateStr, field, value) {
+    const entry = getDailyLogData(dateStr);
+    entry[field] = value;
+    saveToStorage();
+    renderDailyLogCalendar();
+}
+
+function renderDailyLogCalendar() {
+    const grid = document.getElementById('dailylog-month-grid');
+    const title = document.getElementById('dailylog-month-title');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    const year = dailyLogCurrentDate.getFullYear();
+    const month = dailyLogCurrentDate.getMonth();
+    title.innerText = dailyLogCurrentDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDayIndex; i++) {
+        grid.innerHTML += `<div class="calendar-cell bg-slate-900/20 p-2 border-r border-b border-slate-800/40" style="min-height: 160px;"></div>`;
+    }
+
+    for (let d = 1; d <= totalDays; d++) {
+        const thisDate = new Date(year, month, d);
+        const dateStr = formatLocalDate(thisDate);
+        const isToday = formatLocalDate(new Date()) === dateStr;
+        const log = getDailyLogData(dateStr);
+
+        // Attendance color styling for dropdown
+        let selectColor = 'bg-slate-900 text-slate-300 border-slate-700';
+        if (log.attendance === 'Present') selectColor = 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40';
+        else if (log.attendance === 'Not present') selectColor = 'bg-rose-950/60 text-rose-300 border-rose-500/40';
+        else if (log.attendance === 'Holiday') selectColor = 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40';
+
+        const cell = document.createElement('div');
+        cell.className = `calendar-cell p-2.5 border-r border-b border-slate-800/70 flex flex-col justify-between ${isToday ? 'bg-indigo-950/20' : 'bg-slate-950/40'}`;
+        cell.style.minHeight = '160px';
+
+        cell.innerHTML = `
+            <div class="flex justify-between items-center mb-1.5">
+                <span class="text-xs font-bold ${isToday ? 'w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black' : 'text-slate-400'}">${d}</span>
+                <select onchange="updateDailyLogField('${dateStr}', 'attendance', this.value)" class="text-[10px] font-bold rounded-lg px-2 py-1 border outline-none cursor-pointer ${selectColor}">
+                    <option value="Not Set" ${log.attendance === 'Not Set' ? 'selected' : ''}>Attendance</option>
+                    <option value="Present" ${log.attendance === 'Present' ? 'selected' : ''}>🟢 Present</option>
+                    <option value="Not present" ${log.attendance === 'Not present' ? 'selected' : ''}>🔴 Not present</option>
+                    <option value="Holiday" ${log.attendance === 'Holiday' ? 'selected' : ''}>🔵 Holiday</option>
+                </select>
+            </div>
+            <div class="space-y-1.5 pt-1 border-t border-slate-800/60 text-xs">
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" ${log.maths ? 'checked' : ''} onchange="updateDailyLogField('${dateStr}', 'maths', this.checked)" class="w-3.5 h-3.5 rounded text-orange-500 bg-slate-900 border-slate-700">
+                    <span class="text-[11px] truncate ${log.maths ? 'line-through text-slate-500' : 'text-slate-300'}">Maths HW</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" ${log.physics ? 'checked' : ''} onchange="updateDailyLogField('${dateStr}', 'physics', this.checked)" class="w-3.5 h-3.5 rounded text-blue-500 bg-slate-900 border-slate-700">
+                    <span class="text-[11px] truncate ${log.physics ? 'line-through text-slate-500' : 'text-slate-300'}">Physics HW</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" ${log.chemistry ? 'checked' : ''} onchange="updateDailyLogField('${dateStr}', 'chemistry', this.checked)" class="w-3.5 h-3.5 rounded text-emerald-500 bg-slate-900 border-slate-700">
+                    <span class="text-[11px] truncate ${log.chemistry ? 'line-through text-slate-500' : 'text-slate-300'}">Chemistry HW</span>
+                </label>
+            </div>
+        `;
+        grid.appendChild(cell);
+    }
+    lucide.createIcons();
+}
+
 
         function exportBackup() {
             // Bundle every single piece of user data into one comprehensive backup
@@ -5418,7 +5544,7 @@ if (dqBreakdownEl) {
 
         function switchTab(tab) {
             activeCurrentTab = tab; // Track current tab
-            const tabs = ['analytics', 'planner', 'daily', 'report', 'timer', 'f1hub', 'goals', 'fullprep'];
+            const tabs = ['analytics', 'planner', 'daily', 'dailylog', 'report', 'timer', 'f1hub', 'goals', 'fullprep'];
 
             tabs.forEach(name => {
                 const view = document.getElementById(`view-${name}`);
@@ -5445,6 +5571,7 @@ if (dqBreakdownEl) {
             if (tab === 'goals') renderGoals();
             if (tab === 'report') renderDailyReportUI();
             if (tab === 'fullprep') renderPrepSyllabusTree();
+            if (tab === 'dailylog') renderDailyLogCalendar();
 
             updateGlobalTimerStrip(); // Automatically shows or hides the strip based on the tab!
             lucide.createIcons();
