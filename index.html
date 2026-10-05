@@ -4798,6 +4798,7 @@ const taskText = customTask
             const doneCount = allChapters.filter(c => c.status === 'Done').length;
             const doingCount = allChapters.filter(c => c.status === 'Doing').length;
             const todoCount = allChapters.filter(c => c.status === 'To Do').length;
+            const dailyLogsData = JSON.stringify(appState.dailyLogs || {});
 
             const timerState = {
                 isRunning: isTimerRunning,
