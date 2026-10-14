@@ -740,6 +740,145 @@
                     <div id="weekly-goals-list" class="space-y-2 pt-2"></div>
                 </div>
 
+                <!-- ==========================================
+                     DEEP FOCUS TELEMETRY & HEATMAP (FROM SCREENSHOTS)
+                     ========================================== -->
+                <div class="space-y-6 pt-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Left 8 Cols: 8 Metric Cards + Study Trends Bar Chart -->
+                        <div class="lg:col-span-8 space-y-6">
+                            <!-- 8 Stat Cards Grid -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                                <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                                    <i data-lucide="flame" class="w-4 h-4 text-orange-500 mb-1.5"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">STUDY STREAK</span>
+                                    <div id="dp-stat-streak" class="text-xl font-black text-white mt-0.5 font-mono">0 <span class="text-xs font-normal text-slate-400">Days</span></div>
+                                </div>
+                                <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                                    <i data-lucide="clock" class="w-4 h-4 text-amber-500 mb-1.5"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">FOCUSED TODAY</span>
+                                    <div id="dp-stat-today" class="text-xl font-black text-white mt-0.5 font-mono">0m</div>
+                                </div>
+                                <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                                    <i data-lucide="activity" class="w-4 h-4 text-blue-500 mb-1.5"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">7-DAY AVG</span>
+                                    <div id="dp-stat-7d-avg" class="text-xl font-black text-white mt-0.5 font-mono">0m</div>
+                                </div>
+                                <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                                    <i data-lucide="trophy" class="w-4 h-4 text-emerald-500 mb-1.5"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">7-DAY PEAK</span>
+                                    <div id="dp-stat-7d-peak" class="text-xl font-black text-white mt-0.5 font-mono">0m</div>
+                                </div>
+                                <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                                    <i data-lucide="target" class="w-4 h-4 text-rose-500 mb-1.5"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">CONSISTENCY (30D)</span>
+                                    <div id="dp-stat-consistency" class="text-xl font-black text-white mt-0.5 font-mono">0%</div>
+                                </div>
+                                <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                                    <i data-lucide="zap" class="w-4 h-4 text-indigo-400 mb-1.5"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">AVG SESSION</span>
+                                    <div id="dp-stat-avg-session" class="text-xl font-black text-white mt-0.5 font-mono">0m</div>
+                                </div>
+                                <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                                    <i data-lucide="moon" class="w-4 h-4 text-purple-400 mb-1.5"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">CHRONOTYPE</span>
+                                    <div id="dp-stat-chronotype" class="text-sm font-black text-white mt-1 uppercase tracking-tight">BALANCED</div>
+                                </div>
+                                <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                                    <i data-lucide="calendar" class="w-4 h-4 text-yellow-500 mb-1.5"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">WKND VS WKDY</span>
+                                    <div id="dp-stat-wknd-wkdy" class="text-sm font-black text-white mt-1 font-mono">0m / 0m</div>
+                                </div>
+                            </div>
+
+                            <!-- Study Trends Weekly Bar Chart -->
+                            <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-6 shadow-2xl space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-base font-black text-white tracking-tight">Study Trends</h4>
+                                    <div class="flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-1 text-[10px] font-mono font-bold text-slate-300">
+                                        <button onclick="navStudyTrendsWeek(-1)" class="hover:text-white p-0.5"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
+                                        <span id="dp-trends-week-label" class="px-2 uppercase">THIS WEEK</span>
+                                        <button onclick="navStudyTrendsWeek(1)" class="hover:text-white p-0.5"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                                    </div>
+                                </div>
+                                <div class="relative w-full h-[220px]">
+                                    <canvas id="dpStudyTrendsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right 4 Cols: Deep Insights + Subject Breakdown -->
+                        <div class="lg:col-span-4 space-y-6">
+                            <!-- Deep Insights Card -->
+                            <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-6 shadow-2xl space-y-4">
+                                <h4 class="text-base font-black text-white tracking-tight">Deep Insights</h4>
+                                <div class="p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 flex items-center gap-3.5">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                                        <i data-lucide="sun" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">PEAK FOCUS TIME</div>
+                                        <div id="dp-insight-peak-time" class="text-sm font-black text-white mt-0.5">No Data Yet</div>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 flex items-center gap-3.5">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                                        <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-[9px] font-black uppercase tracking-widest text-slate-500">MOST PRODUCTIVE DAY</div>
+                                        <div id="dp-insight-best-day" class="text-sm font-black text-white mt-0.5">No Data Yet</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Subject Breakdown Card -->
+                            <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-6 shadow-2xl space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-base font-black text-white leading-tight">Subject<br>Breakdown</h4>
+                                    <select id="dp-subject-range" onchange="renderDailyPlannerTelemetry()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-300 outline-none cursor-pointer">
+                                        <option value="all">All Time</option>
+                                        <option value="30d">Last 30 Days</option>
+                                        <option value="7d">Last 7 Days</option>
+                                        <option value="today">Today</option>
+                                    </select>
+                                </div>
+                                <div class="relative w-full h-[210px] flex items-center justify-center">
+                                    <canvas id="dpSubjectBreakdownChart"></canvas>
+                                </div>
+                                <div id="dp-subject-legend" class="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs font-bold"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 30-Day Momentum Area Chart -->
+                    <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-6 shadow-2xl space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-base font-black text-white tracking-tight">30-Day Momentum</h4>
+                            <span id="dp-30d-total-badge" class="px-3 py-1 rounded-xl bg-slate-900 border border-slate-800 text-[10px] font-mono font-bold text-slate-300 uppercase">30D TOTAL: 0M</span>
+                        </div>
+                        <div class="relative w-full h-[220px]">
+                            <canvas id="dpMomentumChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Focus Heatmap -->
+                    <div class="bg-[#0b0d13] border border-slate-800/90 rounded-3xl p-6 shadow-2xl space-y-5">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-base font-black text-white tracking-tight">Monthly Focus Heatmap</h4>
+                            <div class="flex items-center gap-3 font-mono text-xs font-bold text-slate-300">
+                                <button onclick="navDpHeatmapMonth(-1)" class="p-1 hover:text-white"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                                <span id="dp-heatmap-month-label" class="uppercase tracking-wider">OCT 2026</span>
+                                <button onclick="navDpHeatmapMonth(1)" class="p-1 hover:text-white"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-black uppercase tracking-widest text-slate-500">
+                            <div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div><div>SUN</div>
+                        </div>
+                        <div id="dp-monthly-heatmap-grid" class="grid grid-cols-7 gap-2.5"></div>
+                    </div>
+                </div>
+
                 <!-- Motivation Embed Banner -->
                 <div class="w-full rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900 mt-6">
                     <iframe src="https://thecbsecore.github.io/jhcnb-JBCFEA" class="w-full h-[540px] border-0" loading="lazy"></iframe>
@@ -2916,6 +3055,7 @@
                 renderTaskList();
             }
             renderTaskMetrics();
+            renderDailyPlannerTelemetry()
             renderDailyQuestionsTracker();
             lucide.createIcons();
         }
@@ -3034,6 +3174,386 @@
                 const pending = taskList.filter(t => t.status !== 'Completed' && t.status !== 'In Progress').length;
                 return { done, inProg, pending, total: taskList.length };
             };
+
+            // ==========================================
+        // --- DEEP FOCUS TELEMETRY & HEATMAP ENGINE ---
+        // ==========================================
+        let dpTrendsWeekOffset = 0;
+        let dpHeatmapDate = new Date();
+        let dpTrendsChartInstance = null;
+        let dpMomentumChartInstance = null;
+        let dpSubChartInstance = null;
+
+        function navStudyTrendsWeek(delta) {
+            dpTrendsWeekOffset += delta;
+            renderDailyPlannerTelemetry();
+        }
+
+        function navDpHeatmapMonth(delta) {
+            dpHeatmapDate.setMonth(dpHeatmapDate.getMonth() + delta);
+            renderDailyPlannerTelemetry();
+        }
+
+        function getTaskMinutes(t) {
+            let mins = Number(t.duration) || 0;
+            if (!mins && t.start && t.end) mins = calculateDurationMinutes(t.start, t.end);
+            return Math.max(0, mins);
+        }
+
+        function getCompletedSessions() {
+            return (appState.scheduledTasks || []).filter(t => t.status === 'Completed' && getTaskMinutes(t) > 0);
+        }
+
+        function computeDeepTelemetryStats() {
+            const completed = getCompletedSessions();
+            const now = new Date();
+            const todayStr = formatLocalDate(now);
+
+            // 1. Focused Today
+            const todayMins = completed.filter(t => t.date === todayStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+
+            // 2. 7-Day Avg & 7-Day Peak
+            let last7DaysMins = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - i);
+                const dStr = formatLocalDate(d);
+                const m = completed.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                last7DaysMins.push(m);
+            }
+            const sum7d = last7DaysMins.reduce((a, b) => a + b, 0);
+            const avg7d = Math.round(sum7d / 7);
+            const peak7d = Math.max(0, ...last7DaysMins);
+
+            // 3. 30-Day Consistency & 30-Day Total
+            let active30dDays = 0;
+            let total30dMins = 0;
+            let daily30dSeries = [];
+            for (let i = 29; i >= 0; i--) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - i);
+                const dStr = formatLocalDate(d);
+                const m = completed.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                if (m > 0) active30dDays++;
+                total30dMins += m;
+                daily30dSeries.push({
+                    dateStr: dStr,
+                    label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                    hours: +(m / 60).toFixed(2),
+                    mins: m
+                });
+            }
+            const consistency30d = Math.round((active30dDays / 30) * 100);
+
+            // 4. Average Session Duration
+            const totalAllTimeMins = completed.reduce((acc, t) => acc + getTaskMinutes(t), 0);
+            const avgSessionMins = completed.length > 0 ? Math.round(totalAllTimeMins / completed.length) : 0;
+
+            // 5. Chronotype & Peak Focus Time
+            const buckets = {
+                'Morning (5a-12p)': 0,
+                'Afternoon (12p-5p)': 0,
+                'Evening (5p-9p)': 0,
+                'Night (9p-5a)': 0
+            };
+            completed.forEach(t => {
+                let hour = 21; // default evening/night if no start time
+                if (t.start && t.start.includes(':')) {
+                    hour = parseInt(t.start.split(':')[0], 10);
+                }
+                const m = getTaskMinutes(t);
+                if (hour >= 5 && hour < 12) buckets['Morning (5a-12p)'] += m;
+                else if (hour >= 12 && hour < 17) buckets['Afternoon (12p-5p)'] += m;
+                else if (hour >= 17 && hour < 21) buckets['Evening (5p-9p)'] += m;
+                else buckets['Night (9p-5a)'] += m;
+            });
+
+            let peakBucket = 'Night (9p-5a)';
+            let maxBucketMins = -1;
+            Object.entries(buckets).forEach(([k, v]) => {
+                if (v > maxBucketMins) { maxBucketMins = v; peakBucket = k; }
+            });
+
+            let chronotype = 'BALANCED';
+            if (maxBucketMins > 0) {
+                if (peakBucket.startsWith('Morning')) chronotype = 'EARLY BIRD';
+                else if (peakBucket.startsWith('Afternoon')) chronotype = 'DAY WALKER';
+                else if (peakBucket.startsWith('Evening')) chronotype = 'TWILIGHT HUSTLER';
+                else chronotype = 'NIGHT OWL';
+            }
+
+            // 6. Weekend vs Weekday Average (Last 30 Days)
+            let wkndMins = 0, wkndDays = 0, wkdyMins = 0, wkdyDays = 0;
+            daily30dSeries.forEach(item => {
+                const dayOfWeek = new Date(item.dateStr + 'T00:00:00').getDay();
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    wkndMins += item.mins;
+                    wkndDays++;
+                } else {
+                    wkdyMins += item.mins;
+                    wkdyDays++;
+                }
+            });
+            const wkndAvg = wkndDays ? Math.round(wkndMins / wkndDays) : 0;
+            const wkdyAvg = wkdyDays ? Math.round(wkdyMins / wkdyDays) : 0;
+
+            // 7. Most Productive Day of the Week
+            const dowTotals = [0, 0, 0, 0, 0, 0, 0];
+            const dowNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            completed.forEach(t => {
+                const d = new Date(t.date + 'T00:00:00');
+                if (!isNaN(d)) dowTotals[d.getDay()] += getTaskMinutes(t);
+            });
+            const maxDowVal = Math.max(...dowTotals);
+            const bestDayName = maxDowVal > 0 ? dowNames[dowTotals.indexOf(maxDowVal)] : 'No Data Yet';
+
+            return {
+                streak: calculateStreak(),
+                todayMins,
+                avg7d,
+                peak7d,
+                consistency30d,
+                avgSessionMins,
+                chronotype,
+                peakFocusTime: maxBucketMins > 0 ? peakBucket : 'No Data Yet',
+                wkndAvg,
+                wkdyAvg,
+                bestDayName,
+                total30dMins,
+                daily30dSeries
+            };
+        }
+
+        function renderDailyPlannerTelemetry() {
+            const stats = computeDeepTelemetryStats();
+            const fmt = (m) => formatDuration(m) || '0m';
+
+            const elStreak = document.getElementById('dp-stat-streak');
+            if (!elStreak) return;
+
+            elStreak.innerHTML = `${stats.streak} <span class="text-xs font-normal text-slate-400">Days</span>`;
+            document.getElementById('dp-stat-today').innerText = fmt(stats.todayMins);
+            document.getElementById('dp-stat-7d-avg').innerText = fmt(stats.avg7d);
+            document.getElementById('dp-stat-7d-peak').innerText = fmt(stats.peak7d);
+            document.getElementById('dp-stat-consistency').innerText = `${stats.consistency30d}%`;
+            document.getElementById('dp-stat-avg-session').innerText = fmt(stats.avgSessionMins);
+            document.getElementById('dp-stat-chronotype').innerText = stats.chronotype;
+            document.getElementById('dp-stat-wknd-wkdy').innerText = `${fmt(stats.wkndAvg)} / ${fmt(stats.wkdyAvg)}`;
+
+            document.getElementById('dp-insight-peak-time').innerText = stats.peakFocusTime;
+            document.getElementById('dp-insight-best-day').innerText = stats.bestDayName;
+            document.getElementById('dp-30d-total-badge').innerText = `30D TOTAL: ${fmt(stats.total30dMins).toUpperCase()}`;
+
+            // --- 1. Study Trends Weekly Chart (Mon - Sun) ---
+            const completed = getCompletedSessions();
+            const now = new Date();
+            const currentDay = now.getDay(); // 0=Sun, 1=Mon
+            const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+            const monday = new Date(now);
+            monday.setDate(now.getDate() + diffToMonday + (dpTrendsWeekOffset * 7));
+
+            const weekLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const weekMins = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                const dStr = formatLocalDate(d);
+                const m = completed.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                weekMins.push(m);
+            }
+
+            const weekLabelEl = document.getElementById('dp-trends-week-label');
+            if (dpTrendsWeekOffset === 0) weekLabelEl.innerText = 'THIS WEEK';
+            else if (dpTrendsWeekOffset === -1) weekLabelEl.innerText = 'LAST WEEK';
+            else {
+                const sun = new Date(monday);
+                sun.setDate(monday.getDate() + 6);
+                weekLabelEl.innerText = `${monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${sun.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+            }
+
+            const ctxTrends = document.getElementById('dpStudyTrendsChart');
+            if (ctxTrends) {
+                if (dpTrendsChartInstance) dpTrendsChartInstance.destroy();
+                dpTrendsChartInstance = new Chart(ctxTrends, {
+                    type: 'bar',
+                    data: {
+                        labels: weekLabels,
+                        datasets: [{
+                            label: 'Focus Time (mins)',
+                            data: weekMins,
+                            backgroundColor: '#f43f5e',
+                            borderRadius: 6,
+                            barThickness: 32
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: { label: (ctx) => `${formatDuration(ctx.raw) || '0m'}` }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 11, weight: 'bold' } } },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(51, 65, 85, 0.25)' },
+                                ticks: {
+                                    color: '#64748b',
+                                    font: { size: 10 },
+                                    callback: (v) => v >= 60 ? `${(v / 60).toFixed(1)}h` : `${v}m`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- 2. Subject Breakdown Doughnut Chart ---
+            const rangeVal = document.getElementById('dp-subject-range')?.value || 'all';
+            const filteredSessions = completed.filter(t => {
+                if (rangeVal === 'all') return true;
+                const todayStr = formatLocalDate(now);
+                if (rangeVal === 'today') return t.date === todayStr;
+                const diffDays = (now - new Date(t.date + 'T00:00:00')) / (1000 * 60 * 60 * 24);
+                if (rangeVal === '7d') return diffDays >= 0 && diffDays <= 7;
+                if (rangeVal === '30d') return diffDays >= 0 && diffDays <= 30;
+                return true;
+            });
+
+            const subTotals = {};
+            filteredSessions.forEach(t => {
+                const s = t.subject || 'General';
+                subTotals[s] = (subTotals[s] || 0) + getTaskMinutes(t);
+            });
+
+            const subColorPalette = {
+                Physics: '#f43f5e',
+                Chemistry: '#10b981',
+                Maths: '#f97316',
+                MockTest: '#8b5cf6',
+                Allen: '#3b82f6',
+                General: '#64748b'
+            };
+
+            const subKeys = Object.keys(subTotals).filter(k => subTotals[k] > 0);
+            const ctxSub = document.getElementById('dpSubjectBreakdownChart');
+            const legendEl = document.getElementById('dp-subject-legend');
+
+            if (ctxSub) {
+                if (dpSubChartInstance) dpSubChartInstance.destroy();
+                const hasSubData = subKeys.length > 0;
+                dpSubChartInstance = new Chart(ctxSub, {
+                    type: 'doughnut',
+                    data: {
+                        labels: hasSubData ? subKeys : ['No Data'],
+                        datasets: [{
+                            data: hasSubData ? subKeys.map(k => subTotals[k]) : [1],
+                            backgroundColor: hasSubData ? subKeys.map(k => subColorPalette[k] || '#6366f1') : ['#1e293b'],
+                            borderWidth: 0,
+                            cutout: '75%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                enabled: hasSubData,
+                                callbacks: { label: (ctx) => `${ctx.label}: ${formatDuration(ctx.raw) || '0m'}` }
+                            }
+                        }
+                    }
+                });
+
+                if (legendEl) {
+                    legendEl.innerHTML = hasSubData
+                        ? subKeys.map(k => `<span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-full" style="background:${subColorPalette[k] || '#6366f1'}"></span>${k} (${fmt(subTotals[k])})</span>`).join('')
+                        : `<span class="text-slate-500 text-[11px]">No completed sessions yet</span>`;
+                }
+            }
+
+            // --- 3. 30-Day Momentum Smooth Line Chart ---
+            const ctxMom = document.getElementById('dpMomentumChart');
+            if (ctxMom) {
+                if (dpMomentumChartInstance) dpMomentumChartInstance.destroy();
+                dpMomentumChartInstance = new Chart(ctxMom, {
+                    type: 'line',
+                    data: {
+                        labels: stats.daily30dSeries.map(d => d.label),
+                        datasets: [{
+                            label: 'Hours Focused',
+                            data: stats.daily30dSeries.map(d => d.hours),
+                            borderColor: '#f97316',
+                            backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                            borderWidth: 2.5,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: { label: (ctx) => `${ctx.raw} hrs` }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#64748b', maxTicksLimit: 7, font: { size: 10 } } },
+                            y: { beginAtZero: true, grid: { color: 'rgba(51, 65, 85, 0.25)' }, ticks: { color: '#64748b', font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+
+            // --- 4. Monthly Focus Heatmap (Mon - Sun Grid) ---
+            const hmGrid = document.getElementById('dp-monthly-heatmap-grid');
+            const hmLabel = document.getElementById('dp-heatmap-month-label');
+            if (hmGrid && hmLabel) {
+                const yr = dpHeatmapDate.getFullYear();
+                const mo = dpHeatmapDate.getMonth();
+                hmLabel.innerText = dpHeatmapDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
+                hmGrid.innerHTML = '';
+
+                const firstDayJS = new Date(yr, mo, 1).getDay(); // 0=Sun..6=Sat
+                const startOffset = firstDayJS === 0 ? 6 : firstDayJS - 1; // Convert to Mon=0..Sun=6
+                const daysInMonth = new Date(yr, mo + 1, 0).getDate();
+                const todayStr = formatLocalDate(new Date());
+
+                for (let i = 0; i < startOffset; i++) {
+                    hmGrid.innerHTML += `<div class="h-16 rounded-2xl bg-transparent"></div>`;
+                }
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const cellDate = new Date(yr, mo, d);
+                    const dStr = formatLocalDate(cellDate);
+                    const mins = completed.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                    const isToday = dStr === todayStr;
+
+                    let boxStyle = 'bg-[#11131a] border-slate-800/70 text-slate-500';
+                    if (mins >= 240) boxStyle = 'bg-orange-500/30 border-orange-500 text-orange-200 shadow-[0_0_12px_rgba(249,115,22,0.25)]';
+                    else if (mins >= 120) boxStyle = 'bg-orange-500/20 border-orange-500/60 text-orange-300';
+                    else if (mins > 0) boxStyle = 'bg-orange-950/40 border-orange-800/60 text-orange-400';
+
+                    const todayRing = isToday ? 'ring-2 ring-orange-500 border-orange-500' : '';
+
+                    hmGrid.innerHTML += `
+                        <div onclick="selectedDate = new Date(${yr}, ${mo}, ${d}); setCalendarView('today');" class="cursor-pointer h-16 rounded-2xl border p-2 flex flex-col justify-between transition-all hover:scale-[1.03] ${boxStyle} ${todayRing}">
+                            <span class="text-[10px] font-mono font-bold">${d}</span>
+                            <span class="text-[11px] font-black font-mono self-center mb-1">${mins > 0 ? fmt(mins) : 'OFF'}</span>
+                        </div>
+                    `;
+                }
+            }
+            lucide.createIcons();
+        }
 
             const ov = getCounts(tasks);
             buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
@@ -4789,6 +5309,7 @@ const taskText = customTask
             const weeklyGoals = JSON.stringify(appState.weeklyGoals || []);
             const dailyQuota = JSON.stringify(getStoredQuota());
             const dailyQuestionsTelemetry = JSON.stringify(appState.dailyQuestions || {});
+            const deepFocusTelemetry = JSON.stringify(computeDeepTelemetryStats()); // <-- ADD THIS LINE
 
             // Calculate overall syllabus stats for fast AI reasoning
             const list11 = appState.prepSyllabus["11"] || [];
@@ -4850,6 +5371,9 @@ ${dailyQuestionsTelemetry}
 
 10. DAILY LOGS (Attendance & Homework Tracker):
 ${dailyLogsData}
+
+11. DEEP FOCUS TELEMETRY & HABIT INSIGHTS (Streak, 7D Avg/Peak, 30D Consistency, Chronotype, Peak Focus Window, Most Productive Day, Weekend vs Weekday):
+${deepFocusTelemetry}
 
 COACHING DIRECTIVES:
 - You have full, transparent access to every single data point listed above. Use exact chapter names, test score numbers, and routine timings whenever giving advice or analyzing progress.
