@@ -2896,6 +2896,7 @@
                 else if (calendarView === 'week') selectedDate.setDate(selectedDate.getDate() + (delta * 7));
                 else selectedDate.setDate(selectedDate.getDate() + delta);
             }
+            dpHeatmapDate = new Date(selectedDate); // <-- Keeps Heatmap month synced with selected date
             renderCalendar();
         }
 
@@ -3175,8 +3176,30 @@
                 return { done, inProg, pending, total: taskList.length };
             };
 
-            // ==========================================
+            const ov = getCounts(tasks);
+            buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
+            const elOv = document.getElementById('stat-text-overall');
+            if (elOv) elOv.innerText = `${ov.done}/${ov.total} Done (${ov.total ? Math.round((ov.done/ov.total)*100) : 0}%)`;
+
+            const phy = getCounts(tasks.filter(t => t.subject === 'Physics'));
+            buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
+            const elPhy = document.getElementById('stat-text-physics');
+            if (elPhy) elPhy.innerText = `${phy.done}/${phy.total} Done (${phy.total ? Math.round((phy.done/phy.total)*100) : 0}%)`;
+
+            const chm = getCounts(tasks.filter(t => t.subject === 'Chemistry'));
+            buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
+            const elChm = document.getElementById('stat-text-chemistry');
+            if (elChm) elChm.innerText = `${chm.done}/${chm.total} Done (${chm.total ? Math.round((chm.done/chm.total)*100) : 0}%)`;
+
+            const mth = getCounts(tasks.filter(t => t.subject === 'Maths'));
+            buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
+            const elMth = document.getElementById('stat-text-maths');
+            if (elMth) elMth.innerText = `${mth.done}/${mth.total} Done (${mth.total ? Math.round((mth.done/mth.total)*100) : 0}%)`;
+        }
+
+        // ==========================================
         // --- DEEP FOCUS TELEMETRY & HEATMAP ENGINE ---
+        // (Global Scope + Synced with Daily Report & Daily Planner Data)
         // ==========================================
         let dpTrendsWeekOffset = 0;
         let dpHeatmapDate = new Date();
@@ -3190,7 +3213,7 @@
         }
 
         function navDpHeatmapMonth(delta) {
-            dpHeatmapDate.setMonth(dpHeatmapDate.getMonth() + delta);
+            dpHeatmapDate = new Date(dpHeatmapDate.getFullYear(), dpHeatmapDate.getMonth() + delta, 1);
             renderDailyPlannerTelemetry();
         }
 
@@ -3200,40 +3223,73 @@
             return Math.max(0, mins);
         }
 
-        function getCompletedSessions() {
-            return (appState.scheduledTasks || []).filter(t => t.status === 'Completed' && getTaskMinutes(t) > 0);
+        // Pulls from the exact same scheduledTasks source that Daily Report & Daily Planner use
+        function getAllTrackedSessions() {
+            return (appState.scheduledTasks || []).filter(t => getTaskMinutes(t) > 0);
+        }
+
+        function calculateTelemetryStreak() {
+            let streak = 0;
+            let checkDate = new Date();
+            const allSessions = getAllTrackedSessions();
+
+            while (true) {
+                const dateStr = formatLocalDate(checkDate);
+                const dayMins = allSessions.filter(t => t.date === dateStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                const q = appState.dailyQuestions?.[dateStr];
+                const hasQuestions = q && ((Number(q.p) || 0) + (Number(q.c) || 0) + (Number(q.m) || 0) > 0);
+
+                if (dayMins > 0 || hasQuestions) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    // If today has 0 so far, check if yesterday had an active streak
+                    if (streak === 0 && dateStr === formatLocalDate(new Date())) {
+                        checkDate.setDate(checkDate.getDate() - 1);
+                        const yestStr = formatLocalDate(checkDate);
+                        const yestMins = allSessions.filter(t => t.date === yestStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                        const yq = appState.dailyQuestions?.[yestStr];
+                        const yHasQ = yq && ((Number(yq.p) || 0) + (Number(yq.c) || 0) + (Number(yq.m) || 0) > 0);
+                        if (yestMins > 0 || yHasQ) {
+                            continue;
+                        }
+                    }
+                    break;
+                }
+            }
+            return streak;
         }
 
         function computeDeepTelemetryStats() {
-            const completed = getCompletedSessions();
-            const now = new Date();
-            const todayStr = formatLocalDate(now);
+            const sessions = getAllTrackedSessions();
+            const baseDate = selectedDate instanceof Date ? selectedDate : new Date();
+            const todayStr = formatLocalDate(baseDate);
 
-            // 1. Focused Today
-            const todayMins = completed.filter(t => t.date === todayStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+            // 1. Focused Today (or Selected Date in Daily Planner)
+            const todayMins = sessions.filter(t => t.date === todayStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
 
             // 2. 7-Day Avg & 7-Day Peak
             let last7DaysMins = [];
             for (let i = 0; i < 7; i++) {
-                const d = new Date(now);
+                const d = new Date(baseDate);
                 d.setDate(d.getDate() - i);
                 const dStr = formatLocalDate(d);
-                const m = completed.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                const m = sessions.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
                 last7DaysMins.push(m);
             }
             const sum7d = last7DaysMins.reduce((a, b) => a + b, 0);
             const avg7d = Math.round(sum7d / 7);
             const peak7d = Math.max(0, ...last7DaysMins);
 
-            // 3. 30-Day Consistency & 30-Day Total
+            // 3. 30-Day Consistency & 30-Day Total (Matches Daily Report 30-Day Activity)
             let active30dDays = 0;
             let total30dMins = 0;
             let daily30dSeries = [];
             for (let i = 29; i >= 0; i--) {
-                const d = new Date(now);
+                const d = new Date(baseDate);
                 d.setDate(d.getDate() - i);
                 const dStr = formatLocalDate(d);
-                const m = completed.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                const m = sessions.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
                 if (m > 0) active30dDays++;
                 total30dMins += m;
                 daily30dSeries.push({
@@ -3246,8 +3302,8 @@
             const consistency30d = Math.round((active30dDays / 30) * 100);
 
             // 4. Average Session Duration
-            const totalAllTimeMins = completed.reduce((acc, t) => acc + getTaskMinutes(t), 0);
-            const avgSessionMins = completed.length > 0 ? Math.round(totalAllTimeMins / completed.length) : 0;
+            const totalAllTimeMins = sessions.reduce((acc, t) => acc + getTaskMinutes(t), 0);
+            const avgSessionMins = sessions.length > 0 ? Math.round(totalAllTimeMins / sessions.length) : 0;
 
             // 5. Chronotype & Peak Focus Time
             const buckets = {
@@ -3256,8 +3312,8 @@
                 'Evening (5p-9p)': 0,
                 'Night (9p-5a)': 0
             };
-            completed.forEach(t => {
-                let hour = 21; // default evening/night if no start time
+            sessions.forEach(t => {
+                let hour = 21;
                 if (t.start && t.start.includes(':')) {
                     hour = parseInt(t.start.split(':')[0], 10);
                 }
@@ -3269,7 +3325,7 @@
             });
 
             let peakBucket = 'Night (9p-5a)';
-            let maxBucketMins = -1;
+            let maxBucketMins = 0;
             Object.entries(buckets).forEach(([k, v]) => {
                 if (v > maxBucketMins) { maxBucketMins = v; peakBucket = k; }
             });
@@ -3282,25 +3338,25 @@
                 else chronotype = 'NIGHT OWL';
             }
 
-            // 6. Weekend vs Weekday Average (Last 30 Days)
-            let wkndMins = 0, wkndDays = 0, wkdyMins = 0, wkdyDays = 0;
+            // 6. Weekend vs Weekday Average (Active days in Last 30 Days)
+            let wkndMins = 0, wkndActiveDays = 0, wkdyMins = 0, wkdyActiveDays = 0;
             daily30dSeries.forEach(item => {
                 const dayOfWeek = new Date(item.dateStr + 'T00:00:00').getDay();
                 if (dayOfWeek === 0 || dayOfWeek === 6) {
                     wkndMins += item.mins;
-                    wkndDays++;
+                    if (item.mins > 0) wkndActiveDays++;
                 } else {
                     wkdyMins += item.mins;
-                    wkdyDays++;
+                    if (item.mins > 0) wkdyActiveDays++;
                 }
             });
-            const wkndAvg = wkndDays ? Math.round(wkndMins / wkndDays) : 0;
-            const wkdyAvg = wkdyDays ? Math.round(wkdyMins / wkdyDays) : 0;
+            const wkndAvg = wkndActiveDays ? Math.round(wkndMins / wkndActiveDays) : 0;
+            const wkdyAvg = wkdyActiveDays ? Math.round(wkdyMins / wkdyActiveDays) : 0;
 
             // 7. Most Productive Day of the Week
             const dowTotals = [0, 0, 0, 0, 0, 0, 0];
             const dowNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            completed.forEach(t => {
+            sessions.forEach(t => {
                 const d = new Date(t.date + 'T00:00:00');
                 if (!isNaN(d)) dowTotals[d.getDay()] += getTaskMinutes(t);
             });
@@ -3308,7 +3364,7 @@
             const bestDayName = maxDowVal > 0 ? dowNames[dowTotals.indexOf(maxDowVal)] : 'No Data Yet';
 
             return {
-                streak: calculateStreak(),
+                streak: calculateTelemetryStreak(),
                 todayMins,
                 avg7d,
                 peak7d,
@@ -3325,11 +3381,11 @@
         }
 
         function renderDailyPlannerTelemetry() {
-            const stats = computeDeepTelemetryStats();
-            const fmt = (m) => formatDuration(m) || '0m';
-
             const elStreak = document.getElementById('dp-stat-streak');
             if (!elStreak) return;
+
+            const stats = computeDeepTelemetryStats();
+            const fmt = (m) => formatDuration(m) || '0m';
 
             elStreak.innerHTML = `${stats.streak} <span class="text-xs font-normal text-slate-400">Days</span>`;
             document.getElementById('dp-stat-today').innerText = fmt(stats.todayMins);
@@ -3345,12 +3401,12 @@
             document.getElementById('dp-30d-total-badge').innerText = `30D TOTAL: ${fmt(stats.total30dMins).toUpperCase()}`;
 
             // --- 1. Study Trends Weekly Chart (Mon - Sun) ---
-            const completed = getCompletedSessions();
-            const now = new Date();
-            const currentDay = now.getDay(); // 0=Sun, 1=Mon
+            const sessions = getAllTrackedSessions();
+            const refDate = selectedDate instanceof Date ? new Date(selectedDate) : new Date();
+            const currentDay = refDate.getDay(); // 0=Sun, 1=Mon
             const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
-            const monday = new Date(now);
-            monday.setDate(now.getDate() + diffToMonday + (dpTrendsWeekOffset * 7));
+            const monday = new Date(refDate);
+            monday.setDate(refDate.getDate() + diffToMonday + (dpTrendsWeekOffset * 7));
 
             const weekLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
             const weekMins = [];
@@ -3358,7 +3414,7 @@
                 const d = new Date(monday);
                 d.setDate(monday.getDate() + i);
                 const dStr = formatLocalDate(d);
-                const m = completed.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                const m = sessions.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
                 weekMins.push(m);
             }
 
@@ -3379,7 +3435,7 @@
                     data: {
                         labels: weekLabels,
                         datasets: [{
-                            label: 'Focus Time (mins)',
+                            label: 'Focus Time',
                             data: weekMins,
                             backgroundColor: '#f43f5e',
                             borderRadius: 6,
@@ -3413,11 +3469,11 @@
 
             // --- 2. Subject Breakdown Doughnut Chart ---
             const rangeVal = document.getElementById('dp-subject-range')?.value || 'all';
-            const filteredSessions = completed.filter(t => {
+            const filteredSessions = sessions.filter(t => {
                 if (rangeVal === 'all') return true;
-                const todayStr = formatLocalDate(now);
+                const todayStr = formatLocalDate(refDate);
                 if (rangeVal === 'today') return t.date === todayStr;
-                const diffDays = (now - new Date(t.date + 'T00:00:00')) / (1000 * 60 * 60 * 24);
+                const diffDays = (refDate - new Date(t.date + 'T00:00:00')) / (1000 * 60 * 60 * 24);
                 if (rangeVal === '7d') return diffDays >= 0 && diffDays <= 7;
                 if (rangeVal === '30d') return diffDays >= 0 && diffDays <= 30;
                 return true;
@@ -3472,7 +3528,7 @@
                 if (legendEl) {
                     legendEl.innerHTML = hasSubData
                         ? subKeys.map(k => `<span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-full" style="background:${subColorPalette[k] || '#6366f1'}"></span>${k} (${fmt(subTotals[k])})</span>`).join('')
-                        : `<span class="text-slate-500 text-[11px]">No completed sessions yet</span>`;
+                        : `<span class="text-slate-500 text-[11px]">No sessions logged in this range</span>`;
                 }
             }
 
@@ -3502,7 +3558,7 @@
                         plugins: {
                             legend: { display: false },
                             tooltip: {
-                                callbacks: { label: (ctx) => `${ctx.raw} hrs` }
+                                callbacks: { label: (ctx) => `${ctx.raw} hrs (${formatDuration(Math.round(ctx.raw * 60)) || '0m'})` }
                             }
                         },
                         scales: {
@@ -3523,9 +3579,10 @@
                 hmGrid.innerHTML = '';
 
                 const firstDayJS = new Date(yr, mo, 1).getDay(); // 0=Sun..6=Sat
-                const startOffset = firstDayJS === 0 ? 6 : firstDayJS - 1; // Convert to Mon=0..Sun=6
+                const startOffset = firstDayJS === 0 ? 6 : firstDayJS - 1; // Mon=0..Sun=6
                 const daysInMonth = new Date(yr, mo + 1, 0).getDate();
                 const todayStr = formatLocalDate(new Date());
+                const selStr = formatLocalDate(selectedDate);
 
                 for (let i = 0; i < startOffset; i++) {
                     hmGrid.innerHTML += `<div class="h-16 rounded-2xl bg-transparent"></div>`;
@@ -3534,18 +3591,19 @@
                 for (let d = 1; d <= daysInMonth; d++) {
                     const cellDate = new Date(yr, mo, d);
                     const dStr = formatLocalDate(cellDate);
-                    const mins = completed.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
+                    const mins = sessions.filter(t => t.date === dStr).reduce((acc, t) => acc + getTaskMinutes(t), 0);
                     const isToday = dStr === todayStr;
+                    const isSelected = dStr === selStr;
 
                     let boxStyle = 'bg-[#11131a] border-slate-800/70 text-slate-500';
                     if (mins >= 240) boxStyle = 'bg-orange-500/30 border-orange-500 text-orange-200 shadow-[0_0_12px_rgba(249,115,22,0.25)]';
                     else if (mins >= 120) boxStyle = 'bg-orange-500/20 border-orange-500/60 text-orange-300';
                     else if (mins > 0) boxStyle = 'bg-orange-950/40 border-orange-800/60 text-orange-400';
 
-                    const todayRing = isToday ? 'ring-2 ring-orange-500 border-orange-500' : '';
+                    const highlightRing = (isToday || isSelected) ? 'ring-2 ring-orange-500 border-orange-500' : '';
 
                     hmGrid.innerHTML += `
-                        <div onclick="selectedDate = new Date(${yr}, ${mo}, ${d}); setCalendarView('today');" class="cursor-pointer h-16 rounded-2xl border p-2 flex flex-col justify-between transition-all hover:scale-[1.03] ${boxStyle} ${todayRing}">
+                        <div onclick="selectedDate = new Date(${yr}, ${mo}, ${d}); dpHeatmapDate = new Date(${yr}, ${mo}, 1); setCalendarView('today');" class="cursor-pointer h-16 rounded-2xl border p-2 flex flex-col justify-between transition-all hover:scale-[1.03] ${boxStyle} ${highlightRing}">
                             <span class="text-[10px] font-mono font-bold">${d}</span>
                             <span class="text-[11px] font-black font-mono self-center mb-1">${mins > 0 ? fmt(mins) : 'OFF'}</span>
                         </div>
@@ -3553,27 +3611,6 @@
                 }
             }
             lucide.createIcons();
-        }
-
-            const ov = getCounts(tasks);
-            buildDoughnut('chart-task-overall', ov.done, ov.inProg, ov.pending);
-            const elOv = document.getElementById('stat-text-overall');
-            if (elOv) elOv.innerText = `${ov.done}/${ov.total} Done (${ov.total ? Math.round((ov.done/ov.total)*100) : 0}%)`;
-
-            const phy = getCounts(tasks.filter(t => t.subject === 'Physics'));
-            buildDoughnut('chart-task-physics', phy.done, phy.inProg, phy.pending);
-            const elPhy = document.getElementById('stat-text-physics');
-            if (elPhy) elPhy.innerText = `${phy.done}/${phy.total} Done (${phy.total ? Math.round((phy.done/phy.total)*100) : 0}%)`;
-
-            const chm = getCounts(tasks.filter(t => t.subject === 'Chemistry'));
-            buildDoughnut('chart-task-chemistry', chm.done, chm.inProg, chm.pending);
-            const elChm = document.getElementById('stat-text-chemistry');
-            if (elChm) elChm.innerText = `${chm.done}/${chm.total} Done (${chm.total ? Math.round((chm.done/chm.total)*100) : 0}%)`;
-
-            const mth = getCounts(tasks.filter(t => t.subject === 'Maths'));
-            buildDoughnut('chart-task-maths', mth.done, mth.inProg, mth.pending);
-            const elMth = document.getElementById('stat-text-maths');
-            if (elMth) elMth.innerText = `${mth.done}/${mth.total} Done (${mth.total ? Math.round((mth.done/mth.total)*100) : 0}%)`;
         }
 
         function closeTaskModal() { document.getElementById('task-modal').classList.add('hidden'); }
