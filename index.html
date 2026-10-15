@@ -5438,8 +5438,8 @@ COACHING DIRECTIVES:
                 formattedContents.push({ role: 'user', parts: [{ text: "Hello coach, give me my strategy." }] });
             }
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(appState.apiKey.trim())}`;
-
+            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(appState.apiKey.trim())}`;
+            
             const res = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
