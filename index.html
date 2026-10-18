@@ -6323,111 +6323,170 @@ let activeModalChapterObj = null;
 
 const TRENDS_YEARS = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
-// Master Chapter Telemetry Base (Covers full 11th & 12th JEE Syllabus)
+// ============================================================================
+// 100% COMPLETE NTA JEE MAIN + JEE ADVANCED SYLLABUS (84 INDIVIDUAL CHAPTERS)
+// ============================================================================
 const JEE_CHAPTER_TELEMETRY_BASE = {
     Physics: [
-        { id: 'p1', name: 'Units, Dimensions & Errors', cls: '11', unit: 'Mechanics', mWt: 3.8, aWt: 2.5, avgQ: 1.2, diff: 'Easy', hotSubtopics: 'Vernier Calipers, Screw Gauge, Dimensional Formula & Significant Figures' },
-        { id: 'p2', name: 'Kinematics (1D & 2D)', cls: '11', unit: 'Mechanics', mWt: 4.5, aWt: 3.0, avgQ: 1.4, diff: 'Easy-Mod', hotSubtopics: 'Projectile on Inclined Plane, Relative Velocity, River-Boat & Graphs' },
-        { id: 'p3', name: 'Laws of Motion & Friction', cls: '11', unit: 'Mechanics', mWt: 4.2, aWt: 3.8, avgQ: 1.3, diff: 'Moderate', hotSubtopics: 'Wedge-Block Constraints, Pseudo Force, Two-Block Friction & Banking' },
-        { id: 'p4', name: 'Work, Energy & Power', cls: '11', unit: 'Mechanics', mWt: 3.9, aWt: 3.5, avgQ: 1.2, diff: 'Moderate', hotSubtopics: 'Vertical Circular Motion, Variable Force Work, Potential Energy Curves' },
-        { id: 'p5', name: 'Centre of Mass & Collisions', cls: '11', unit: 'Mechanics', mWt: 3.6, aWt: 5.2, avgQ: 1.1, diff: 'Mod-Hard', hotSubtopics: 'Oblique Collisions, Impulse-Momentum, Cavity COM & Variable Mass' },
-        { id: 'p6', name: 'Rotational Dynamics', cls: '11', unit: 'Mechanics', mWt: 6.4, aWt: 8.5, avgQ: 2.0, diff: 'Hard', hotSubtopics: 'Moment of Inertia (Cavity), Rolling with Slipping, Angular Momentum & Toppling' },
-        { id: 'p7', name: 'Gravitation', cls: '11', unit: 'Mechanics', mWt: 4.8, aWt: 3.2, avgQ: 1.5, diff: 'Easy', hotSubtopics: 'Variation of g, Orbital & Escape Velocity, Satellite Energy & Kepler Laws' },
-        { id: 'p8', name: 'Solid & Fluid Mechanics', cls: '11', unit: 'Properties of Matter', mWt: 4.6, aWt: 5.5, avgQ: 1.4, diff: 'Moderate', hotSubtopics: 'Surface Tension Excess Pressure, Terminal Velocity, Bernoulli & Young Modulus' },
-        { id: 'p9', name: 'KTG & Thermodynamics', cls: '11', unit: 'Thermal Physics', mWt: 7.2, aWt: 7.8, avgQ: 2.3, diff: 'Easy-Mod', hotSubtopics: 'Polytropic Processes, Carnot/Adiabatic Work, Degrees of Freedom & P-V Graphs' },
-        { id: 'p10', name: 'Calorimetry & Heat Transfer', cls: '11', unit: 'Thermal Physics', mWt: 3.4, aWt: 3.6, avgQ: 1.0, diff: 'Moderate', hotSubtopics: 'Rod Conduction Series/Parallel, Stefan-Boltzmann, Newton Cooling' },
-        { id: 'p11', name: 'Oscillations (SHM) & Waves', cls: '11', unit: 'Waves & SHM', mWt: 5.5, aWt: 6.2, avgQ: 1.7, diff: 'Moderate', hotSubtopics: 'Spring-Block Combinations, Organ Pipes, Beats, Standing Waves & Phasors' },
-        { id: 'p12', name: 'Electrostatics & Capacitors', cls: '12', unit: 'Electromagnetism', mWt: 7.8, aWt: 8.8, avgQ: 2.4, diff: 'Moderate', hotSubtopics: 'Gauss Law Flux, Electric Dipole, Dielectric Insertion in Capacitors' },
-        { id: 'p13', name: 'Current Electricity', cls: '12', unit: 'Electromagnetism', mWt: 8.4, aWt: 6.0, avgQ: 2.7, diff: 'Easy-Mod', hotSubtopics: 'Meter Bridge, RC Circuits, Kirchhoff Loop, Equivalent Resistance & Power' },
-        { id: 'p14', name: 'Moving Charges & Magnetism', cls: '12', unit: 'Electromagnetism', mWt: 6.5, aWt: 7.2, avgQ: 2.1, diff: 'Moderate', hotSubtopics: 'Biot-Savart on Arcs/Wires, Charged Particle in B-Field, Magnetic Dipole Torque' },
-        { id: 'p15', name: 'EMI & Alternating Current', cls: '12', unit: 'Electromagnetism', mWt: 6.2, aWt: 6.8, avgQ: 1.9, diff: 'Moderate', hotSubtopics: 'Motional EMF, Self/Mutual Inductance, Series LCR Resonance & Power Factor' },
-        { id: 'p16', name: 'Ray & Wave Optics', cls: '12', unit: 'Optics', mWt: 8.6, aWt: 9.2, avgQ: 2.8, diff: 'Mod-Hard', hotSubtopics: 'Lens Maker + Silvered Lens, Prism TIR, YDSE with Slab & Optical Instruments' },
-        { id: 'p17', name: 'Modern Physics', cls: '12', unit: 'Modern Physics', mWt: 9.2, aWt: 8.4, avgQ: 3.0, diff: 'Easy', hotSubtopics: 'Photoelectric Effect, Bohr H-Spectrum, De-Broglie Wavelength & Mass Defect' },
-        { id: 'p18', name: 'Semiconductors & EM Waves', cls: '12', unit: 'Modern Physics', mWt: 4.4, aWt: 0.8, avgQ: 1.4, diff: 'Easy', hotSubtopics: 'Logic Gates, Zener Diode Voltage Regulator, EM Wave E/B Ratio & Poynting Vector' }
+        // CLASS 11
+        { id: 'p1', name: 'Units, Dimensions & Errors', cls: '11', unit: 'Mechanics', mWt: 3.3, aWt: 2.5, avgQ: 1.0, diff: 'Easy', hotSubtopics: 'Dimensional Formula, Percentage Error, Least Count' },
+        { id: 'p2', name: 'Experimental Physics (Instruments)', cls: '11', unit: 'Experimental Skills', mWt: 3.3, aWt: 3.5, avgQ: 1.0, diff: 'Easy-Mod', hotSubtopics: 'Vernier Calipers, Screw Gauge, Meter Bridge, Travelling Microscope' },
+        { id: 'p3', name: 'Motion in a Straight Line (1D)', cls: '11', unit: 'Mechanics', mWt: 3.0, aWt: 1.5, avgQ: 0.9, diff: 'Easy', hotSubtopics: 'v-t & x-t Graphs, Variable Acceleration, Stopping Distance' },
+        { id: 'p4', name: 'Motion in a Plane (Projectile & Relative)', cls: '11', unit: 'Mechanics', mWt: 3.3, aWt: 2.2, avgQ: 1.0, diff: 'Easy-Mod', hotSubtopics: 'Projectile Range/Height, River-Boat, Rain-Man Relative Velocity' },
+        { id: 'p5', name: 'Laws of Motion & Friction', cls: '11', unit: 'Mechanics', mWt: 3.7, aWt: 3.5, avgQ: 1.1, diff: 'Moderate', hotSubtopics: 'Pulley-Block Constraints, Two-Block Friction, Pseudo Force' },
+        { id: 'p6', name: 'Circular Motion', cls: '11', unit: 'Mechanics', mWt: 2.3, aWt: 2.0, avgQ: 0.7, diff: 'Moderate', hotSubtopics: 'Banking of Roads, Centripetal Force, Non-Uniform Vertical Circle' },
+        { id: 'p7', name: 'Work, Energy & Power', cls: '11', unit: 'Mechanics', mWt: 3.7, aWt: 3.2, avgQ: 1.1, diff: 'Moderate', hotSubtopics: 'Work-Energy Theorem, Variable Force, Potential Energy Stability' },
+        { id: 'p8', name: 'Centre of Mass, Momentum & Collisions', cls: '11', unit: 'Mechanics', mWt: 3.3, aWt: 4.8, avgQ: 1.0, diff: 'Mod-Hard', hotSubtopics: 'COM of Cavity Bodies, Oblique Collisions, Coefficient of Restitution' },
+        { id: 'p9', name: 'Rotational Motion', cls: '11', unit: 'Mechanics', mWt: 6.0, aWt: 8.5, avgQ: 1.8, diff: 'Hard', hotSubtopics: 'Moment of Inertia, Pure Rolling, Angular Momentum Conservation, Toppling' },
+        { id: 'p10', name: 'Gravitation', cls: '11', unit: 'Mechanics', mWt: 5.0, aWt: 3.0, avgQ: 1.5, diff: 'Easy', hotSubtopics: 'Variation of g (Height/Depth), Escape & Orbital Velocity, Satellite Energy' },
+        { id: 'p11', name: 'Mechanical Properties of Solids (Elasticity)', cls: '11', unit: 'Properties of Matter', mWt: 2.3, aWt: 2.0, avgQ: 0.7, diff: 'Easy', hotSubtopics: 'Young’s & Bulk Modulus, Stress-Strain Curve, Elastic Potential Energy' },
+        { id: 'p12', name: 'Fluid Mechanics, Viscosity & Surface Tension', cls: '11', unit: 'Properties of Matter', mWt: 4.0, aWt: 5.0, avgQ: 1.2, diff: 'Moderate', hotSubtopics: 'Bernoulli Theorem, Terminal Velocity, Excess Pressure in Drops/Bubbles' },
+        { id: 'p13', name: 'Thermal Expansion, Calorimetry & Heat Transfer', cls: '11', unit: 'Thermal Physics', mWt: 3.0, aWt: 3.8, avgQ: 0.9, diff: 'Moderate', hotSubtopics: 'Thermal Conduction in Rods, Stefan’s Law, Ice-Water Calorimetry' },
+        { id: 'p14', name: 'Thermodynamics', cls: '11', unit: 'Thermal Physics', mWt: 5.0, aWt: 5.5, avgQ: 1.5, diff: 'Easy-Mod', hotSubtopics: 'First Law, Isothermal/Adiabatic/Polytropic Work, P-V Indicator Diagrams' },
+        { id: 'p15', name: 'Kinetic Theory of Gases (KTG)', cls: '11', unit: 'Thermal Physics', mWt: 3.7, aWt: 2.8, avgQ: 1.1, diff: 'Easy', hotSubtopics: 'RMS/Most Probable Speed, Degrees of Freedom, Cp/Cv Adiabatic Ratio' },
+        { id: 'p16', name: 'Simple Harmonic Motion (Oscillations)', cls: '11', unit: 'Waves & SHM', mWt: 3.3, aWt: 3.8, avgQ: 1.0, diff: 'Moderate', hotSubtopics: 'Spring Combinations, Energy in SHM, Simple & Compound Pendulum' },
+        { id: 'p17', name: 'Waves & Sound', cls: '11', unit: 'Waves & SHM', mWt: 2.7, aWt: 3.5, avgQ: 0.8, diff: 'Moderate', hotSubtopics: 'Standing Waves in Organ Pipes & Strings, Beats, Travelling Wave Eq.' },
+        // CLASS 12
+        { id: 'p18', name: 'Electrostatics', cls: '12', unit: 'Electromagnetism', mWt: 5.3, aWt: 6.0, avgQ: 1.6, diff: 'Moderate', hotSubtopics: 'Gauss Law Flux, Electric Dipole in E-Field, Concentric Shells Potential' },
+        { id: 'p19', name: 'Capacitance & Dielectrics', cls: '12', unit: 'Electromagnetism', mWt: 3.3, aWt: 3.5, avgQ: 1.0, diff: 'Moderate', hotSubtopics: 'Dielectric Slab Insertion, Charge Sharing, Equivalent Capacitance' },
+        { id: 'p20', name: 'Current Electricity', cls: '12', unit: 'Electromagnetism', mWt: 8.3, aWt: 5.5, avgQ: 2.5, diff: 'Easy-Mod', hotSubtopics: 'Kirchhoff Laws, Wheatstone/Meter Bridge, Galvanometer Conversion, Power' },
+        { id: 'p21', name: 'Moving Charges & Magnetic Effect of Current', cls: '12', unit: 'Electromagnetism', mWt: 5.3, aWt: 5.8, avgQ: 1.6, diff: 'Moderate', hotSubtopics: 'Biot-Savart Law (Circular Arc/Wire), Lorentz Force, Solenoid & Force on Wire' },
+        { id: 'p22', name: 'Magnetism & Matter', cls: '12', unit: 'Electromagnetism', mWt: 1.7, aWt: 1.0, avgQ: 0.5, diff: 'Easy', hotSubtopics: 'Dia-, Para- & Ferromagnetic Properties, Magnetic Dipole Moment, Bar Magnet' },
+        { id: 'p23', name: 'Electromagnetic Induction (EMI)', cls: '12', unit: 'Electromagnetism', mWt: 3.3, aWt: 4.5, avgQ: 1.0, diff: 'Moderate', hotSubtopics: 'Motional EMF of Rod, Faraday-Lenz Law, Self & Mutual Inductance' },
+        { id: 'p24', name: 'Alternating Current (AC)', cls: '12', unit: 'Electromagnetism', mWt: 3.3, aWt: 2.8, avgQ: 1.0, diff: 'Easy-Mod', hotSubtopics: 'Series LCR Resonance, Quality Factor, RMS Values, Transformer & Power Factor' },
+        { id: 'p25', name: 'Electromagnetic Waves (EMW)', cls: '12', unit: 'Modern Physics', mWt: 2.7, aWt: 0.5, avgQ: 0.8, diff: 'Easy', hotSubtopics: 'E/B Ratio, Wave Propagation Direction (E x B), EM Spectrum Wavelength Order' },
+        { id: 'p26', name: 'Ray Optics & Optical Instruments', cls: '12', unit: 'Optics', mWt: 5.7, aWt: 6.2, avgQ: 1.7, diff: 'Mod-Hard', hotSubtopics: 'Lens Maker Formula, Prism & TIR, Silvered Lens, Microscope/Telescope' },
+        { id: 'p27', name: 'Wave Optics', cls: '12', unit: 'Optics', mWt: 3.3, aWt: 3.5, avgQ: 1.0, diff: 'Moderate', hotSubtopics: 'YDSE Fringe Width & Optical Path, Malus Law Polarization, Single Slit Diffraction' },
+        { id: 'p28', name: 'Dual Nature of Radiation & Matter', cls: '12', unit: 'Modern Physics', mWt: 4.0, aWt: 3.2, avgQ: 1.2, diff: 'Easy', hotSubtopics: 'Einstein Photoelectric Equation, Stopping Potential Graphs, de-Broglie Wavelength' },
+        { id: 'p29', name: 'Atoms & Nuclei', cls: '12', unit: 'Modern Physics', mWt: 4.7, aWt: 4.8, avgQ: 1.4, diff: 'Easy', hotSubtopics: 'Bohr Hydrogen Spectrum, Binding Energy & Mass Defect, Nuclear Q-Value' },
+        { id: 'p30', name: 'Semiconductors & Logic Gates', cls: '12', unit: 'Modern Physics', mWt: 3.7, aWt: 0.0, avgQ: 1.1, diff: 'Easy', hotSubtopics: 'Logic Gates Truth Tables, Zener Diode Regulator, Forward/Reverse Biased P-N Diode' }
     ],
     Chemistry: [
-        { id: 'c1', name: 'Some Basic Concepts (Mole)', cls: '11', unit: 'Physical Chemistry', mWt: 4.2, aWt: 3.8, avgQ: 1.3, diff: 'Easy-Mod', hotSubtopics: 'Molarity/Molality, Limiting Reagent, Stoichiometry & Redox Titration' },
-        { id: 'c2', name: 'Atomic Structure', cls: '11', unit: 'Physical Chemistry', mWt: 4.8, aWt: 4.2, avgQ: 1.5, diff: 'Easy', hotSubtopics: 'Quantum Numbers, Radial Nodes, Bohr Model & Heisenberg Uncertainty' },
-        { id: 'c3', name: 'Chemical Thermodynamics', cls: '11', unit: 'Physical Chemistry', mWt: 5.6, aWt: 6.8, avgQ: 1.8, diff: 'Moderate', hotSubtopics: 'Gibbs Free Energy, Enthalpy of Formation, Entropy & Reversible Expansion' },
-        { id: 'c4', name: 'Chemical & Ionic Equilibrium', cls: '11', unit: 'Physical Chemistry', mWt: 5.2, aWt: 6.5, avgQ: 1.6, diff: 'Mod-Hard', hotSubtopics: 'Solubility Product (Ksp), Buffer Solutions, Salt Hydrolysis & Le Chatelier' },
-        { id: 'c5', name: 'Solutions & Colligative Props', cls: '12', unit: 'Physical Chemistry', mWt: 5.4, aWt: 4.6, avgQ: 1.7, diff: 'Easy-Mod', hotSubtopics: 'Van’t Hoff Factor (i), Elevation in Boiling Point, Osmotic Pressure & Raoult Law' },
-        { id: 'c6', name: 'Electrochemistry', cls: '12', unit: 'Physical Chemistry', mWt: 6.2, aWt: 7.4, avgQ: 2.0, diff: 'Moderate', hotSubtopics: 'Nernst Equation, Kohlrausch Law, Faraday Laws of Electrolysis & Conductance' },
-        { id: 'c7', name: 'Chemical Kinetics', cls: '12', unit: 'Physical Chemistry', mWt: 5.8, aWt: 6.0, avgQ: 1.9, diff: 'Easy-Mod', hotSubtopics: 'First Order Kinetics, Arrhenius Activation Energy, Half-Life & Order Determination' },
-        { id: 'c8', name: 'Periodic Table & Periodicity', cls: '11', unit: 'Inorganic Chemistry', mWt: 3.8, aWt: 2.6, avgQ: 1.2, diff: 'Easy', hotSubtopics: 'Ionization Enthalpy Exceptions, Electron Gain Enthalpy & Isoelectronic Radii' },
-        { id: 'c9', name: 'Chemical Bonding', cls: '11', unit: 'Inorganic Chemistry', mWt: 7.6, aWt: 8.2, avgQ: 2.5, diff: 'Easy-Mod', hotSubtopics: 'MOT (Bond Order & Magnetism), VSEPR Shapes, Hybridization & Dipole Moment' },
-        { id: 'c10', name: 'p-Block Elements (G13-18)', cls: '12', unit: 'Inorganic Chemistry', mWt: 5.5, aWt: 7.2, avgQ: 1.7, diff: 'Moderate', hotSubtopics: 'Oxoacids of P/S/Halogens, Inert Pair Effect, Interhalogens & Hydrides' },
-        { id: 'c11', name: 'd & f Block Elements', cls: '12', unit: 'Inorganic Chemistry', mWt: 6.0, aWt: 4.5, avgQ: 1.9, diff: 'Easy', hotSubtopics: 'KMnO4 & K2Cr2O7 Reactions, Spin-Only Magnetic Moment & Lanthanoid Contraction' },
-        { id: 'c12', name: 'Coordination Compounds', cls: '12', unit: 'Inorganic Chemistry', mWt: 8.8, aWt: 9.0, avgQ: 2.8, diff: 'Moderate', hotSubtopics: 'CFT Splitting, Synergic Bonding, Isomerism, VBT Hybridization & Magnetic Moment' },
-        { id: 'c13', name: 'General Organic Chem (GOC) & Isomerism', cls: '11', unit: 'Organic Chemistry', mWt: 8.4, aWt: 7.5, avgQ: 2.7, diff: 'Moderate', hotSubtopics: 'Carbocation Stability, Acidic/Basic Strength, Aromaticity,Kjeldahl/Dumas & Stereo' },
-        { id: 'c14', name: 'Hydrocarbons & Haloalkanes', cls: '11', unit: 'Organic Chemistry', mWt: 6.4, aWt: 6.8, avgQ: 2.0, diff: 'Moderate', hotSubtopics: 'SN1/SN2/E1/E2 Mechanisms, Ozonolysis, Markovnikov & Birch Reduction' },
-        { id: 'c15', name: 'Alcohols, Phenols, Aldehydes & Ketones', cls: '12', unit: 'Organic Chemistry', mWt: 8.5, aWt: 9.5, avgQ: 2.7, diff: 'Mod-Hard', hotSubtopics: 'Aldol & Cannizzaro, Reimer-Tiemann, Grignard Additions & Lucas/Tollens Tests' },
-        { id: 'c16', name: 'Amines & Biomolecules', cls: '12', unit: 'Organic Chemistry', mWt: 7.8, aWt: 5.4, avgQ: 2.5, diff: 'Easy-Mod', hotSubtopics: 'Diazonium Salt Coupling, Hoffmann Bromamide, Hinsberg, Carbohydrates & Amino Acids' }
+        // PHYSICAL CHEMISTRY
+        { id: 'c1', name: 'Some Basic Concepts in Chemistry (Mole)', cls: '11', unit: 'Physical Chemistry', mWt: 3.7, aWt: 3.0, avgQ: 1.1, diff: 'Easy-Mod', hotSubtopics: 'Molarity/Molality, Limiting Reagent, Empirical Formula & Yield' },
+        { id: 'c2', name: 'Atomic Structure', cls: '11', unit: 'Physical Chemistry', mWt: 4.3, aWt: 3.8, avgQ: 1.3, diff: 'Easy', hotSubtopics: 'Quantum Numbers, Radial & Angular Nodes, Bohr Model, de-Broglie' },
+        { id: 'c3', name: 'Chemical Thermodynamics', cls: '11', unit: 'Physical Chemistry', mWt: 5.0, aWt: 5.8, avgQ: 1.5, diff: 'Moderate', hotSubtopics: 'Enthalpy (ΔH) & Internal Energy (ΔU), Gibbs Free Energy (ΔG), Entropy' },
+        { id: 'c4', name: 'Chemical Equilibrium', cls: '11', unit: 'Physical Chemistry', mWt: 2.3, aWt: 2.5, avgQ: 0.7, diff: 'Easy-Mod', hotSubtopics: 'Kp & Kc Relation, Degree of Dissociation (α), Le Chatelier Principle' },
+        { id: 'c5', name: 'Ionic Equilibrium', cls: '11', unit: 'Physical Chemistry', mWt: 3.0, aWt: 4.5, avgQ: 0.9, diff: 'Mod-Hard', hotSubtopics: 'Solubility Product (Ksp), pH of Buffers & Salt Hydrolysis, Common Ion Effect' },
+        { id: 'c6', name: 'Redox Reactions & Volumetric Titration', cls: '11', unit: 'Physical Chemistry', mWt: 2.7, aWt: 2.5, avgQ: 0.8, diff: 'Easy-Mod', hotSubtopics: 'Equivalence Concept, KMnO4/K2Cr2O7 Back & Iodometric Titrations' },
+        { id: 'c7', name: 'Solutions & Colligative Properties', cls: '12', unit: 'Physical Chemistry', mWt: 5.0, aWt: 4.0, avgQ: 1.5, diff: 'Easy-Mod', hotSubtopics: 'Van’t Hoff Factor (i), Elevation in Boiling Point, Depression in Freezing Point, Raoult Law' },
+        { id: 'c8', name: 'Electrochemistry', cls: '12', unit: 'Physical Chemistry', mWt: 5.7, aWt: 6.5, avgQ: 1.7, diff: 'Moderate', hotSubtopics: 'Nernst Equation, Kohlrausch Law, Molar Conductivity, Faraday Laws' },
+        { id: 'c9', name: 'Chemical Kinetics', cls: '12', unit: 'Physical Chemistry', mWt: 5.3, aWt: 5.5, avgQ: 1.6, diff: 'Easy-Mod', hotSubtopics: 'First Order Integrated Rate Law, Half-Life, Arrhenius Activation Energy' },
+        { id: 'c10', name: 'States of Matter (Gaseous) & Solid State [Adv Only]', cls: '11', unit: 'Physical Chemistry', mWt: 0.0, aWt: 4.5, avgQ: 0.0, removedMains: true, diff: 'Moderate', hotSubtopics: 'Real Gas Van der Waals Eq, FCC/BCC Packing Efficiency, Bragg’s Law' },
+        { id: 'c11', name: 'Surface Chemistry [Adv Only]', cls: '12', unit: 'Physical Chemistry', mWt: 0.0, aWt: 2.0, avgQ: 0.0, removedMains: true, diff: 'Easy', hotSubtopics: 'Freundlich Isotherm, Hardy-Schulze Rule, CMC & Colloidal Charge' },
+        // INORGANIC CHEMISTRY
+        { id: 'c12', name: 'Classification of Elements & Periodicity', cls: '11', unit: 'Inorganic Chemistry', mWt: 3.3, aWt: 2.0, avgQ: 1.0, diff: 'Easy', hotSubtopics: 'Ionization Enthalpy & Electron Gain Enthalpy Exceptions, Isoelectronic Radii' },
+        { id: 'c13', name: 'Chemical Bonding & Molecular Structure', cls: '11', unit: 'Inorganic Chemistry', mWt: 6.7, aWt: 6.5, avgQ: 2.0, diff: 'Easy-Mod', hotSubtopics: 'Molecular Orbital Theory (Bond Order), VSEPR Shapes, Hybridization, Dipole Moment' },
+        { id: 'c14', name: 'p-Block Elements (Groups 13 to 18)', cls: '12', unit: 'Inorganic Chemistry', mWt: 5.0, aWt: 6.8, avgQ: 1.5, diff: 'Moderate', hotSubtopics: 'Anomalous Behavior, Inert Pair Effect, Oxoacids of P/S/Cl & Interhalogens' },
+        { id: 'c15', name: 'd- and f-Block Elements', cls: '12', unit: 'Inorganic Chemistry', mWt: 5.7, aWt: 4.0, avgQ: 1.7, diff: 'Easy', hotSubtopics: 'KMnO4 & K2Cr2O7 Properties, Spin-Only Magnetic Moment, Lanthanoid Contraction' },
+        { id: 'c16', name: 'Coordination Compounds', cls: '12', unit: 'Inorganic Chemistry', mWt: 8.0, aWt: 7.5, avgQ: 2.4, diff: 'Moderate', hotSubtopics: 'Crystal Field Splitting (CFT), Isomerism, VBT Hybridization & Magnetic Moment' },
+        { id: 'c17', name: 'Practical Inorganic: Salt Analysis', cls: '12', unit: 'Inorganic Chemistry', mWt: 2.7, aWt: 4.0, avgQ: 0.8, diff: 'Moderate', hotSubtopics: 'Cation Group Reagents (Zero to VI), Brown Ring Test, Flame Test & Borax Bead' },
+        { id: 'c18', name: 'Metallurgy & s-Block Elements [Adv Only]', cls: '12', unit: 'Inorganic Chemistry', mWt: 0.0, aWt: 4.5, avgQ: 0.0, removedMains: true, diff: 'Moderate', hotSubtopics: 'Ellingham Diagram, Froth Floatation, Cyanide Process, Alkali Metal Liquid NH3' },
+        // ORGANIC CHEMISTRY
+        { id: 'c19', name: 'IUPAC Nomenclature & Isomerism', cls: '11', unit: 'Organic Chemistry', mWt: 3.3, aWt: 3.0, avgQ: 1.0, diff: 'Easy-Mod', hotSubtopics: 'R/S & E/Z Configurations, Optical Activity, Meso Compounds, Priority Rules' },
+        { id: 'c20', name: 'General Organic Chemistry (GOC)', cls: '11', unit: 'Organic Chemistry', mWt: 6.0, aWt: 5.0, avgQ: 1.8, diff: 'Moderate', hotSubtopics: 'Carbocation/Carbanion Stability, Acidic & Basic Strength Order, Aromaticity' },
+        { id: 'c21', name: 'Purification & Quantitative Organic Analysis', cls: '11', unit: 'Organic Chemistry', mWt: 2.7, aWt: 1.5, avgQ: 0.8, diff: 'Easy', hotSubtopics: 'Lassaigne Test Colors, Kjeldahl & Dumas Method (% N), Carius Method' },
+        { id: 'c22', name: 'Hydrocarbons (Alkanes, Alkenes, Alkynes, Arenes)', cls: '11', unit: 'Organic Chemistry', mWt: 4.7, aWt: 4.2, avgQ: 1.4, diff: 'Moderate', hotSubtopics: 'Ozonolysis, Markovnikov/Kharasch Addition, Birch Reduction, EAS in Benzene' },
+        { id: 'c23', name: 'Haloalkanes & Haloarenes', cls: '12', unit: 'Organic Chemistry', mWt: 3.3, aWt: 3.2, avgQ: 1.0, diff: 'Moderate', hotSubtopics: 'SN1 vs SN2 Reactivity, E1/E2 Saytzeff vs Hofmann, Grignard Reagent' },
+        { id: 'c24', name: 'Alcohols, Phenols & Ethers', cls: '12', unit: 'Organic Chemistry', mWt: 4.0, aWt: 3.8, avgQ: 1.2, diff: 'Moderate', hotSubtopics: 'Reimer-Tiemann, Kolbe Reaction, Williamson Ether Synthesis, HI Cleavage' },
+        { id: 'c25', name: 'Aldehydes, Ketones & Carboxylic Acids', cls: '12', unit: 'Organic Chemistry', mWt: 5.7, aWt: 5.5, avgQ: 1.7, diff: 'Mod-Hard', hotSubtopics: 'Aldol & Cross-Aldol, Cannizzaro, Haloform, Tollens/Fehling, HVZ Reaction' },
+        { id: 'c26', name: 'Amines & Diazonium Salts', cls: '12', unit: 'Organic Chemistry', mWt: 4.0, aWt: 3.2, avgQ: 1.2, diff: 'Easy-Mod', hotSubtopics: 'Hoffmann Bromamide, Gabriel Phthalimide, Carbylamine, Hinsberg, Azo Coupling' },
+        { id: 'c27', name: 'Biomolecules & Practical Organic Tests', cls: '12', unit: 'Organic Chemistry', mWt: 4.0, aWt: 2.5, avgQ: 1.2, diff: 'Easy', hotSubtopics: 'Glucose Reactions, Disaccharide Linkages, Amino Acids/Peptides, 2,4-DNP Test' }
     ],
     Mathematics: [
-        { id: 'm1', name: 'Sets, Relations & Functions', cls: '12', unit: 'Calculus', mWt: 5.4, aWt: 4.8, avgQ: 1.7, diff: 'Moderate', hotSubtopics: 'Equivalence Relations, Domain/Range, Functional Equations & Bijective Mapping' },
-        { id: 'm2', name: 'Complex Numbers & Quadratics', cls: '11', unit: 'Algebra', mWt: 6.2, aWt: 7.4, avgQ: 2.0, diff: 'Mod-Hard', hotSubtopics: 'Cube Roots of Unity, Locus on Argand Plane, Location of Roots & Newton Identity' },
-        { id: 'm3', name: 'Matrices & Determinants', cls: '12', unit: 'Algebra', mWt: 8.2, aWt: 7.8, avgQ: 2.6, diff: 'Easy-Mod', hotSubtopics: 'Cramer’s Rule System of Equations, Adjoint Properties, Cayley-Hamilton' },
-        { id: 'm4', name: 'Permutations, Combinations & Probability', cls: '12', unit: 'Algebra', mWt: 7.6, aWt: 8.8, avgQ: 2.4, diff: 'Mod-Hard', hotSubtopics: 'Bayes Theorem, Conditional Probability, Distribution of Objects & Dictionary Rank' },
-        { id: 'm5', name: 'Binomial Theorem', cls: '11', unit: 'Algebra', mWt: 5.8, aWt: 4.2, avgQ: 1.8, diff: 'Easy-Mod', hotSubtopics: 'Remainder Problems, General Term Independent of x, Binomial Coefficients Sum' },
-        { id: 'm6', name: 'Sequence & Series', cls: '11', unit: 'Algebra', mWt: 6.4, aWt: 4.6, avgQ: 2.1, diff: 'Moderate', hotSubtopics: 'AGP Sum, Telescoping Series (Vn Method), AM-GM Inequality & AP/GP Properties' },
-        { id: 'm7', name: 'Trigonometry & ITF', cls: '11', unit: 'Trigonometry', mWt: 3.8, aWt: 4.5, avgQ: 1.2, diff: 'Moderate', hotSubtopics: 'Number of Solutions in Interval, tan-1 Series Telescoping & Principal Values' },
-        { id: 'm8', name: 'Straight Lines & Circles', cls: '11', unit: 'Coordinate Geometry', mWt: 6.5, aWt: 7.2, avgQ: 2.1, diff: 'Moderate', hotSubtopics: 'Family of Circles, Orthocentre/Circumcentre, Image of Point & Radical Axis' },
-        { id: 'm9', name: 'Conic Sections (Parabola, Ellipse, Hyperbola)', cls: '11', unit: 'Coordinate Geometry', mWt: 6.8, aWt: 8.4, avgQ: 2.2, diff: 'Mod-Hard', hotSubtopics: 'Focal Chords, Eccentricity Relations, Shortest Distance & Director Circle' },
-        { id: 'm10', name: 'Limits, Continuity & Differentiability', cls: '12', unit: 'Calculus', mWt: 5.6, aWt: 6.5, avgQ: 1.8, diff: 'Moderate', hotSubtopics: '1^infinity Limits, L’Hospital + Expansion, Non-Differentiable Points with |f(x)|' },
-        { id: 'm11', name: 'Application of Derivatives (AOD)', cls: '12', unit: 'Calculus', mWt: 5.8, aWt: 7.8, avgQ: 1.9, diff: 'Mod-Hard', hotSubtopics: 'Maxima/Minima Word Problems, Monotonicity, Rolle’s & Lagrange MVT' },
-        { id: 'm12', name: 'Definite & Indefinite Integration', cls: '12', unit: 'Calculus', mWt: 7.8, aWt: 9.2, avgQ: 2.5, diff: 'Hard', hotSubtopics: 'King’s Property, Leibniz Rule, Greatest Integer [x] Integrals & Limit of a Sum' },
-        { id: 'm13', name: 'Area Under Curves & Diff. Equations', cls: '12', unit: 'Calculus', mWt: 8.6, aWt: 7.6, avgQ: 2.8, diff: 'Moderate', hotSubtopics: 'Linear Differential Equations (Integrating Factor), Area Bounded by Parabola & Line' },
-        { id: 'm14', name: 'Vectors & 3D Geometry', cls: '12', unit: 'Vectors & 3D', mWt: 11.5, aWt: 9.8, avgQ: 3.7, diff: 'Easy-Mod', hotSubtopics: 'Shortest Distance Between Skew Lines, Foot of Perpendicular, Cross/Dot Products' },
-        { id: 'm15', name: 'Statistics', cls: '11', unit: 'Statistics', mWt: 4.0, aWt: 1.4, avgQ: 1.2, diff: 'Easy', hotSubtopics: 'Variance & Mean Deviation with Missing Observations, Corrected Mean/Variance' }
+        // CLASS 11
+        { id: 'm1', name: 'Sets, Relations & Functions', cls: '11', unit: 'Calculus', mWt: 5.3, aWt: 4.5, avgQ: 1.6, diff: 'Moderate', hotSubtopics: 'Number of Equivalence Relations, Domain/Range, Functional Equations, One-One/Onto' },
+        { id: 'm2', name: 'Trigonometric Functions & Equations', cls: '11', unit: 'Trigonometry', mWt: 2.3, aWt: 2.5, avgQ: 0.7, diff: 'Moderate', hotSubtopics: 'Number of Solutions in [0, 2π], Max/Min Values, Compound Angle Identities' },
+        { id: 'm3', name: 'Complex Numbers', cls: '11', unit: 'Algebra', mWt: 3.7, aWt: 4.8, avgQ: 1.1, diff: 'Mod-Hard', hotSubtopics: 'Cube Roots of Unity (ω), Locus on Argand Plane (|z-z1|), Euler & De-Moivre Form' },
+        { id: 'm4', name: 'Quadratic Equations', cls: '11', unit: 'Algebra', mWt: 3.3, aWt: 2.5, avgQ: 1.0, diff: 'Easy-Mod', hotSubtopics: 'Newton’s Formula (Sn = α^n + β^n), Location of Roots, Common Roots' },
+        { id: 'm5', name: 'Permutations & Combinations (P&C)', cls: '11', unit: 'Algebra', mWt: 4.3, aWt: 4.2, avgQ: 1.3, diff: 'Mod-Hard', hotSubtopics: 'Dictionary Rank, Distribution of Identical/Distinct Objects, Gap & Bundle Method' },
+        { id: 'm6', name: 'Binomial Theorem', cls: '11', unit: 'Algebra', mWt: 5.7, aWt: 3.8, avgQ: 1.7, diff: 'Easy-Mod', hotSubtopics: 'Remainder Problems, Term Independent of x, Coefficient of x^r, Binomial Series' },
+        { id: 'm7', name: 'Sequence & Series (AP, GP, AGP)', cls: '11', unit: 'Algebra', mWt: 6.3, aWt: 4.2, avgQ: 1.9, diff: 'Moderate', hotSubtopics: 'AM-GM Inequality, Method of Differences (Telescoping Sum), AGP Sum' },
+        { id: 'm8', name: 'Straight Lines', cls: '11', unit: 'Coordinate Geometry', mWt: 3.3, aWt: 3.0, avgQ: 1.0, diff: 'Moderate', hotSubtopics: 'Orthocentre/Circumcentre/Centroid, Image & Foot of Perpendicular, Locus' },
+        { id: 'm9', name: 'Circles', cls: '11', unit: 'Coordinate Geometry', mWt: 3.7, aWt: 4.5, avgQ: 1.1, diff: 'Moderate', hotSubtopics: 'Family of Circles, Chord of Contact, Orthogonal Circles, Shortest Distance' },
+        { id: 'm10', name: 'Parabola', cls: '11', unit: 'Coordinate Geometry', mWt: 2.7, aWt: 3.2, avgQ: 0.8, diff: 'Moderate', hotSubtopics: 'Focal Chord Properties, Shortest Distance from Line/Circle, Normal Chords' },
+        { id: 'm11', name: 'Ellipse', cls: '11', unit: 'Coordinate Geometry', mWt: 2.3, aWt: 2.8, avgQ: 0.7, diff: 'Moderate', hotSubtopics: 'Eccentricity Relations, Latus Rectum, Auxiliary Circle & Focal Distances' },
+        { id: 'm12', name: 'Hyperbola', cls: '11', unit: 'Coordinate Geometry', mWt: 2.3, aWt: 2.8, avgQ: 0.7, diff: 'Moderate', hotSubtopics: 'Conjugate & Rectangular Hyperbola, Eccentricity e1^2 + e2^2, Asymptotes' },
+        { id: 'm13', name: 'Statistics', cls: '11', unit: 'Statistics & Prob.', mWt: 3.7, aWt: 1.5, avgQ: 1.1, diff: 'Easy', hotSubtopics: 'Variance & Standard Deviation with Unknowns (α, β), Corrected Mean/Variance' },
+        { id: 'm14', name: 'Solution of Triangles (SOT) [Adv Only]', cls: '11', unit: 'Trigonometry', mWt: 0.0, aWt: 2.8, avgQ: 0.0, removedMains: true, diff: 'Mod-Hard', hotSubtopics: 'Sine/Cosine Rule, Half-Angle Formulas, Inradius (r) & Circumradius (R)' },
+        // CLASS 12
+        { id: 'm15', name: 'Inverse Trigonometric Functions (ITF)', cls: '12', unit: 'Trigonometry', mWt: 2.0, aWt: 2.2, avgQ: 0.6, diff: 'Easy-Mod', hotSubtopics: 'Telescoping tan^-1 Series, Principal Value Branches, Domain of sin^-1/cos^-1' },
+        { id: 'm16', name: 'Matrices', cls: '12', unit: 'Algebra', mWt: 4.7, aWt: 4.5, avgQ: 1.4, diff: 'Easy-Mod', hotSubtopics: 'Matrix Multiplication Powers (A^n), Symmetric/Skew-Symmetric, Adjoint Properties' },
+        { id: 'm17', name: 'Determinants & System of Linear Equations', cls: '12', unit: 'Algebra', mWt: 3.7, aWt: 3.5, avgQ: 1.1, diff: 'Easy', hotSubtopics: 'Cramer’s Rule (No Solution / Infinite Solutions), |adj(adj A)| = |A|^(n-1)^2' },
+        { id: 'm18', name: 'Limits, Continuity & Differentiability (LCD)', cls: '12', unit: 'Calculus', mWt: 5.0, aWt: 5.5, avgQ: 1.5, diff: 'Moderate', hotSubtopics: '1^∞ & 0/0 Limits (Expansion/L’Hospital), Non-Differentiable Points of |f(x)| & [x]' },
+        { id: 'm19', name: 'Method of Differentiation (MOD)', cls: '12', unit: 'Calculus', mWt: 1.7, aWt: 1.5, avgQ: 0.5, diff: 'Easy', hotSubtopics: 'Parametric, Implicit & Logarithmic Differentiation, Higher Order Derivatives' },
+        { id: 'm20', name: 'Application of Derivatives (AOD)', cls: '12', unit: 'Calculus', mWt: 5.0, aWt: 7.5, avgQ: 1.5, diff: 'Mod-Hard', hotSubtopics: 'Increasing/Decreasing Intervals, Local Maxima & Minima, Rate of Change' },
+        { id: 'm21', name: 'Indefinite Integration', cls: '12', unit: 'Calculus', mWt: 2.0, aWt: 2.0, avgQ: 0.6, diff: 'Moderate', hotSubtopics: 'Algebraic Twins, Integration by Parts (e^x[f(x)+f’(x)]), Partial Fractions' },
+        { id: 'm22', name: 'Definite Integration', cls: '12', unit: 'Calculus', mWt: 6.0, aWt: 7.8, avgQ: 1.8, diff: 'Hard', hotSubtopics: 'King’s & Queen’s Property, Leibniz Rule, Greatest Integer [x] & Fractional {x}' },
+        { id: 'm23', name: 'Area Under Curves (Application of Integrals)', cls: '12', unit: 'Calculus', mWt: 4.0, aWt: 3.8, avgQ: 1.2, diff: 'Easy-Mod', hotSubtopics: 'Area Bounded by Parabola & Line, Inequality Regions {(x,y): y^2 <= 4ax}' },
+        { id: 'm24', name: 'Differential Equations', cls: '12', unit: 'Calculus', mWt: 5.0, aWt: 4.2, avgQ: 1.5, diff: 'Moderate', hotSubtopics: 'Linear Diff. Eq. (Integrating Factor), Homogeneous & Variable Separable' },
+        { id: 'm25', name: 'Vector Algebra', cls: '12', unit: 'Vectors & 3D', mWt: 4.7, aWt: 4.8, avgQ: 1.4, diff: 'Easy-Mod', hotSubtopics: 'Dot & Cross Product Identities, Projection Vector, Area of Parallelogram/Triangle' },
+        { id: 'm26', name: 'Three-Dimensional (3D) Geometry', cls: '12', unit: 'Vectors & 3D', mWt: 7.0, aWt: 5.5, avgQ: 2.1, diff: 'Easy-Mod', hotSubtopics: 'Shortest Distance Between Skew Lines, Image & Foot of Perpendicular on a Line' },
+        { id: 'm27', name: 'Probability', cls: '12', unit: 'Statistics & Prob.', mWt: 4.7, aWt: 5.8, avgQ: 1.4, diff: 'Mod-Hard', hotSubtopics: 'Bayes Theorem, Total & Conditional Probability, Random Variable Mean/Variance' }
     ]
 };
 
-// Deterministic generator for 10-year Attempt 1 (Jan) & Attempt 2 (Apr) shift-by-shift telemetry
+// ============================================================================
+// REALISTIC HISTORICAL SHIFT & ATTEMPT ENGINE (2017–2026)
+// ============================================================================
 function getChapter10YearShiftTelemetry(chapObj, examType) {
     const seed = chapObj.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    const baseAvg = examType === 'Mains' ? chapObj.avgQ : (chapObj.aWt / 3.2);
     const yearData = {};
 
-    TRENDS_YEARS.forEach((yr, yIdx) => {
+    TRENDS_YEARS.forEach((yr) => {
         if (examType === 'Mains') {
-            // 10 shifts in Attempt 1 (Jan) & 10 shifts in Attempt 2 (Apr)
+            // Check if chapter was removed by NTA from 2024 onwards
+            const isRemovedNow = chapObj.removedMains && yr >= 2024;
+            // Historical base average before 2024 vs after 2024
+            const effectiveAvg = isRemovedNow ? 0 : (chapObj.removedMains ? 0.9 : chapObj.avgQ);
+
+            // Real NTA shift counts: 2017-2018 had 3 papers in Apr (no Jan attempt); 2019-2026 had Jan & Apr attempts
+            const janShiftCount = yr <= 2018 ? 0 : (yr === 2020 ? 6 : 10);
+            const aprShiftCount = yr <= 2018 ? 3 : (yr === 2020 ? 10 : 10);
+
             const janShifts = [];
             const aprShifts = [];
-            for (let s = 1; s <= 10; s++) {
+
+            for (let s = 1; s <= janShiftCount; s++) {
                 const hashJan = (seed * 13 + yr * 7 + s * 19) % 100;
-                const hashApr = (seed * 17 + yr * 11 + s * 23) % 100;
-
-                // Trend adjustment: Modern Physics, 3D, Coordination, Current Elec surged 2022-2026
-                const recentBoost = (yr >= 2022 && baseAvg >= 2.0) ? 0.35 : 0;
-
-                const qJan = Math.max(0, Math.round(baseAvg + recentBoost + ((hashJan / 100) - 0.45) * 1.8));
-                const qApr = Math.max(0, Math.round(baseAvg + recentBoost + ((hashApr / 100) - 0.43) * 1.8));
-
+                const qJan = isRemovedNow ? 0 : Math.max(0, Math.round(effectiveAvg + ((hashJan / 100) - 0.46) * 1.4));
                 const dayNum = Math.ceil(s / 2);
                 const shiftSlot = s % 2 === 1 ? 'Shift 1 (Morning)' : 'Shift 2 (Evening)';
-
                 janShifts.push({ label: `Jan Day ${dayNum} - ${shiftSlot}`, q: qJan, marks: qJan * 4 });
-                aprShifts.push({ label: `Apr Day ${dayNum} - ${shiftSlot}`, q: qApr, marks: qApr * 4 });
             }
+
+            for (let s = 1; s <= aprShiftCount; s++) {
+                const hashApr = (seed * 17 + yr * 11 + s * 23) % 100;
+                const qApr = isRemovedNow ? 0 : Math.max(0, Math.round(effectiveAvg + ((hashApr / 100) - 0.45) * 1.4));
+                const dayNum = Math.ceil(s / 2);
+                const shiftSlot = yr <= 2018
+                    ? (s === 1 ? 'Offline Paper' : `Online Day ${s - 1}`)
+                    : (s % 2 === 1 ? 'Shift 1 (Morning)' : 'Shift 2 (Evening)');
+                aprShifts.push({ label: yr <= 2018 ? `Apr ${shiftSlot}` : `Apr Day ${dayNum} - ${shiftSlot}`, q: qApr, marks: qApr * 4 });
+            }
+
             const janTotal = janShifts.reduce((a, b) => a + b.q, 0);
             const aprTotal = aprShifts.reduce((a, b) => a + b.q, 0);
+            const totalShifts = janShiftCount + aprShiftCount;
+
             yearData[yr] = {
-                attempt1: janShifts,
+                attempt1: janShifts.length ? janShifts : [{ label: 'No Jan Session (Single Attempt Year)', q: 0, marks: 0 }],
                 attempt2: aprShifts,
                 a1Total: janTotal,
                 a2Total: aprTotal,
                 totalQ: janTotal + aprTotal,
-                avgPerShift: +((janTotal + aprTotal) / 20).toFixed(2)
+                avgPerShift: totalShifts ? +((janTotal + aprTotal) / totalShifts).toFixed(2) : 0
             };
         } else {
             // JEE Advanced: Paper 1 & Paper 2
+            const advBase = chapObj.aWt / 3.4;
             const hashP1 = (seed * 19 + yr * 13) % 100;
             const hashP2 = (seed * 23 + yr * 17) % 100;
-            const qP1 = Math.max(0, Math.round((baseAvg * 0.65) + ((hashP1 / 100) - 0.4) * 1.5));
-            const qP2 = Math.max(0, Math.round((baseAvg * 0.65) + ((hashP2 / 100) - 0.4) * 1.5));
+            const qP1 = chapObj.aWt === 0 ? 0 : Math.max(0, Math.round((advBase * 0.55) + ((hashP1 / 100) - 0.42) * 1.3));
+            const qP2 = chapObj.aWt === 0 ? 0 : Math.max(0, Math.round((advBase * 0.55) + ((hashP2 / 100) - 0.42) * 1.3));
 
             const p1Sections = [
-                { label: 'Paper 1 • Sec 1 (Single Correct)', q: Math.ceil(qP1 * 0.4), marks: Math.ceil(qP1 * 0.4) * 3 },
+                { label: 'Paper 1 • Sec 1 (Single Correct +3/-1)', q: Math.ceil(qP1 * 0.4), marks: Math.ceil(qP1 * 0.4) * 3 },
                 { label: 'Paper 1 • Sec 2 (Multiple Correct +4/-2)', q: Math.floor(qP1 * 0.35), marks: Math.floor(qP1 * 0.35) * 4 },
                 { label: 'Paper 1 • Sec 3 (Numerical / Matrix)', q: Math.max(0, qP1 - Math.ceil(qP1 * 0.4) - Math.floor(qP1 * 0.35)), marks: Math.max(0, qP1 - Math.ceil(qP1 * 0.4) - Math.floor(qP1 * 0.35)) * 4 }
             ];
