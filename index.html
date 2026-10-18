@@ -337,6 +337,30 @@
                     </div>
                 </div>
 
+                <!-- WIDE BANNER: FEELING SLEEPY? (MAX VERSTAPPEN RADIO TRIGGER) -->
+                <div onclick="openMaxRadioModal()" role="button" tabindex="0" class="w-full cursor-pointer relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#070b14] via-[#0d1627] to-[#070b14] border-[2px] border-[#3b72cc]/50 hover:border-[#3b72cc] p-4 sm:p-5 shadow-[0_0_25px_rgba(59,114,204,0.2)] hover:shadow-[0_0_35px_rgba(59,114,204,0.45)] transition-all group select-none">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-[#3b72cc]/15 border border-[#3b72cc]/40 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                <img src="rbmax.png" alt="Red Bull" class="w-9 h-auto object-contain">
+                            </div>
+                            <div class="text-center sm:text-left">
+                                <div class="flex items-center justify-center sm:justify-start gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-[#e10600] animate-ping"></span>
+                                    <span class="text-[10px] font-mono font-black uppercase tracking-widest text-[#3b72cc]">INCOMING TRANSMISSION // VERSTAPPEN RADIO</span>
+                                </div>
+                                <h3 class="text-base sm:text-lg font-black italic tracking-tight text-white uppercase mt-0.5 group-hover:text-[#4e8df5] transition-colors">
+                                    Feeling sleepy? Tired? Wanna give up?
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-[#3b72cc]/20 border border-[#3b72cc]/40 text-white font-mono text-xs font-black uppercase tracking-wider group-hover:bg-[#3b72cc] group-hover:text-slate-950 transition-all shrink-0">
+                            <i data-lucide="radio" class="w-4 h-4"></i>
+                            <span>Play Team Radio →</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Place right above or beside the Stats Grid in #view-analytics -->
 <div class="flex items-center justify-between gap-3 flex-wrap">
     <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800 text-xs font-bold">
@@ -2107,6 +2131,103 @@
         </div>
     </div>
 </div>
+
+        <!-- MODAL: MAX VERSTAPPEN RED BULL TEAM RADIO -->
+    <div id="max-radio-modal" onclick="if(event.target === this) closeMaxRadioModal()" class="fixed inset-0 z-[98] hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4 select-none">
+        <div class="relative w-full max-w-md bg-[#0b0e14] border-[3px] border-[#3b72cc] rounded-2xl shadow-[0_0_50px_rgba(59,114,204,0.4)] overflow-hidden font-sans">
+            
+            <!-- Close Button -->
+            <button onclick="closeMaxRadioModal()" class="absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center border border-slate-700/80 transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+
+            <!-- Top Header: VERSTAPPEN + Red Bull Logo + RADIO + Waveform -->
+            <div class="p-6 pb-4 bg-gradient-to-b from-[#141b26] to-[#0b0e14]">
+                <div class="text-center">
+                    <h2 class="text-4xl sm:text-5xl font-black italic tracking-wider text-[#447bd4] uppercase leading-none">
+                        VERSTAPPEN
+                    </h2>
+                    <div class="flex items-center justify-center gap-3 mt-1.5">
+                        <img src="rbmax.png" alt="Red Bull Racing" class="h-9 sm:h-11 w-auto object-contain drop-shadow-md">
+                        <span class="text-3xl sm:text-4xl font-black italic tracking-wider text-white uppercase leading-none">
+                            RADIO
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Dynamic Blue Audio Equalizer Bars -->
+                <div id="max-radio-bars" class="flex items-end justify-center gap-[3px] h-10 mt-5 px-2">
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-2 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-3 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-2 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-4 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-3 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-5 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-3 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-4 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-2 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-6 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-4 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-7 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-9 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-6 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-10 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-7 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-5 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-4 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-6 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-5 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-7 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-4 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-5 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-3 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-4 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-6 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-4 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-5 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-3 transition-all duration-150"></div>
+                    <div class="w-1.5 bg-[#3b72cc] rounded-t h-2 transition-all duration-150"></div>
+                </div>
+            </div>
+
+            <!-- Glowing Blue Divider Line -->
+            <div class="h-[2px] w-full bg-[#3b72cc] shadow-[0_0_12px_#3b72cc]"></div>
+
+            <!-- Radio Message Transcript (Right-Aligned Italic Like Official F1 Graphic) -->
+            <div class="p-6 sm:p-7 bg-[#090c12] text-right space-y-3">
+                <p class="text-[#3b72cc] font-bold italic text-sm sm:text-base leading-relaxed tracking-wide uppercase">
+                    "I CAN WAKE UP IN THE MIDDLE OF THE NIGHT WITH SOME IDEAS AND I DO NEED TO TEST IT, LIKE I CANNOT WAIT FOR IT."
+                </p>
+                <p class="text-slate-400 font-bold italic text-xs sm:text-sm leading-relaxed tracking-wide uppercase">
+                    — "WAKE UP AND TURN ON THE SIMULATOR AT 2:00 IN THE MORNING?! YOU NEED TO SLEEP AT THE SAME TIME!"
+                </p>
+                <p class="text-[#3b72cc] font-bold italic text-sm sm:text-base leading-relaxed tracking-wide uppercase">
+                    "YEAH, BUT I ALSO NEED TO GO FASTER. SO...
+                </p>
+                <!-- Emphasized Punchline (Stands out without ugly background highlight) -->
+                <p class="text-white font-black italic text-xl sm:text-2xl leading-tight tracking-wider uppercase drop-shadow-[0_0_14px_rgba(68,123,212,0.95)] pt-1">
+                    YOU CAN SLEEP WHEN YOU'RE DEAD."
+                </p>
+            </div>
+
+            <!-- Footer Audio Controls -->
+            <div class="px-6 py-4 bg-[#07090e] border-t border-slate-800/80 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleMaxRadioAudio()" id="btn-max-radio" class="w-10 h-10 rounded-full bg-[#3b72cc] hover:bg-[#4e8df5] text-white flex items-center justify-center transition-transform active:scale-90 shadow-[0_0_15px_rgba(59,114,204,0.6)]">
+                        <i data-lucide="play" class="w-5 h-5 fill-white ml-0.5"></i>
+                    </button>
+                    <div>
+                        <span class="block text-xs text-[#447bd4] uppercase font-black tracking-wider font-mono">TEAM RADIO // 01</span>
+                        <span id="max-radio-status" class="block text-[10px] text-slate-500 font-mono">Click play to listen</span>
+                    </div>
+                </div>
+                <span class="text-xs text-slate-400 font-mono font-bold">0:16</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO ELEMENT FOR MAX.MP3 -->
+    <audio id="audio-max" src="max.mp3" preload="auto"></audio>
 
         <!-- MODAL: CHAPTER SHIFT-BY-SHIFT & 10-YEAR TELEMETRY (THE 'i' BUTTON MODAL) -->
 <div id="trends-shift-modal" class="fixed inset-0 z-[95] hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
@@ -5358,6 +5479,80 @@ const taskText = customTask
             }
             lucide.createIcons();
             audio.onended = () => { btn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>`; lucide.createIcons(); };
+        }
+
+        let maxWaveInterval = null;
+
+        function openMaxRadioModal() {
+            document.getElementById('max-radio-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeMaxRadioModal() {
+            const audio = document.getElementById('audio-max');
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+            stopMaxWaveAnimation();
+            const btn = document.getElementById('btn-max-radio');
+            if (btn) btn.innerHTML = `<i data-lucide="play" class="w-5 h-5 fill-white ml-0.5"></i>`;
+            const status = document.getElementById('max-radio-status');
+            if (status) status.innerText = "Click play to listen";
+            document.getElementById('max-radio-modal').classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        function startMaxWaveAnimation() {
+            stopMaxWaveAnimation();
+            const bars = document.querySelectorAll('#max-radio-bars > div');
+            maxWaveInterval = setInterval(() => {
+                bars.forEach(bar => {
+                    const randomHeight = Math.floor(Math.random() * 32) + 6;
+                    bar.style.height = `${randomHeight}px`;
+                });
+            }, 120);
+        }
+
+        function stopMaxWaveAnimation() {
+            if (maxWaveInterval) {
+                clearInterval(maxWaveInterval);
+                maxWaveInterval = null;
+            }
+        }
+
+        function toggleMaxRadioAudio() {
+            const audio = document.getElementById('audio-max');
+            const btn = document.getElementById('btn-max-radio');
+            const status = document.getElementById('max-radio-status');
+
+            // Pause Lewis Hamilton radios if playing
+            ['audio-lh-1', 'audio-lh-2'].forEach(id => {
+                const otherAudio = document.getElementById(id);
+                if (otherAudio) { otherAudio.pause(); otherAudio.currentTime = 0; }
+                const otherBtn = document.getElementById(id === 'audio-lh-1' ? 'btn-lh-1' : 'btn-lh-2');
+                if (otherBtn) otherBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-white ml-0.5"></i>`;
+            });
+
+            if (audio.paused) {
+                audio.play();
+                btn.innerHTML = `<i data-lucide="pause" class="w-5 h-5 fill-white"></i>`;
+                if (status) status.innerText = "Playing transmission...";
+                startMaxWaveAnimation();
+            } else {
+                audio.pause();
+                btn.innerHTML = `<i data-lucide="play" class="w-5 h-5 fill-white ml-0.5"></i>`;
+                if (status) status.innerText = "Paused";
+                stopMaxWaveAnimation();
+            }
+            lucide.createIcons();
+
+            audio.onended = () => {
+                btn.innerHTML = `<i data-lucide="play" class="w-5 h-5 fill-white ml-0.5"></i>`;
+                if (status) status.innerText = "Transmission ended";
+                stopMaxWaveAnimation();
+                lucide.createIcons();
+            };
         }
 
         const QUOTA_KEY = 'jee_daily_quota';
